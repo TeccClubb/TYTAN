@@ -1,5 +1,4 @@
 // ignore_for_file: use_super_parameters
-
 import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -81,6 +80,8 @@ class _ServersScreenState extends State<ServersScreen> {
         height: 50,
         decoration: BoxDecoration(
           color: const Color(0xFF1E1E1E),
+                  border:  Border.all(color: const Color(0xFF2A2A2A)),
+
           borderRadius: BorderRadius.circular(10),
         ),
         child: TextField(
@@ -132,6 +133,8 @@ class _ServersScreenState extends State<ServersScreen> {
                         color: _selectedRegion == region
                             ? AppColors.primary
                             : const Color(0xFF1E1E1E),
+                                    border:  Border.all(color: const Color(0xFF2A2A2A))
+,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -288,6 +291,8 @@ class _ServersScreenState extends State<ServersScreen> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: const Color(0xFF1E1E1E),
+                        border:  Border.all(color: const Color(0xFF2A2A2A)),
+
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -411,9 +416,11 @@ class _ServersScreenState extends State<ServersScreen> {
               }
             },
             child: Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: const Color(0xFF1E1E1E),
+                        border:  Border.all(color: const Color(0xFF2A2A2A)),
+
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -424,6 +431,7 @@ class _ServersScreenState extends State<ServersScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.primary,
                       shape: BoxShape.circle,
+                      
                     ),
                     child: const Icon(
                       Icons.shuffle,
@@ -622,7 +630,7 @@ class _ServersScreenState extends State<ServersScreen> {
           color: const Color(0xFF1E1E1E),
           borderRadius: BorderRadius.circular(15),
           border: Border.all(
-            color: isSelected ? AppColors.primary : Colors.transparent,
+            color: isSelected ? AppColors.primary : const Color(0xFF2A2A2A),
             width: 1.5,
           ),
         ),

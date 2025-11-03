@@ -18,6 +18,11 @@ class AccountScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(context),
+              const Divider(
+                  color: Color(0xFF2A2A2A),
+                  height: 1,
+                  thickness: 1,
+                ),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
@@ -83,6 +88,7 @@ class AccountScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xFF1A1A1A),
             borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: const Color(0xFF2A2A2A)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,7 +163,14 @@ class AccountScreen extends StatelessWidget {
                 ),
               ),
 
-              const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: const Divider(
+                  color: Color(0xFF2A2A2A),
+                  height: 1,
+                  thickness: 1,
+                ),
+              ),
 
               // Email
               Padding(
@@ -199,7 +212,14 @@ class AccountScreen extends StatelessWidget {
                 ),
               ),
 
-              const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: const Divider(
+                  color: Color(0xFF2A2A2A),
+                  height: 1,
+                  thickness: 1,
+                ),
+              ),
 
               // Member since
               Padding(
@@ -257,7 +277,9 @@ class AccountScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: const Color(0xFF2A2A2A)),
       ),
+
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -293,6 +315,7 @@ class AccountScreen extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFF2A2A2A)),
                 color: const Color(0xFF000000),
                 borderRadius: BorderRadius.circular(12),
               ),

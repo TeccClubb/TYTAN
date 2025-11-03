@@ -133,7 +133,12 @@ class AuthProvide with ChangeNotifier {
           context,
           EvaIcons.alertTriangle,
           'Error',
-          data['message'],
+          data['errors'] != null
+              ? data['errors'].toString().replaceAll('[', '').replaceAll(']', '')
+              : data['message']
+                    .toString()
+                    .replaceAll('[', '')
+                    .replaceAll(']', ''),
           Colors.red,
         );
       }

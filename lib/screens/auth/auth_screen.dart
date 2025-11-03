@@ -4,9 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';
 import 'package:tytan/screens/auth/forget.dart';
 import 'package:tytan/screens/background/background.dart';
-import 'package:tytan/screens/bottomnavbar/bottomnavbar.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
-import 'package:tytan/screens/home/home_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   final int initialTabIndex;

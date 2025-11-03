@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -144,40 +146,47 @@ class _HomeScreenState extends State<HomeScreen>
         children: [
           Row(
             children: [
-              Image.asset('assets/Tytan Logo.png', width: 40, height: 40),
+              Image.asset('assets/Tytan Logo.png', width: 44, height: 44),
               const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Tytan',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Tytan',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      Text(
+                        'VPN',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
+                  SizedBox(height: 4),
                   Text(
-                    'VPN',
+                    'Secure and Quick',
                     style: GoogleFonts.plusJakartaSans(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textGray,
                     ),
                   ),
                 ],
               ),
               const SizedBox(width: 5),
-              Text(
-                'Secure and Quick',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textGray,
-                ),
-              ),
             ],
           ),
+
           GestureDetector(
             onTap: () {
               // Handle info icon tap
@@ -187,15 +196,19 @@ class _HomeScreenState extends State<HomeScreen>
               );
             },
             child: Container(
-              width: 36,
-              height: 36,
+              // width: 36,
+              // height: 36,
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Colors.transparent,
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppColors.textGray, width: 1),
+                border: Border.all(
+                  color: Colors.transparent.withOpacity(0.1),
+                  width: 1,
+                ),
               ),
               child: Center(
-                child: Image.asset('assets/i.png', width: 20, height: 20),
+                child: Image.asset('assets/premium.png', width: 20, height: 20),
               ),
             ),
           ),
@@ -231,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen>
           '00:00:00',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 32,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.bold,
             color: const Color(0xFFA0A0A0),
           ),
         ),
@@ -241,24 +254,34 @@ class _HomeScreenState extends State<HomeScreen>
         GestureDetector(
           onTap: _toggleConnection,
           child: Container(
-            width: 120,
-            height: 120,
+            width: 140,
+            height: 140,
             decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(60),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withOpacity(0.4),
-                  blurRadius: 30,
-                  spreadRadius: 10,
-                ),
-              ],
+              color: AppColors.primary.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(70),
             ),
-            child: const Center(
-              child: Icon(
-                Icons.power_settings_new_rounded,
-                color: Colors.white,
-                size: 50,
+            child: Center(
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(50),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.4),
+                      blurRadius: 30,
+                      spreadRadius: 10,
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.power_settings_new_rounded,
+                    color: Colors.white,
+                    size: 50,
+                  ),
+                ),
               ),
             ),
           ),
@@ -288,6 +311,7 @@ class _HomeScreenState extends State<HomeScreen>
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: const Color(0xFF1E1E1E),
+                border: Border.all(color: const Color(0xFF2A2A2A)),
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Row(
@@ -494,7 +518,8 @@ class _HomeScreenState extends State<HomeScreen>
 
         // Server Name
         Text(
-          selectedServer?.name ?? 'Selecting server...',
+          ' ${selectedServer?.name} # ${selectedServer!.id}' ??
+              'Selecting server...',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -532,34 +557,44 @@ class _HomeScreenState extends State<HomeScreen>
           provider.getFormattedDuration(),
           style: GoogleFonts.plusJakartaSans(
             fontSize: 32,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.bold,
             color: const Color(0xFFA0A0A0),
           ),
         ),
-        const SizedBox(height: 50),
+        const SizedBox(height: 40),
 
         // Power Button
         GestureDetector(
           onTap: _toggleConnection,
           child: Container(
-            width: 120,
-            height: 120,
+            width: 140,
+            height: 140,
             decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(60),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withOpacity(0.4),
-                  blurRadius: 30,
-                  spreadRadius: 10,
-                ),
-              ],
+              color: AppColors.primary.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(70),
             ),
-            child: const Center(
-              child: Icon(
-                Icons.power_settings_new_rounded,
-                color: Colors.white,
-                size: 50,
+            child: Center(
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(50),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.4),
+                      blurRadius: 30,
+                      spreadRadius: 10,
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.power_settings_new_rounded,
+                    color: Colors.white,
+                    size: 50,
+                  ),
+                ),
               ),
             ),
           ),

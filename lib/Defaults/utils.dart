@@ -1,5 +1,5 @@
 class UUtils {
-  static const String baseUrl = "https://safepro.tecclubb.com/api/";
+  static const String baseUrl = "https://yallavpn.tecclubb.com/api/";
   static const String login = "${baseUrl}login";
   static const String register = "${baseUrl}signup";
   static const String forgotPassword = "${baseUrl}forgot-password";
@@ -14,3 +14,7 @@ class UUtils {
 
   
 }
+
+
+const String VPS_API_KEY = "a3f7b9c2-d1e5-4f68-8a0b-95c6e7f4d8a1";
+

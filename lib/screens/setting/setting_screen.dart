@@ -53,7 +53,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // Connection Section
                       _buildSectionCard(
                         title: 'Connection',
-                        iconData: Icons.wifi,
+                        image: 'assets/wifi.png',
                         iconBackgroundColor: AppColors.primary,
                         children: [
                           _buildToggleSetting(
@@ -66,6 +66,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               provider.toggleAutoConnectState();
                             },
                           ),
+                          SizedBox(height: 6),
                           _buildNavigationSetting(
                             title: 'Protocol',
                             subtitle: 'WireGuard (Recommended)',
@@ -80,6 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               );
                             },
                           ),
+                          SizedBox(height: 6),
                           _buildNavigationSetting(
                             title: 'Server Location',
                             subtitle: 'United States - New York',
@@ -98,7 +100,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // Security Section
                       _buildSectionCard(
                         title: 'Security',
-                        iconData: Icons.shield_outlined,
+                        image: 'assets/sheild.png',
                         iconBackgroundColor: AppColors.primary,
                         children: [
                           _buildToggleSetting(
@@ -111,6 +113,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               provider.toggleKillSwitchState();
                             },
                           ),
+                          SizedBox(height: 15),
                           _buildToggleSetting(
                             title: 'DNS Leak Protection',
                             subtitle: 'Prevent DNS leaks',
@@ -123,6 +126,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               });
                             },
                           ),
+                          SizedBox(height: 15),
                           _buildToggleSetting(
                             title: 'Split Tunneling',
                             subtitle: 'Route specific apps outside VPN',
@@ -144,7 +148,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       // Account Section
                       _buildSectionCard(
                         title: 'Account',
-                        iconData: Icons.person,
+                        image: 'assets/person.png',
                         iconBackgroundColor: AppColors.primary,
                         children: [
                           _buildProfileSetting(
@@ -160,6 +164,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               );
                             },
                           ),
+                          SizedBox(height: 10),
                           _buildNavigationSetting(
                             title: 'Premium Plan',
                             subtitle: 'Expires Dec 2024',
@@ -174,6 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ); // Navigate to subscription details
                             },
                           ),
+                          SizedBox(height: 10),
                           _buildNavigationSetting(
                             title: 'Feedback',
                             subtitle: 'Help us improve our app',
@@ -188,6 +194,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               );
                             },
                           ),
+                          SizedBox(height: 15),
                           _buildNavigationSetting(
                             title: 'Sign Out',
                             subtitle: 'Logout from this device',
@@ -283,16 +290,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildSectionCard({
     required String title,
-    required IconData iconData,
     required Color iconBackgroundColor,
     required List<Widget> children,
+    required String image,
   }) {
     return Container(
+      padding: const EdgeInsets.all(4),
       margin: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A), // Updated to 0xFF1A1A1A
         borderRadius: BorderRadius.circular(15),
+        border:  Border.all(color: const Color(0xFF2A2A2A))
       ),
+
       child: Column(
         children: [
           Padding(
@@ -306,7 +316,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: iconBackgroundColor,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(iconData, color: Colors.white, size: 20),
+                  child:  Image.asset(image, color: Colors.white, scale: 4,),
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -375,8 +385,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ),
-        if (!isLastItem)
-          const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
+      
       ],
     );
   }
@@ -430,8 +439,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
         ),
-        if (!isLastItem)
-          const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
+       
       ],
     );
   }

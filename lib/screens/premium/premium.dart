@@ -72,6 +72,7 @@ class _PremiumScreenState extends State<PremiumScreen>
                   );
                 },
               ),
+              const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
               Expanded(
                 child: Stack(
                   children: [
@@ -223,10 +224,11 @@ class _PremiumScreenState extends State<PremiumScreen>
     required String description,
   }) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A),
         borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: const Color(0xFF2A2A2A)),
       ),
       child: Row(
         children: [
@@ -408,7 +410,7 @@ class _PremiumScreenState extends State<PremiumScreen>
           borderRadius: BorderRadius.circular(15),
           border: isSelected
               ? Border.all(color: AppColors.primary, width: 1.5)
-              : null,
+              : Border.all(color: const Color(0xFF2A2A2A)),
         ),
         child: Column(
           children: [
@@ -562,7 +564,7 @@ class _PremiumScreenState extends State<PremiumScreen>
   Widget _buildInfoItem(String text) {
     return Text(
       text,
-      textAlign: TextAlign.center,
+      textAlign: TextAlign.start,
       style: GoogleFonts.plusJakartaSans(fontSize: 13, color: Colors.grey),
     );
   }

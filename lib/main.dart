@@ -1,12 +1,13 @@
+// ignore_for_file: use_super_parameters
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tytan/Providers/AuthProvide/authProvide.dart';
-import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/screens/home/home_screen.dart';
 import 'package:tytan/screens/splash/splash_screen.dart';
 // import 'package:tytan/screens/splash_screen.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
+import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
+import 'package:tytan/Providers/AuthProvide/authProvide.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,7 @@ void main() {
       systemNavigationBarColor: const Color(0xFF1A1A1A),
       systemNavigationBarIconBrightness: Brightness.light,
     ),
-  );
+  ); 
   runApp(const MyApp());
 }
 

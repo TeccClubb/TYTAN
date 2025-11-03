@@ -15,7 +15,6 @@ class FeedbackScreen extends StatefulWidget {
 class _FeedbackScreenState extends State<FeedbackScreen> {
   int _rating = 0;
   String _selectedFeedbackType = '';
-  final TextEditingController _feedbackController = TextEditingController();
   bool _isSubmitting = false;
 
   final List<String> _feedbackTypes = [
@@ -39,12 +38,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   }
 
   @override
-  void dispose() {
-    _feedbackController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: AppBackground(
@@ -53,6 +46,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(context),
+              const Divider(
+                  color: Color(0xFF2A2A2A),
+                  height: 1,
+                  thickness: 1,
+                ),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
@@ -89,25 +87,25 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       _buildFeedbackTextField(),
                       const SizedBox(height: 20),
 
-                      // Attach screenshot
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.attach_file,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            'Attach screenshot (optional)',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 14,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
+                      // // Attach screenshot
+                      // Row(
+                      //   children: [
+                      //     const Icon(
+                      //       Icons.attach_file,
+                      //       color: Colors.white,
+                      //       size: 20,
+                      //     ),
+                      //     const SizedBox(width: 10),
+                      //     Text(
+                      //       'Attach screenshot (optional)',
+                      //       style: GoogleFonts.plusJakartaSans(
+                      //         fontSize: 14,
+                      //         color: Colors.white,
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      const SizedBox(height: 10),
 
                       // Send feedback button
                       _buildSendButton(),
@@ -224,6 +222,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           onTap: () {
             setState(() {
               _selectedFeedbackType = type;
+              // Set the subject in the provider's subject controller
+              context.read<VpnProvide>().subjectController.text = type;
             });
           },
           child: Container(
@@ -231,6 +231,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             decoration: BoxDecoration(
               color: isSelected ? AppColors.primary : const Color(0xFF212121),
               borderRadius: BorderRadius.circular(20),
+              border: isSelected 
+                  ? Border.all(color: AppColors.primary, width: 2)
+                  : Border.all(color: Colors.transparent, width: 2),
             ),
             child: Text(
               type,
@@ -255,7 +258,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextField(
-        controller: _feedbackController,
+        controller: context.read<VpnProvide>().messageController,
         maxLines: null,
         style: GoogleFonts.plusJakartaSans(fontSize: 14, color: Colors.white),
         decoration: InputDecoration(
@@ -275,7 +278,15 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        onPressed: _isSubmitting ? null : _submitFeedback,
+        onPressed: _isSubmitting ? null : () async {
+          setState(() {
+            _isSubmitting = true;
+          });
+          await context.read<VpnProvide>().addFeedback(context);
+          setState(() {
+            _isSubmitting = false;
+          });
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
@@ -302,103 +313,5 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               ),
       ),
     );
-  }
-
-  Future<void> _submitFeedback() async {
-    // Validate inputs
-    if (_rating == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Please select a rating',
-            style: GoogleFonts.plusJakartaSans(),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    if (_selectedFeedbackType.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Please select a feedback type',
-            style: GoogleFonts.plusJakartaSans(),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    if (_feedbackController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Please enter your feedback',
-            style: GoogleFonts.plusJakartaSans(),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
-    setState(() {
-      _isSubmitting = true;
-    });
-
-    try {
-      final provider = Provider.of<VpnProvide>(context, listen: false);
-
-      // Prepare feedback data using provider's text controllers
-      // Include subject, category and rating in the message body
-      final feedbackMessage =
-          '''Subject: App Feedback - $_selectedFeedbackType
-Category: $_selectedFeedbackType
-Rating: $_rating/5 stars
-
-${_feedbackController.text.trim()}''';
-
-      provider.messageController.text = feedbackMessage;
-
-      // If email is not set, use user's email from provider
-      if (provider.user.isNotEmpty) {
-        provider.emailController.text = provider.user.first.email;
-      }
-
-      // Submit feedback using provider's method
-      await provider.addFeedback(context);
-
-      // Clear form after successful submission
-      setState(() {
-        _rating = 0;
-        _selectedFeedbackType = '';
-        _feedbackController.clear();
-      });
-
-      // Navigate back after short delay
-      await Future.delayed(const Duration(seconds: 1));
-      if (mounted) {
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Failed to submit feedback. Please try again.',
-            style: GoogleFonts.plusJakartaSans(),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSubmitting = false;
-        });
-      }
-    }
   }
 }

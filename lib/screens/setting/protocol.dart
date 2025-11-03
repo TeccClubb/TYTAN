@@ -14,11 +14,13 @@ class ProtocolScreen extends StatefulWidget {
 
 class _ProtocolScreenState extends State<ProtocolScreen> {
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
     // Load protocol from provider when screen loads
-    final provider = Provider.of<VpnProvide>(context, listen: false);
-    provider.lProtocolFromStorage();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = Provider.of<VpnProvide>(context, listen: false);
+      provider.lProtocolFromStorage();
+    });
   }
 
   @override
@@ -32,6 +34,7 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(context),
+              const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
@@ -39,36 +42,46 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
                     children: [
                       _buildProtocolOption(
                         provider: provider,
-                        protocol: Protocol.openvpn,
-                        name: 'OpenVPN',
-                        description:
-                            'Experience next-gen speed with lightweight encryption and instant connectivity.',
-                        feature: 'Ultra Fast',
-                        featureColor: Colors.green,
-                        iconColor: AppColors.primary,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildProtocolOption(
-                        provider: provider,
-                        protocol: Protocol.wireguard,
-                        name: 'WireGuard',
-                        description:
-                            'Enjoy military-grade security with time-tested, stable, and reliable protection.',
+                        protocol: Protocol.vless,
+                        name: 'Vless',
+                        description: 'Enjoy military-grade security with time-tested, stable, and reliable protection.',
                         feature: 'Stable Connection',
                         featureColor: Colors.blue,
                         iconColor: const Color(0xFF0A84FF),
                       ),
                       const SizedBox(height: 16),
-                      _buildProtocolOption(
-                        provider: provider,
-                        protocol: Protocol.singbox,
-                        name: 'SingBox',
-                        description:
-                            'Next-generation VPN protocol with advanced features and high performance.',
-                        feature: 'Advanced',
-                        featureColor: Colors.purple,
-                        iconColor: const Color(0xFF8B5CF6),
-                      ),
+                      // _buildProtocolOption(
+                      //   provider: provider,
+                      //   protocol: Protocol.hysteria,
+                      //   name: 'Vmess',
+                      //   description:
+                      //       'Next-generation VPN protocol with advanced features and high performance.',
+                      //   feature: 'Advanced',
+                      //   featureColor: Colors.purple,
+                      //   iconColor: const Color(0xFF8B5CF6),
+                      // ),
+                      // const SizedBox(height: 16),
+                      //  _buildProtocolOption(
+                      //   provider: provider,
+                      //   protocol: Protocol.wireguard,
+                      //   name: 'Wireguard',
+                      //   description:
+                      //       'Next-generation VPN protocol with advanced features and high performance.',
+                      //   feature: 'Advanced',
+                      //   featureColor: Colors.purple,
+                      //   iconColor: const Color(0xFF8B5CF6),
+                      // ),
+                      // const SizedBox(height: 16),
+                      //  _buildProtocolOption(
+                      //   provider: provider,
+                      //   protocol: Protocol.openvpn,
+                      //   name: 'OpenVPN',
+                      //   description:
+                      //       'Next-generation VPN protocol with advanced features and high performance.',
+                      //   feature: 'Advanced',
+                      //   featureColor: Colors.purple,
+                      //   iconColor: const Color(0xFF8B5CF6),
+                      // ),
                     ],
                   ),
                 ),
@@ -93,6 +106,7 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
               height: 40,
               decoration: BoxDecoration(
                 color: const Color(0xFF2A2A2A),
+                border: Border.all(color: const Color(0xFF2A2A2A)),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Icon(
@@ -111,7 +125,7 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
               color: Colors.white,
             ),
           ),
-          Container(width: 40, height: 40),
+          SizedBox(width: 40, height: 40),
         ],
       ),
     );
@@ -166,7 +180,7 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
           borderRadius: BorderRadius.circular(15),
           border: isSelected
               ? Border.all(color: AppColors.primary, width: 1.5)
-              : null,
+              : Border.all(color: const Color(0xFF2A2A2A)),
         ),
         child: Row(
           children: [
