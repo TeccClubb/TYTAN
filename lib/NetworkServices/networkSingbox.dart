@@ -1,9 +1,10 @@
+// ignore_for_file: file_names
+
 import 'dart:convert';
 import 'dart:developer' show log;
 import 'package:flutter_singbox/flutter_singbox.dart';
 import 'package:flutter/services.dart' show PlatformException;
-import 'package:shared_preferences/shared_preferences.dart'
-    show SharedPreferences;
+import 'package:shared_preferences/shared_preferences.dart' show SharedPreferences;
 
 class NetworkSingbox {
   static final NetworkSingbox _instance = NetworkSingbox._internal();
@@ -63,6 +64,8 @@ class NetworkSingbox {
       await _singbox.saveConfig(_formatJson(config));
 
       log('Starting VPN...');
+            await Future.delayed(Duration(milliseconds: 500));
+
       await _singbox.startVPN();
 
       log('VPN start command sent successfully');

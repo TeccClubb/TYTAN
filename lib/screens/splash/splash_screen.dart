@@ -45,6 +45,11 @@ class _SplashScreenState extends State<SplashScreen>
       CurvedAnimation(parent: _loadingController, curve: Curves.easeInOut),
     );
 
+    final provider = context.read<VpnProvide>();
+    //print(0.1, 'Initializing secure connection...');
+    provider.init();
+    // await Future.delayed(const Duration(milliseconds: 200));
+
     // Start animations
     _logoController.forward();
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -82,7 +87,7 @@ class _SplashScreenState extends State<SplashScreen>
       // Load protocol, auto-connect, and kill switch settings (synchronous)
       provider.lProtocolFromStorage();
       provider.myAutoConnect();
-      provider.myKillSwitch();
+      provider.loadKillSwitchState();
 
       // Auto-select fastest server if no valid server is selected
       if (provider.servers.isNotEmpty &&

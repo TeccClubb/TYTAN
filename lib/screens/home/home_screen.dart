@@ -9,9 +9,6 @@ import 'package:tytan/screens/constant/Appconstant.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/screens/premium/premium.dart';
 import 'package:tytan/screens/server/server_screen.dart';
-import 'dart:async';
-
-enum ConnectionState { disconnected, connecting, connected }
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onNavigateToServers;
@@ -22,8 +19,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderStateMixin {
   // For connecting animation
   late AnimationController _connectingAnimationController;
 
@@ -48,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen>
         await provider.getPremium();
         provider.lProtocolFromStorage();
         provider.myAutoConnect();
-        provider.myKillSwitch();
+       // provider.myKillSwitch();
 
         // Load servers
         await provider.getServersPlease(true);
@@ -73,44 +69,7 @@ class _HomeScreenState extends State<HomeScreen>
     super.dispose();
   }
 
-  Future<void> _toggleConnection() async {
-    final provider = context.read<VpnProvide>();
 
-    // Prevent action if already in a transitional state
-    if (provider.isloading) {
-      return;
-    }
-
-    // If currently connected, show disconnecting animation before actual disconnect
-    if (provider.vpnConnectionStatus == VpnStatusConnectionStatus.connected) {
-      // Call toggleVpn (which will set status to disconnecting and stop timer)
-      final disconnectFuture = provider.toggleVpn();
-
-      // Wait 10 seconds to show the disconnecting animation
-      await Future.delayed(const Duration(seconds: 10));
-
-      // Wait for actual disconnection to complete
-      await disconnectFuture;
-    } else {
-      // Connecting - just proceed normally (timer will be started in provider)
-      await provider.toggleVpn();
-    }
-  }
-
-  ConnectionState _getConnectionState(VpnProvide provider) {
-    switch (provider.vpnConnectionStatus) {
-      case VpnStatusConnectionStatus.connected:
-        return ConnectionState.connected;
-      case VpnStatusConnectionStatus.connecting:
-      case VpnStatusConnectionStatus.reconnecting:
-        return ConnectionState.connecting;
-      case VpnStatusConnectionStatus.disconnecting:
-        return ConnectionState
-            .connecting; // Use connecting view for disconnecting animation
-      case VpnStatusConnectionStatus.disconnected:
-        return ConnectionState.disconnected;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,15 +84,18 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget _buildContent() {
     final provider = context.watch<VpnProvide>();
-    final connectionState = _getConnectionState(provider);
 
     // Show different content based on connection state
-    switch (connectionState) {
-      case ConnectionState.connecting:
+    switch (provider.vpnConnectionStatus) {
+      case VpnStatusConnectionStatus.connecting:
         return _buildConnectingView();
-      case ConnectionState.connected:
+      case VpnStatusConnectionStatus.connected:
         return _buildConnectedView();
-      case ConnectionState.disconnected:
+      case VpnStatusConnectionStatus.disconnected:
+        return _buildDisconnectedView();
+      case VpnStatusConnectionStatus.disconnecting:
+        return _buildConnectingView();
+      case VpnStatusConnectionStatus.reconnecting:
         return _buildDisconnectedView();
     }
   }
@@ -219,11 +181,11 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget _buildDisconnectedView() {
     final provider = context.watch<VpnProvide>();
-    final selectedServer =
-        provider.servers.isNotEmpty &&
-            provider.selectedServerIndex < provider.servers.length
-        ? provider.servers[provider.selectedServerIndex]
-        : null;
+    // final selectedServer =
+    //     provider.servers.isNotEmpty &&
+    //         provider.selectedServerIndex < provider.servers.length
+    //     ? provider.servers[provider.selectedServerIndex]
+    //     : null;
 
     return Column(
       children: [
@@ -241,18 +203,19 @@ class _HomeScreenState extends State<HomeScreen>
         const SizedBox(height: 10),
         // Timer
         Text(
-          '00:00:00',
+          "00:00:00",
           style: GoogleFonts.plusJakartaSans(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFFA0A0A0),
+            color: Colors.white,
           ),
         ),
+
         const SizedBox(height: 50),
 
         // Power Button
         GestureDetector(
-          onTap: _toggleConnection,
+          onTap: provider.toggleVpn,
           child: Container(
             width: 140,
             height: 140,
@@ -317,10 +280,10 @@ class _HomeScreenState extends State<HomeScreen>
               child: Row(
                 children: [
                   // Server Flag
-                  if (selectedServer != null)
+                  if (provider.selectedServerIndex < provider.servers.length)
                     ClipOval(
                       child: CachedNetworkImage(
-                        imageUrl: selectedServer.image,
+                        imageUrl: provider.servers[provider.selectedServerIndex].image,
                         width: 48,
                         height: 48,
                         fit: BoxFit.cover,
@@ -336,19 +299,6 @@ class _HomeScreenState extends State<HomeScreen>
                             valueColor: AlwaysStoppedAnimation<Color>(
                               AppColors.primary,
                             ),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey.withOpacity(0.2),
-                          ),
-                          child: const Icon(
-                            Icons.flag,
-                            color: Colors.white,
-                            size: 24,
                           ),
                         ),
                       ),
@@ -383,7 +333,13 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          selectedServer?.name ?? 'Loading...',
+                          provider.servers.isNotEmpty &&
+                                  provider.selectedServerIndex >= 0 &&
+                                  provider.selectedServerIndex <
+                                      provider.servers.length
+                              ? provider
+                                  .servers[provider.selectedServerIndex].name
+                              : 'No server selected',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -407,10 +363,9 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildConnectingView() {
-    final provider = context.watch<VpnProvide>();
-    final selectedServer =
-        provider.servers.isNotEmpty &&
-            provider.selectedServerIndex < provider.servers.length
+    var provider = context.watch<VpnProvide>();
+
+    var selectedServer = provider.servers.isNotEmpty && provider.selectedServerIndex < provider.servers.length
         ? provider.servers[provider.selectedServerIndex]
         : null;
 
@@ -518,8 +473,7 @@ class _HomeScreenState extends State<HomeScreen>
 
         // Server Name
         Text(
-          ' ${selectedServer?.name} # ${selectedServer!.id}' ??
-              'Selecting server...',
+          ' ${selectedServer?.name} # ${selectedServer!.id}',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -565,7 +519,7 @@ class _HomeScreenState extends State<HomeScreen>
 
         // Power Button
         GestureDetector(
-          onTap: _toggleConnection,
+          onTap: provider.toggleVpn,
           child: Container(
             width: 140,
             height: 140,
@@ -643,7 +597,7 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    '${provider.downloadSpeed} Kb/s',
+                    '${provider.downloadSpeed} ',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -683,7 +637,7 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    '${provider.uploadSpeed} Kb/s',
+                    '${provider.uploadSpeed}',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,

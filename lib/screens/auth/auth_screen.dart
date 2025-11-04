@@ -91,7 +91,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<AuthProvide>(context);
+  var provider = Provider.of<AuthProvide>(context);
     // Update loading state based on provider
     _isLoading = provider.isloading;
 

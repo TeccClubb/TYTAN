@@ -1,14 +1,14 @@
 // ignore_for_file: use_super_parameters
 import 'dart:developer' show log;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart' show SharedPreferences;
+import 'package:tytan/screens/premium/premium.dart';
 import 'package:tytan/DataModel/serverDataModel.dart';
-import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
 import 'package:tytan/screens/background/background.dart';
-import 'package:tytan/screens/premium/premium.dart';
+import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 
 class ServersScreen extends StatefulWidget {
   final VoidCallback? onServerSelected;
@@ -21,7 +21,6 @@ class ServersScreen extends StatefulWidget {
 
 class _ServersScreenState extends State<ServersScreen> {
   final TextEditingController _searchController = TextEditingController();
-  int _selectedServerIndex = 0; // Track selected server by ID
   String _selectedRegion = 'All';
   String _sortBy = 'Speed';
 
@@ -80,7 +79,7 @@ class _ServersScreenState extends State<ServersScreen> {
         height: 50,
         decoration: BoxDecoration(
           color: const Color(0xFF1E1E1E),
-                  border:  Border.all(color: const Color(0xFF2A2A2A)),
+          border: Border.all(color: const Color(0xFF2A2A2A)),
 
           borderRadius: BorderRadius.circular(10),
         ),
@@ -133,8 +132,7 @@ class _ServersScreenState extends State<ServersScreen> {
                         color: _selectedRegion == region
                             ? AppColors.primary
                             : const Color(0xFF1E1E1E),
-                                    border:  Border.all(color: const Color(0xFF2A2A2A))
-,
+                        border: Border.all(color: const Color(0xFF2A2A2A)),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -176,6 +174,7 @@ class _ServersScreenState extends State<ServersScreen> {
           // Fastest Server (Free servers only)
           GestureDetector(
             onTap: () async {
+
               log('Fastest Server button tapped');
 
               if (provider.servers.isEmpty) {
@@ -237,22 +236,15 @@ class _ServersScreenState extends State<ServersScreen> {
 
               if (mainIndex != -1) {
                 provider.setSelectedServerIndex(mainIndex);
-                setState(() {
-                  _selectedServerIndex = selectedFreeServer.id;
-                });
-                log('Server selection updated in provider and state');
+                log('Server selection updated in provider: index=$mainIndex, server=${selectedFreeServer.name}');
                 _showServerSelectedMessage(
                   "${selectedFreeServer.name} (Free Server)",
                 );
 
                 // If VPN is connected, disconnect first
-                if (provider.vpnConnectionStatus ==
-                    VpnStatusConnectionStatus.connected) {
-                  log(
-                    'VPN is connected, disconnecting before switching to fastest server...',
-                  );
-                  await provider
-                      .toggleVpn(); // This will disconnect and reset timer
+                if (provider.vpnConnectionStatus == VpnStatusConnectionStatus.connected) {
+                  log('VPN is connected, disconnecting before switching to fastest server...');
+                  await provider.toggleVpn(); // This will disconnect and reset timer
                   // Wait for disconnection to complete
                   await Future.delayed(const Duration(seconds: 2));
                   log('VPN disconnected, timer reset to 0');
@@ -277,8 +269,7 @@ class _ServersScreenState extends State<ServersScreen> {
 
                 log('VPN status: ${provider.vpnConnectionStatus}');
                 // Auto-connect to the new server
-                if (provider.vpnConnectionStatus ==
-                    VpnStatusConnectionStatus.disconnected) {
+                if (provider.vpnConnectionStatus == VpnStatusConnectionStatus.disconnected) {
                   log('Starting auto-connect to ${selectedFreeServer.name}');
                   await provider.toggleVpn();
                   log('Auto-connect initiated');
@@ -291,7 +282,7 @@ class _ServersScreenState extends State<ServersScreen> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: const Color(0xFF1E1E1E),
-                        border:  Border.all(color: const Color(0xFF2A2A2A)),
+                border: Border.all(color: const Color(0xFF2A2A2A)),
 
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -373,9 +364,7 @@ class _ServersScreenState extends State<ServersScreen> {
 
               if (mainIndex != -1) {
                 provider.setSelectedServerIndex(mainIndex);
-                setState(() {
-                  _selectedServerIndex = randomServer.id;
-                });
+                log('Random server selection: index=$mainIndex, server=${randomServer.name}');
                 _showServerSelectedMessage(
                   "${randomServer.name} (Random Premium)",
                 );
@@ -386,8 +375,7 @@ class _ServersScreenState extends State<ServersScreen> {
                   log(
                     'VPN is connected, disconnecting before switching to random server...',
                   );
-                  await provider
-                      .toggleVpn(); // This will disconnect and reset timer
+                  await provider.toggleVpn(); // This will disconnect and reset timer
                   // Wait for disconnection to complete
                   await Future.delayed(const Duration(seconds: 2));
                   log('VPN disconnected, timer reset to 0');
@@ -408,8 +396,7 @@ class _ServersScreenState extends State<ServersScreen> {
                 await Future.delayed(const Duration(milliseconds: 500));
 
                 // Auto-connect to the new server
-                if (provider.vpnConnectionStatus ==
-                    VpnStatusConnectionStatus.disconnected) {
+                if (provider.vpnConnectionStatus == VpnStatusConnectionStatus.disconnected) {
                   log('Connecting to new random server: ${randomServer.name}');
                   await provider.toggleVpn();
                 }
@@ -419,9 +406,8 @@ class _ServersScreenState extends State<ServersScreen> {
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: const Color(0xFF1E1E1E),
-                        border:  Border.all(color: const Color(0xFF2A2A2A)),
-
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFF2A2A2A)),
               ),
               child: Row(
                 children: [
@@ -431,7 +417,6 @@ class _ServersScreenState extends State<ServersScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.primary,
                       shape: BoxShape.circle,
-                      
                     ),
                     child: const Icon(
                       Icons.shuffle,
@@ -567,7 +552,7 @@ class _ServersScreenState extends State<ServersScreen> {
     required VpnProvide provider,
     required Server server,
   }) {
-    final isSelected = _selectedServerIndex == server.id;
+    final isSelected = provider.selectedServerIndex == provider.servers.indexWhere((s) => s.id == server.id);
     final isFavorite = provider.isFavoriteServer(server.id);
     // Check if server requires premium based on server type
     // You can customize this logic based on your requirements
@@ -582,47 +567,61 @@ class _ServersScreenState extends State<ServersScreen> {
           return;
         }
 
-        setState(() {
-          _selectedServerIndex = server.id;
-        });
-        final index = provider.servers.indexWhere(
-          (item) => item.id == server.id,
-        );
-        if (index != -1) {
-          provider.setSelectedServerIndex(index);
-        }
-        _showServerSelectedMessage(server.name);
-
-        // If VPN is connected, disconnect first
-        if (provider.vpnConnectionStatus ==
-            VpnStatusConnectionStatus.connected) {
-          log('VPN is connected, disconnecting before switching server...');
-          await provider.toggleVpn(); // This will disconnect and reset timer
-          // Wait for disconnection to complete
-          await Future.delayed(const Duration(seconds: 2));
-          log('VPN disconnected, timer reset to 0');
+        // Find the index of the tapped server in the main servers list
+        final index = provider.servers.indexWhere((s) => s.id == server.id);
+        if (index == -1) {
+          log('Server not found in servers list');
+          return;
         }
 
-        // Switch to home screen (either via callback or pop)
-        if (widget.onServerSelected != null) {
-          // If callback exists (bottom nav), use it to switch tabs
-          widget.onServerSelected!();
-        } else {
-          // Otherwise, pop back to previous screen
-          if (mounted && Navigator.of(context).canPop()) {
-            Navigator.of(context).pop();
-          }
-        }
+        log('Selecting server: ${server.name} at index $index');
+        provider.changeServer(index, 0, context); 
+        // if (isPremium && !userIsPremium) {
+        //   _showPremiumRequiredMessage(server.name);
+        //   return;
+        // }
 
-        // Wait a brief moment for navigation, then auto-connect
-        await Future.delayed(const Duration(milliseconds: 500));
+        // setState(() {
+        //   _selectedServerIndex = server.id;
+        // });
+        // final index = provider.servers.indexWhere(
+        //   (item) => item.id == server.id,
+        // );
+        // if (index != -1) {
+        //   provider.setSelectedServerIndex(index);
+        // }
+        // _showServerSelectedMessage(server.name);
 
-        // Auto-connect to the new server
-        if (provider.vpnConnectionStatus ==
-            VpnStatusConnectionStatus.disconnected) {
-          log('Connecting to new server: ${server.name}');
-          await provider.toggleVpn();
-        }
+        // // If VPN is connected, disconnect first
+        // if (provider.vpnConnectionStatus ==
+        //     VpnStatusConnectionStatus.connected) {
+        //   log('VPN is connected, disconnecting before switching server...');
+        //   await provider.toggleVpn(); // This will disconnect and reset timer
+        //   // Wait for disconnection to complete
+        //   await Future.delayed(const Duration(seconds: 2));
+        //   log('VPN disconnected, timer reset to 0');
+        // }
+
+        // // Switch to home screen (either via callback or pop)
+        // if (widget.onServerSelected != null) {
+        //   // If callback exists (bottom nav), use it to switch tabs
+        //   widget.onServerSelected!();
+        // } else {
+        //   // Otherwise, pop back to previous screen
+        //   if (mounted && Navigator.of(context).canPop()) {
+        //     Navigator.of(context).pop();
+        //   }
+        // }
+
+        // // Wait a brief moment for navigation, then auto-connect
+        // await Future.delayed(const Duration(milliseconds: 500));
+
+        // // Auto-connect to the new server
+        // if (provider.vpnConnectionStatus ==
+        //     VpnStatusConnectionStatus.disconnected) {
+        //   log('Connecting to new server: ${server.name}');
+        //   await provider.toggleVpn();
+        // }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

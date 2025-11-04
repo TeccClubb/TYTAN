@@ -49,6 +49,10 @@ dependencies:
   flutter_singbox: 
     path: ./flutter_singbox
   uuid: ^4.5.2
+  installed_apps: ^1.6.0
+  firebase_core: ^4.2.1
+  firebase_auth: ^6.1.2
+  device_info_plus: ^12.2.0
 
 dev_dependencies:
   flutter_test:

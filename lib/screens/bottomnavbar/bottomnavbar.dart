@@ -18,7 +18,7 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   // Current tab index (starts at 0 for Home screen)
-  var currentIndex = 0.obs;
+
 
   @override
   void initState() {
@@ -40,23 +40,20 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   // Method to get current page with callback
   Widget _getCurrentPage() {
-    switch (currentIndex.value) {
+    var provider = Provider.of<VpnProvide>(context);
+    switch (provider.bottomBarIndex.value) {
       case 0:
         return HomeScreen(
           onNavigateToServers: () {
             // When home screen wants to navigate to servers
-            setState(() {
-              currentIndex.value = 1;
-            });
+            provider.chnageBottomBarIndex(1);
           },
         );
       case 1:
         return ServersScreen(
           onServerSelected: () {
             // When user selects a server, switch to Home screen
-            setState(() {
-              currentIndex.value = 0;
-            });
+            provider.chnageBottomBarIndex(0);
           },
         );
       case 2:
@@ -64,9 +61,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       default:
         return HomeScreen(
           onNavigateToServers: () {
-            setState(() {
-              currentIndex.value = 1;
-            });
+            provider.chnageBottomBarIndex(1);
           },
         );
     }
@@ -105,14 +100,14 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   Widget _buildNavItem(IconData icon, String label, int index) {
-    final bool isSelected = currentIndex.value == index;
+    final provider = Provider.of<VpnProvide>(context);
+    final bool isSelected = provider.bottomBarIndex.value == index;
     final Color itemColor = isSelected ? AppColors.primary : Colors.grey;
 
     return GestureDetector(
       onTap: () {
-        setState(() {
-          currentIndex.value = index;
-        });
+        final provider = Provider.of<VpnProvide>(context, listen: false);
+        provider.chnageBottomBarIndex(index);
       },
       behavior: HitTestBehavior.opaque,
       child: Container(

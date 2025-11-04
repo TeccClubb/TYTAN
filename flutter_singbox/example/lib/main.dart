@@ -82,7 +82,7 @@ class _HomePageState extends State<HomePage> {
 
       // Get current VPN status and log it
       final vpnStatus = await _flutterSingboxPlugin.getVPNStatus();
-      print('Initial VPN status: $vpnStatus');
+      log('Initial VPN status: $vpnStatus');
 
       // Get saved config
       await _flutterSingboxPlugin.getConfig();
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
         event,
       ) {
         if (event['status'] != null) {
-          print('VPN status update: ${event['status']}');
+          log('VPN status update: ${event['status']}');
           setState(() {
             _vpnStatus = event['status'] as String;
           });

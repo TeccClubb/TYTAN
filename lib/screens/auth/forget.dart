@@ -18,7 +18,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   late Animation<double> _fadeAnimation;
 
   // Form controller
-  final TextEditingController _emailController = TextEditingController();
 
   // Focus node
   final FocusNode _emailFocusNode = FocusNode();
@@ -42,32 +41,32 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     _animationController.forward();
 
     // Pre-fill email for demo
-    _emailController.text = 'tecclubx@gmail.com';
+    // _emailController.text = 'tecclubx@gmail.com';
 
     // Initialize provider with email value
-    Future.microtask(() {
-      final authProvider = Provider.of<AuthProvide>(context, listen: false);
-      authProvider.mailController.text = _emailController.text;
-    });
+    // Future.microtask(() {
+    //   final authProvider = Provider.of<AuthProvide>(context, listen: false);
+    //   authProvider.mailController.text = _emailController.text;
+    // });
 
     // Add listener to focus node for UI updates
     _emailFocusNode.addListener(() => setState(() {}));
 
     // Add listener to sync email field with provider
-    _emailController.addListener(() {
-      Future.microtask(() {
-        if (mounted) {
-          final authProvider = Provider.of<AuthProvide>(context, listen: false);
-          authProvider.mailController.text = _emailController.text;
-        }
-      });
-    });
+    // _emailController.addListener(() {
+    //   Future.microtask(() {
+    //     if (mounted) {
+    //       final authProvider = Provider.of<AuthProvide>(context, listen: false);
+    //       authProvider.mailController.text = _emailController.text;
+    //     }
+    //   });
+    // });
   }
 
   @override
   void dispose() {
     _animationController.dispose();
-    _emailController.dispose();
+    // _emailController.dispose();
     _emailFocusNode.dispose();
 
     // Clear the provider's email when we leave this screen
@@ -214,6 +213,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   }
 
   Widget _buildEmailField() {
+    var authProvider = Provider.of<AuthProvide>(context);
+
     return Container(
       height: 50,
       decoration: BoxDecoration(
@@ -236,7 +237,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             : null,
       ),
       child: TextFormField(
-        controller: _emailController,
+        controller: authProvider.mailController,
         focusNode: _emailFocusNode,
         keyboardType: TextInputType.emailAddress,
         style: GoogleFonts.plusJakartaSans(
@@ -276,6 +277,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   }
 
   Widget _buildSubmitButton() {
+    var controller = Provider.of<AuthProvide>(context);
     return Container(
       width: double.infinity,
       height: 50,
@@ -290,7 +292,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
         ],
       ),
       child: ElevatedButton(
-        onPressed: _isLoading ? null : _handleSubmit,
+        onPressed: () {
+          controller.forgotPassword(context);
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
@@ -319,31 +323,5 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     );
   }
 
-  void _handleSubmit() async {
-    // Unfocus any active fields first
-    FocusScope.of(context).unfocus();
-
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      // Get AuthProvide instance
-      final authProvider = Provider.of<AuthProvide>(context, listen: false);
-      // Set email in provider's controller
-      authProvider.mailController.text = _emailController.text;
-
-      // Call forgot password API
-      await authProvider.forgotPassword(context);
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      // Optional: Go back to login screen after a delay
-      Future.delayed(const Duration(seconds: 2), () {
-        Navigator.of(context).pop();
-      });
-    }
-  }
+ 
 }

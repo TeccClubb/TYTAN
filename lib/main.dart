@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tytan/screens/home/home_screen.dart';
 import 'package:tytan/screens/splash/splash_screen.dart';
-// import 'package:tytan/screens/splash_screen.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';

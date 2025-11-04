@@ -23,19 +23,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _splitTunnelingEnabled = false;
 
   @override
-  void initState() {
-    super.initState();
-    // Load auto-connect and kill-switch states from provider
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<VpnProvide>(context, listen: false);
-      provider.myAutoConnect(); // Load auto-connect state from storage
-      provider.myKillSwitch(); // Load kill-switch state from storage
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<VpnProvide>(context);
+    var provider = context.watch<VpnProvide>();
 
     return Scaffold(
       body: AppBackground(
@@ -69,7 +58,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           SizedBox(height: 6),
                           _buildNavigationSetting(
                             title: 'Protocol',
-                            subtitle: 'WireGuard (Recommended)',
+                            subtitle: provider.selectedProtocol
+                                .toString()
+                                .split('.')
+                                .last
+                                .toUpperCase(),
                             icon: Icons.dns,
                             iconColor: AppColors.primary,
                             onTap: () {
@@ -84,7 +77,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           SizedBox(height: 6),
                           _buildNavigationSetting(
                             title: 'Server Location',
-                            subtitle: 'United States - New York',
+                            subtitle:
+                                provider.selectedServerIndex <
+                                    provider.servers.length
+                                ? "${provider.servers[provider.selectedServerIndex].name} ${provider.servers[provider.selectedServerIndex].subServers![0].name}"
+                                : 'Select Server',
                             icon: Icons.public,
                             iconColor: AppColors.primary,
                             onTap: () {
@@ -110,7 +107,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             iconColor: AppColors.primary,
                             value: provider.killSwitchOn,
                             onChanged: (value) {
-                              provider.toggleKillSwitchState();
+                              provider.toggleKillSwitchState(context);
                             },
                           ),
                           SizedBox(height: 15),
@@ -300,7 +297,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF1A1A1A), // Updated to 0xFF1A1A1A
         borderRadius: BorderRadius.circular(15),
-        border:  Border.all(color: const Color(0xFF2A2A2A))
+        border: Border.all(color: const Color(0xFF2A2A2A)),
       ),
 
       child: Column(
@@ -316,7 +313,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     color: iconBackgroundColor,
                     shape: BoxShape.circle,
                   ),
-                  child:  Image.asset(image, color: Colors.white, scale: 4,),
+                  child: Image.asset(image, color: Colors.white, scale: 4),
                 ),
                 const SizedBox(width: 12),
                 Text(
@@ -385,7 +382,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
         ),
-      
       ],
     );
   }
@@ -439,7 +435,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
         ),
-       
       ],
     );
   }
