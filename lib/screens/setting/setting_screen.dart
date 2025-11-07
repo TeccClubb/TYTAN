@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
-import 'package:tytan/screens/background/background.dart';
-import 'package:tytan/screens/constant/Appconstant.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tytan/screens/premium/premium.dart';
 import 'package:tytan/screens/setting/Account.dart';
 import 'package:tytan/screens/setting/feedback.dart';
 import 'package:tytan/screens/setting/protocol.dart';
 import 'package:tytan/screens/tunneling/tunneling.dart';
+import 'package:tytan/screens/constant/Appconstant.dart';
+import 'package:tytan/screens/background/background.dart';
+import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -215,10 +215,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               );
 
                               // Disconnect VPN if connected
-                              if (provider.vpnConnectionStatus ==
-                                      VpnStatusConnectionStatus.connected ||
-                                  provider.vpnConnectionStatus ==
-                                      VpnStatusConnectionStatus.connecting) {
+                              if (provider.vpnConnectionStatus == VpnStatusConnectionStatus.connected ||
+                                  provider.vpnConnectionStatus == VpnStatusConnectionStatus.connecting) {
                                 await provider.toggleVpn();
                                 // Wait for disconnection to complete
                                 await Future.delayed(
@@ -387,8 +385,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               CupertinoSwitch(
                 value: value,
                 onChanged: onChanged,
-                activeColor: AppColors.primary,
-                trackColor: Colors.grey.shade700,
+                activeTrackColor: AppColors.primary,
+                inactiveTrackColor: Colors.grey.shade700,
               ),
             ],
           ),

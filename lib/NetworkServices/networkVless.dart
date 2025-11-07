@@ -1,14 +1,10 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings
-
-import 'dart:developer';
 import 'dart:io';
-
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tytan/Defaults/singboxConfigs.dart' show SingboxConfig;
-import 'package:tytan/NetworkServices/networkVlessService.dart';
+import 'dart:developer';
 import 'package:uuid/uuid.dart';
-
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tytan/NetworkServices/networkVlessService.dart';
+import 'package:tytan/Defaults/singboxConfigs.dart' show SingboxConfig;
 class VlessService {
   // Generate Uuid for Vless and Store in Shared Preferences
   static Future<String> generateAndStoreUuid() async {

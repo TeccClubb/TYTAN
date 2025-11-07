@@ -5,7 +5,6 @@ import 'package:installed_apps/app_info.dart' show AppInfo;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:tytan/screens/background/background.dart' show AppBackground;
-import 'package:tytan/screens/constant/Appconstant.dart' show AppColors;
 
 class Tunneling extends StatefulWidget {
   const Tunneling({super.key});
@@ -51,7 +50,10 @@ class _TunnelingState extends State<Tunneling> {
       _isLoading = true;
     });
     try {
-      List<AppInfo> apps = await InstalledApps.getInstalledApps();
+      List<AppInfo> apps = await InstalledApps.getInstalledApps(
+        false,
+        true,
+      );
       setState(() {
         _installedApps = apps;
         _isLoading = false;
@@ -263,7 +265,7 @@ class _TunnelingState extends State<Tunneling> {
                         ),
                         const Icon(
                           Icons.lock,
-                          color: Color(0xFF00417B),
+                          color: Colors.deepOrange,
                           size: 20,
                         ),
                       ],

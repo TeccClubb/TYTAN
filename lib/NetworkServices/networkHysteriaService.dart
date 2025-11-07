@@ -67,7 +67,7 @@ class HysteriaApiService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = jsonDecode(response.body);
+        // final data = jsonDecode(response.body);
         return HysteriaUserConfig.fromJson({
           "username": username,
           "password": password,

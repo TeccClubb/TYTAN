@@ -56,7 +56,11 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
         if (provider.servers.isNotEmpty) {
           if (provider.selectedServerIndex == 0 ||
               provider.selectedServerIndex >= provider.servers.length) {
-            await provider.selectFastestServerByHealth();
+            if (provider.isPremium) {
+              await provider.selectFastestServerByHealth();
+            } else {
+              await provider.selectFastestServerByHealth(freeOnly: true);
+            }
           }
         }
       }

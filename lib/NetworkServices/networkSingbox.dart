@@ -60,6 +60,8 @@ class NetworkSingbox {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       List<String>? selectedApps = prefs.getStringList('selected_apps');
 
+      await _singbox.setPerAppProxyMode(ProxyMode.EXCLUDE);
+
       await _singbox.setPerAppProxyList(selectedApps);
       await _singbox.saveConfig(_formatJson(config));
 

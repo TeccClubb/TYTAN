@@ -12,9 +12,9 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Colors.transparent,
-      systemNavigationBarColor: const Color(0xFF1A1A1A),
-      systemNavigationBarIconBrightness: Brightness.light,
+      statusBarColor: Colors.white,
+      systemNavigationBarColor: const Color.fromARGB(255, 50, 50, 50),
+      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   ); 
   runApp(const MyApp());
@@ -38,6 +38,12 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: Colors.black,
           useMaterial3: true,
         ),
+        darkTheme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
+          scaffoldBackgroundColor: Colors.black,
+          useMaterial3: true,
+        ),
+        themeMode: ThemeMode.dark,
         home: const SplashScreen(),
         routes: {'/home': (context) => const HomeScreen()},
       ),

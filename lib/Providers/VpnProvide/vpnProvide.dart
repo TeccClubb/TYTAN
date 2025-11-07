@@ -709,7 +709,7 @@ class VpnProvide with ChangeNotifier {
     }
   }
 
-  Future<void> selectFastestServerByHealth() async {
+  Future<void> selectFastestServerByHealth({bool freeOnly = false}) async {
     if (servers.isEmpty) {
       log("No servers available to analyze.");
       return;
@@ -722,6 +722,13 @@ class VpnProvide with ChangeNotifier {
     double highestScore = -1.0;
 
     for (int i = 0; i < servers.length; i++) {
+      // If only free servers should be considered, skip premium ones
+      if (freeOnly) {
+        final t = servers[i].type.trim().toLowerCase();
+        if (t == 'premium') {
+          continue;
+        }
+      }
       try {
         // Each server can have multiple subServers, so find the best among them
         final subServers = servers[i].subServers ?? [];
@@ -742,15 +749,35 @@ class VpnProvide with ChangeNotifier {
       }
     }
 
+    // If no free server matched and we were filtering for free, fall back to first non-premium if exists
+    if (highestScore < 0 && freeOnly) {
+      for (int i = 0; i < servers.length; i++) {
+        final t = servers[i].type.trim().toLowerCase();
+        if (t != 'premium') {
+          fastestIndex = i;
+          highestScore = 0; // mark as selected
+          break;
+        }
+      }
+    }
+
+    // If still nothing found, keep current index 0 safely bounded
+    if (highestScore < 0) {
+      fastestIndex = servers.isNotEmpty ? 0 : 0;
+    }
+
     selectedServerIndex = fastestIndex;
     await _saveSelectedServerIndex();
 
     isloading = false;
     notifyListeners();
 
-    log(
-      "Fastest server selected: ${servers[fastestIndex].name} (Health Score: $highestScore)",
-    );
+    if (servers.isNotEmpty) {
+      final picked = servers[fastestIndex];
+      log(
+        "Fastest ${freeOnly ? 'free ' : ''}server selected: ${picked.name} (Health Score: $highestScore, Type: ${picked.type})",
+      );
+    }
   }
 
   Future<bool> setProtocol(Protocol protocol, {BuildContext? context}) async {
@@ -1703,13 +1730,41 @@ class VpnProvide with ChangeNotifier {
     var data = jsonDecode(response.body);
 
     log("Response status code: ${response.statusCode}");
-    if (data['status'] == true || response.statusCode == 200) {
-      log('Premium plans: ${data['plans']}');
-      // await prefs.setString('premium_plans', jsonEncode(data['plans']));
-      isPremium = true;
-      notifyListeners();
-    } else {
-      log('Error: ${data['message']}');
+
+    try {
+      // Consider premium ONLY if response OK and there is at least one active/available plan
+      if (response.statusCode == 200) {
+        final plans = data['plans'];
+        bool hasPlans = false;
+        if (plans is List) {
+          // If API provides status flags per plan, prefer those; otherwise any plan means premium
+          hasPlans = plans.isNotEmpty;
+          try {
+            // If any plan has an 'active' or 'status' truthy, prefer that signal
+            final anyActive = plans.any((p) {
+              if (p is Map) {
+                final s = p['status'];
+                final a = p['active'];
+                return (s == true) || (a == true);
+              }
+              return false;
+            });
+            if (anyActive) {
+              hasPlans = true;
+            }
+          } catch (_) {}
+        }
+
+        isPremium = hasPlans;
+        log('Computed isPremium: $isPremium');
+        notifyListeners();
+      } else {
+        log('Subscription endpoint error: ${data['message'] ?? response.reasonPhrase}');
+        isPremium = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      log('Error parsing subscription response: $e');
       isPremium = false;
       notifyListeners();
     }

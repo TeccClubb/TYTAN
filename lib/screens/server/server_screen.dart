@@ -106,7 +106,7 @@ class _ServersScreenState extends State<ServersScreen> {
   }
 
   Widget _buildRegionFilter() {
-    final regions = ['All', 'Americas', 'Europe', 'Asia'];
+    final regions = ['All', 'Free', 'Premium'];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -478,6 +478,14 @@ class _ServersScreenState extends State<ServersScreen> {
   }
 
   Widget _buildServerList(VpnProvide provider) {
+    // Apply region filter before showing
+    final filteredServers = provider.filterServers.where((server) {
+      if (_selectedRegion == 'All') return true;
+      if (_selectedRegion == 'Free') return server.type == 'free';
+      if (_selectedRegion == 'Premium') return server.type == 'premium';
+      return true;
+    }).toList();
+
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -486,7 +494,7 @@ class _ServersScreenState extends State<ServersScreen> {
             _buildServerListHeader(),
             const SizedBox(height: 15),
             Expanded(
-              child: provider.filterServers.isEmpty
+              child: filteredServers.isEmpty
                   ? Center(
                       child: Text(
                         'No servers available',
@@ -499,11 +507,11 @@ class _ServersScreenState extends State<ServersScreen> {
                     )
                   : ListView.separated(
                       padding: EdgeInsets.zero,
-                      itemCount: provider.filterServers.length,
+                      itemCount: filteredServers.length,
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: 10),
                       itemBuilder: (context, index) {
-                        final server = provider.filterServers[index];
+                        final server = filteredServers[index];
                         return _buildServerItem(
                           provider: provider,
                           server: server,
