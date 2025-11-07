@@ -4,6 +4,8 @@ import 'package:installed_apps/installed_apps.dart';
 import 'package:installed_apps/app_info.dart' show AppInfo;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:tytan/screens/background/background.dart' show AppBackground;
+import 'package:tytan/screens/constant/Appconstant.dart' show AppColors;
 
 class Tunneling extends StatefulWidget {
   const Tunneling({super.key});
@@ -85,14 +87,14 @@ class _TunnelingState extends State<Tunneling> {
             leading: _buildAppIcon(app),
             title: Text(
               app.name,
-              style: GoogleFonts.poppins(color: Colors.black, fontSize: 14),
+              style: GoogleFonts.poppins(color: Colors.white, fontSize: 14),
             ),
             trailing: Container(
               width: 24,
               height: 24,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Color(0xFF00417B), width: 2),
+                border: Border.all(color: Colors.deepOrange, width: 2),
               ),
               child: Center(
                 child: Container(
@@ -100,7 +102,7 @@ class _TunnelingState extends State<Tunneling> {
                   height: 14,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isSelected ? Color(0xFF00417B) : Colors.transparent,
+                    color: isSelected ? Colors.deepOrange : Colors.transparent,
                   ),
                 ),
               ),
@@ -183,84 +185,98 @@ class _TunnelingState extends State<Tunneling> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15.0,
-                vertical: 8.0,
-              ),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.black,
-                      size: 20,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  const Spacer(),
-                  Text(
-                    'Split Tunneling',
-                    style: GoogleFonts.daysOne(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const Spacer(),
-                  const SizedBox(width: 48), // placeholder
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: Container(
-                width: double.infinity,
-                height: 56,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(
-                      width: 1,
-                      color: Color(0xFF00417B),
-                    ), // Blue switch),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
+      body: AppBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15.0,
+                  vertical: 8.0,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Do not allow selected apps to use VPN',
-                        style: GoogleFonts.poppins(
-                          color: Colors.black,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2A2A2A),
+                          border: Border.all(color: const Color(0xFF2A2A2A)),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          color: Colors.white,
+                          size: 18,
                         ),
                       ),
-                      const Icon(
-                        Icons.lock,
-                        color: Color(0xFF00417B),
-                        size: 20,
+                    ),
+
+                    const Spacer(),
+                    Text(
+                      'Split Tunneling',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 24,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
                       ),
-                    ],
+                    ),
+                    const Spacer(),
+
+                    const SizedBox(width: 48), // placeholder
+
+                  ],
+                ),
+              ),
+
+                      const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
+
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Container(
+                  width: double.infinity,
+                  height: 56,
+                  decoration: ShapeDecoration(
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(
+                        width: 1,
+                        color: Colors.white,
+                      ), // Blue switch),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Do not allow selected apps to use VPN',
+                          style: GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                        const Icon(
+                          Icons.lock,
+                          color: Color(0xFF00417B),
+                          size: 20,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 18),
-            _isLoading
-                ? const CircularProgressIndicator(color: Colors.black)
-                : _buildAppsList(),
-          ],
+              const SizedBox(height: 18),
+              _isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : _buildAppsList(),
+            ],
+          ),
         ),
       ),
     );

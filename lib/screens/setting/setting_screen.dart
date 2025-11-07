@@ -9,6 +9,7 @@ import 'package:tytan/screens/premium/premium.dart';
 import 'package:tytan/screens/setting/Account.dart';
 import 'package:tytan/screens/setting/feedback.dart';
 import 'package:tytan/screens/setting/protocol.dart';
+import 'package:tytan/screens/tunneling/tunneling.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -19,8 +20,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   // Toggle states (only for features not in VPN provider)
-  bool _dnsLeakProtectionEnabled = true;
-  bool _splitTunnelingEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +57,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           SizedBox(height: 6),
                           _buildNavigationSetting(
                             title: 'Protocol',
-                            subtitle: provider.selectedProtocol
-                                .toString()
-                                .split('.')
-                                .last
-                                .toUpperCase(),
+                            subtitle: provider.getProtocolDisplayName(
+                              provider.selectedProtocol,
+                            ),
                             icon: Icons.dns,
                             iconColor: AppColors.primary,
                             onTap: () {
@@ -80,7 +77,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             subtitle:
                                 provider.selectedServerIndex <
                                     provider.servers.length
-                                ? "${provider.servers[provider.selectedServerIndex].name} ${provider.servers[provider.selectedServerIndex].subServers![0].name}"
+                                ? "${provider.servers[provider.selectedServerIndex].name} "
                                 : 'Select Server',
                             icon: Icons.public,
                             iconColor: AppColors.primary,
@@ -116,24 +113,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             subtitle: 'Prevent DNS leaks',
                             icon: Icons.visibility_off_outlined,
                             iconColor: AppColors.primary,
-                            value: _dnsLeakProtectionEnabled,
+                            value: provider.dnsLeakProtection,
                             onChanged: (value) {
-                              setState(() {
-                                _dnsLeakProtectionEnabled = value;
-                              });
+                              provider.toggleDnsLeakProtection();
                             },
                           ),
                           SizedBox(height: 15),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const Tunneling(),
+                                ),
+                              );
+                            },
+                            child: _buildToggleSetting1(
+                              title: 'Split Tunneling',
+                              subtitle: 'Manage apps using VPN',
+                              icon: Icons.call_split,
+                              iconColor: AppColors.primary,
+                              value: false,
+                              onChanged: (value) {},
+                            ),
+                          ),
+                          SizedBox(height: 15),
                           _buildToggleSetting(
-                            title: 'Split Tunneling',
-                            subtitle: 'Route specific apps outside VPN',
-                            icon: Icons.route,
+                            title: 'AD Block',
+                            subtitle: 'Block ads and trackers',
+                            icon: Icons.block,
                             iconColor: AppColors.primary,
-                            value: _splitTunnelingEnabled,
+                            value: provider.adBlockerEnabled,
                             onChanged: (value) {
-                              setState(() {
-                                _splitTunnelingEnabled = value;
-                              });
+                              provider.toggleAdBlocker();
                             },
                             isLastItem: true,
                           ),
@@ -386,6 +397,59 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Widget _buildToggleSetting1({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconColor,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    bool isLastItem = false,
+  }) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            children: [
+              Icon(icon, color: iconColor, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Using CupertinoSwitch instead of regular Switch
+              // CupertinoSwitch(
+              //   value: value,
+              //   onChanged: onChanged,
+              //   activeColor: AppColors.primary,
+              //   trackColor: Colors.grey.shade700,
+              // ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildNavigationSetting({
     required String title,
     required String subtitle,
@@ -438,7 +502,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ],
     );
   }
-  
+
   Widget _buildServerLocationName({
     required String title,
     required String subtitle,

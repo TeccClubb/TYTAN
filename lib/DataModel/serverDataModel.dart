@@ -108,7 +108,7 @@ class SubServer {
     return SubServer(
       id: json['id'] ?? 0,
       serverId: json['server_id'] ?? 0,
-      name: json['name'] ?? '',
+      name: (json['name'] ?? '').split('-').first,
       status: json['status'] ?? false,
       vpsGroup: json['vps_group'] != null
           ? VpsGroup.fromJson(json['vps_group'])

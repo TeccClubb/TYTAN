@@ -683,10 +683,11 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
                   Row(
                     children: [
                       // Country Flag
-                      if (selectedServer != null)
+                      if (provider.servers.isNotEmpty &&
+                          provider.selectedServerIndex < provider.servers.length)
                         ClipOval(
                           child: CachedNetworkImage(
-                            imageUrl: selectedServer.image,
+                            imageUrl: provider.servers[provider.selectedServerIndex].image,
                             width: 36,
                             height: 36,
                             fit: BoxFit.cover,
@@ -740,7 +741,13 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            selectedServer?.name ?? 'No Server',
+                            provider.servers.isNotEmpty &&
+                                    provider.selectedServerIndex >= 0 &&
+                                    provider.selectedServerIndex <
+                                        provider.servers.length
+                                ? provider
+                                    .servers[provider.selectedServerIndex].name
+                                : 'No server selected',
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

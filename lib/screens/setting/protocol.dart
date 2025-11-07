@@ -1,9 +1,11 @@
+// ignore_for_file: use_super_parameters
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
-import 'package:tytan/screens/background/background.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
+import 'package:tytan/screens/background/background.dart';
+import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 
 class ProtocolScreen extends StatefulWidget {
   const ProtocolScreen({Key? key}) : super(key: key);
@@ -42,46 +44,25 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
                     children: [
                       _buildProtocolOption(
                         provider: provider,
+                        protocol: Protocol.hysteria,
+                        name: provider.getProtocolDisplayName(Protocol.hysteria),
+                        description:
+                            'Next-generation VPN protocol with advanced features and high performance.',
+                        feature: 'Advanced',
+                        featureColor: Colors.purple,
+                        iconColor: const Color(0xFF8B5CF6),
+                      ),
+                      SizedBox(height: 16),
+                      _buildProtocolOption(
+                        provider: provider,
                         protocol: Protocol.vless,
-                        name: 'Vless',
+                        name: provider.getProtocolDisplayName(Protocol.vless),
                         description: 'Enjoy military-grade security with time-tested, stable, and reliable protection.',
                         feature: 'Stable Connection',
                         featureColor: Colors.blue,
                         iconColor: const Color(0xFF0A84FF),
                       ),
-                      const SizedBox(height: 16),
-                      // _buildProtocolOption(
-                      //   provider: provider,
-                      //   protocol: Protocol.hysteria,
-                      //   name: 'Vmess',
-                      //   description:
-                      //       'Next-generation VPN protocol with advanced features and high performance.',
-                      //   feature: 'Advanced',
-                      //   featureColor: Colors.purple,
-                      //   iconColor: const Color(0xFF8B5CF6),
-                      // ),
-                      // const SizedBox(height: 16),
-                      //  _buildProtocolOption(
-                      //   provider: provider,
-                      //   protocol: Protocol.wireguard,
-                      //   name: 'Wireguard',
-                      //   description:
-                      //       'Next-generation VPN protocol with advanced features and high performance.',
-                      //   feature: 'Advanced',
-                      //   featureColor: Colors.purple,
-                      //   iconColor: const Color(0xFF8B5CF6),
-                      // ),
-                      // const SizedBox(height: 16),
-                      //  _buildProtocolOption(
-                      //   provider: provider,
-                      //   protocol: Protocol.openvpn,
-                      //   name: 'OpenVPN',
-                      //   description:
-                      //       'Next-generation VPN protocol with advanced features and high performance.',
-                      //   feature: 'Advanced',
-                      //   featureColor: Colors.purple,
-                      //   iconColor: const Color(0xFF8B5CF6),
-                      // ),
+                    
                     ],
                   ),
                 ),
@@ -140,8 +121,7 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
     required Color featureColor,
     required Color iconColor,
   }) {
-    final bool isSelected = provider.selectedProtocol == protocol;
-
+   
     return GestureDetector(
       onTap: () async {
         // Try to set the protocol
@@ -178,7 +158,7 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
         decoration: BoxDecoration(
           color: const Color(0xFF1A1A1A),
           borderRadius: BorderRadius.circular(15),
-          border: isSelected
+          border: provider.selectedProtocol == protocol
               ? Border.all(color: AppColors.primary, width: 1.5)
               : Border.all(color: const Color(0xFF2A2A2A)),
         ),
@@ -247,11 +227,13 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected ? AppColors.primary : Colors.grey,
+                  color: provider.selectedProtocol == protocol
+                      ? AppColors.primary
+                      : Colors.grey,
                   width: 1.5,
                 ),
               ),
-              child: isSelected
+              child: provider.selectedProtocol == protocol
                   ? Center(
                       child: Container(
                         width: 10,

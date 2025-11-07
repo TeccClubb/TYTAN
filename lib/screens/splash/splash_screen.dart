@@ -88,6 +88,8 @@ class _SplashScreenState extends State<SplashScreen>
       provider.lProtocolFromStorage();
       provider.myAutoConnect();
       provider.loadKillSwitchState();
+      provider.loadAdBlocker();
+      provider.loadDnsLeakProtection();
 
       // Auto-select fastest server if no valid server is selected
       if (provider.servers.isNotEmpty &&

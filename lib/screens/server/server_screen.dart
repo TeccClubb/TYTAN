@@ -3,7 +3,8 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart' show SharedPreferences;
+import 'package:shared_preferences/shared_preferences.dart'
+    show SharedPreferences;
 import 'package:tytan/screens/premium/premium.dart';
 import 'package:tytan/DataModel/serverDataModel.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
@@ -22,7 +23,6 @@ class ServersScreen extends StatefulWidget {
 class _ServersScreenState extends State<ServersScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedRegion = 'All';
-  String _sortBy = 'Speed';
 
   @override
   void initState() {
@@ -174,7 +174,6 @@ class _ServersScreenState extends State<ServersScreen> {
           // Fastest Server (Free servers only)
           GestureDetector(
             onTap: () async {
-
               log('Fastest Server button tapped');
 
               if (provider.servers.isEmpty) {
@@ -236,15 +235,21 @@ class _ServersScreenState extends State<ServersScreen> {
 
               if (mainIndex != -1) {
                 provider.setSelectedServerIndex(mainIndex);
-                log('Server selection updated in provider: index=$mainIndex, server=${selectedFreeServer.name}');
+                log(
+                  'Server selection updated in provider: index=$mainIndex, server=${selectedFreeServer.name}',
+                );
                 _showServerSelectedMessage(
                   "${selectedFreeServer.name} (Free Server)",
                 );
 
                 // If VPN is connected, disconnect first
-                if (provider.vpnConnectionStatus == VpnStatusConnectionStatus.connected) {
-                  log('VPN is connected, disconnecting before switching to fastest server...');
-                  await provider.toggleVpn(); // This will disconnect and reset timer
+                if (provider.vpnConnectionStatus ==
+                    VpnStatusConnectionStatus.connected) {
+                  log(
+                    'VPN is connected, disconnecting before switching to fastest server...',
+                  );
+                  await provider
+                      .toggleVpn(); // This will disconnect and reset timer
                   // Wait for disconnection to complete
                   await Future.delayed(const Duration(seconds: 2));
                   log('VPN disconnected, timer reset to 0');
@@ -269,7 +274,8 @@ class _ServersScreenState extends State<ServersScreen> {
 
                 log('VPN status: ${provider.vpnConnectionStatus}');
                 // Auto-connect to the new server
-                if (provider.vpnConnectionStatus == VpnStatusConnectionStatus.disconnected) {
+                if (provider.vpnConnectionStatus ==
+                    VpnStatusConnectionStatus.disconnected) {
                   log('Starting auto-connect to ${selectedFreeServer.name}');
                   await provider.toggleVpn();
                   log('Auto-connect initiated');
@@ -364,7 +370,9 @@ class _ServersScreenState extends State<ServersScreen> {
 
               if (mainIndex != -1) {
                 provider.setSelectedServerIndex(mainIndex);
-                log('Random server selection: index=$mainIndex, server=${randomServer.name}');
+                log(
+                  'Random server selection: index=$mainIndex, server=${randomServer.name}',
+                );
                 _showServerSelectedMessage(
                   "${randomServer.name} (Random Premium)",
                 );
@@ -375,7 +383,8 @@ class _ServersScreenState extends State<ServersScreen> {
                   log(
                     'VPN is connected, disconnecting before switching to random server...',
                   );
-                  await provider.toggleVpn(); // This will disconnect and reset timer
+                  await provider
+                      .toggleVpn(); // This will disconnect and reset timer
                   // Wait for disconnection to complete
                   await Future.delayed(const Duration(seconds: 2));
                   log('VPN disconnected, timer reset to 0');
@@ -396,7 +405,8 @@ class _ServersScreenState extends State<ServersScreen> {
                 await Future.delayed(const Duration(milliseconds: 500));
 
                 // Auto-connect to the new server
-                if (provider.vpnConnectionStatus == VpnStatusConnectionStatus.disconnected) {
+                if (provider.vpnConnectionStatus ==
+                    VpnStatusConnectionStatus.disconnected) {
                   log('Connecting to new random server: ${randomServer.name}');
                   await provider.toggleVpn();
                 }
@@ -519,31 +529,6 @@ class _ServersScreenState extends State<ServersScreen> {
             color: Colors.white,
           ),
         ),
-        Row(
-          children: [
-            Text(
-              'Sort by: ',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Colors.grey,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                // Toggle sorting options
-              },
-              child: Text(
-                _sortBy,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.primary,
-                ),
-              ),
-            ),
-          ],
-        ),
       ],
     );
   }
@@ -552,7 +537,9 @@ class _ServersScreenState extends State<ServersScreen> {
     required VpnProvide provider,
     required Server server,
   }) {
-    final isSelected = provider.selectedServerIndex == provider.servers.indexWhere((s) => s.id == server.id);
+    final isSelected =
+        provider.selectedServerIndex ==
+        provider.servers.indexWhere((s) => s.id == server.id);
     final isFavorite = provider.isFavoriteServer(server.id);
     // Check if server requires premium based on server type
     // You can customize this logic based on your requirements
@@ -575,7 +562,7 @@ class _ServersScreenState extends State<ServersScreen> {
         }
 
         log('Selecting server: ${server.name} at index $index');
-        provider.changeServer(index, 0, context); 
+        provider.changeServer(index, 0, context);
         // if (isPremium && !userIsPremium) {
         //   _showPremiumRequiredMessage(server.name);
         //   return;

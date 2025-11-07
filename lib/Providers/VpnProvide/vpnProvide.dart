@@ -4,23 +4,26 @@ import 'dart:async' show Timer;
 import 'dart:developer' show log;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:tytan/Defaults/utils.dart';
 import 'dart:io' show Platform, InternetAddress;
 import 'package:tytan/DataModel/userModel.dart';
-import 'package:tytan/ReusableWidgets/customSnackBar.dart' show showCustomSnackBar;
 import '../../NetworkServices/networkVless.dart';
 import 'package:tytan/DataModel/plansModel.dart';
 import 'dart:convert' show jsonDecode, jsonEncode;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tytan/screens/auth/auth_screen.dart';
 import 'package:tytan/DataModel/serverDataModel.dart';
-// ,import 'package:tytan/ReusableWidgets/customSnackBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// ,import 'package:tytan/ReusableWidgets/customSnackBar.dart';
 import 'package:flutter_singbox/flutter_singbox.dart' show FlutterSingbox;
+import 'package:tytan/NetworkServices/networkHysteria.dart'
+    show HysteriaService;
 import 'package:tytan/NetworkServices/networkSingbox.dart' show NetworkSingbox;
+import 'package:tytan/ReusableWidgets/customSnackBar.dart'
+    show showCustomSnackBar;
 
-enum Protocol { vless }
+enum Protocol { vless, hysteria }
 
 enum VpnStatusConnectionStatus {
   connected,
@@ -33,34 +36,36 @@ enum VpnStatusConnectionStatus {
 class VpnProvide with ChangeNotifier {
   var vpnConnectionStatus = VpnStatusConnectionStatus.disconnected;
 
-  Protocol selectedProtocol = Protocol.vless;
   // final Wireguardservices _wireguardService = Wireguardservices();
   // OVPNEngine openVPN = OVPNEngine();
   // final NetworkSingbox _singboxService = NetworkSingbox();
+  var selectedProtocol = Protocol.hysteria;
   final NetworkSingbox singboxService = NetworkSingbox();
   final FlutterSingbox _singbox = FlutterSingbox();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   var isloading = false;
   var selectedServerIndex = 0;
   var selectedSubServerIndex = 0;
-  var protocol = Protocol.vless;
   var servers = <Server>[];
   var filterServers = <Server>[];
   var isPremium = false;
   var plans = <PlanModel>[];
   var bottomBarIndex = 0.obs;
+  var dnsLeakProtection = true;
   //make the user varaible type user
 
   var user = <UserModel>{};
   var downloadSpeed = "0.0";
   var uploadSpeed = "0.0";
   var pingSpeed = "0.0";
-  
+
   String? _lastStatusReceived;
   DateTime? _lastStatusTime;
 
   /// Platform channel for kill switch native communication
-  final MethodChannel _killSwitchChannel = MethodChannel('com.yallavpn.android/killswitch');
+  final MethodChannel _killSwitchChannel = MethodChannel(
+    'com.yallavpn.android/killswitch',
+  );
 
   /// Flag to track connection in progress
   var isConnecting = false;
@@ -75,22 +80,18 @@ class VpnProvide with ChangeNotifier {
   static const String favoriteServersPrefsKey = 'favorite_server_ids';
   var favoriteServerIds = <int>{};
   var favoritesFilterActive = false;
-
   var messageController = TextEditingController();
   var subjectController = TextEditingController();
   var emailController = TextEditingController();
-
   var autoConnectOn = false;
   var killSwitchOn = false;
-
   String queryText = '';
   bool queryActive = false;
-
   Timer? speedUpdateTimer;
   Timer? _stageTimer;
-
   bool autoSelectProtocol = false;
   bool _cancelRequested = false;
+  bool adBlockerEnabled = false;
 
   chnageBottomBarIndex(int index) {
     bottomBarIndex.value = index;
@@ -178,7 +179,7 @@ class VpnProvide with ChangeNotifier {
         }
       }
     });
-    
+
     // Check if VPN was connected before app restart
     checkAndRestoreTimer();
   }
@@ -188,34 +189,39 @@ class VpnProvide with ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       final storedTime = prefs.getString('connectTime');
-      
+
       log('checkAndRestoreTimer: storedTime = $storedTime');
-      
+
       // If we have a stored connection time, check if VPN is still connected
       if (storedTime != null) {
         // Wait a bit for singbox to initialize
         await Future.delayed(const Duration(milliseconds: 500));
-        
+
         // Check VPN status
         final vpnStatus = await _singbox.getVPNStatus();
         log('checkAndRestoreTimer: VPN status = $vpnStatus');
-        
+
         if (vpnStatus.toLowerCase() == 'started') {
           // VPN is still connected, restore timer with elapsed time
           final startTime = DateTime.parse(storedTime);
           final elapsed = DateTime.now().difference(startTime);
-          
-          log('checkAndRestoreTimer: Restoring timer with elapsed time: ${elapsed.inSeconds} seconds');
-          
+
+          log(
+            'checkAndRestoreTimer: Restoring timer with elapsed time: ${elapsed.inSeconds} seconds',
+          );
+
           connectedDuration = elapsed;
           _connectionDurationTimer?.cancel();
-          _connectionDurationTimer = Timer.periodic(const Duration(seconds: 1), (
-            timer,
-          ) {
-            connectedDuration = Duration(seconds: connectedDuration.inSeconds + 1);
-            notifyListeners();
-          });
-          
+          _connectionDurationTimer = Timer.periodic(
+            const Duration(seconds: 1),
+            (timer) {
+              connectedDuration = Duration(
+                seconds: connectedDuration.inSeconds + 1,
+              );
+              notifyListeners();
+            },
+          );
+
           vpnConnectionStatus = VpnStatusConnectionStatus.connected;
           log('checkAndRestoreTimer: Timer restored successfully');
           notifyListeners();
@@ -232,7 +238,7 @@ class VpnProvide with ChangeNotifier {
     }
   }
 
-  void requestCancellation() {
+  requestCancellation() {
     if (_cancelRequested) {
       return;
     }
@@ -241,6 +247,36 @@ class VpnProvide with ChangeNotifier {
       vpnConnectionStatus = VpnStatusConnectionStatus.disconnecting;
       notifyListeners();
     }
+  }
+
+  toggleDnsLeakProtection() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dnsLeakProtection = !dnsLeakProtection;
+    await prefs.setBool('dnsLeakProtection', dnsLeakProtection);
+    log("DNS Leak Protection toggled: $dnsLeakProtection");
+    notifyListeners();
+  }
+
+  /// Load DNS leak protection setting from storage
+  loadDnsLeakProtection() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    dnsLeakProtection = prefs.getBool('dnsLeakProtection') ?? true;
+    notifyListeners();
+  }
+
+  toggleAdBlocker() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    adBlockerEnabled = !adBlockerEnabled;
+    await prefs.setBool('adBlockerEnabled', adBlockerEnabled);
+    log("Ad Blocker toggled: $adBlockerEnabled");
+    notifyListeners();
+  }
+
+  /// Load ad blocker setting from storage
+  loadAdBlocker() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    adBlockerEnabled = prefs.getBool('adBlockerEnabled') ?? false;
+    notifyListeners();
   }
 
   autoC(BuildContext context) async {
@@ -274,7 +310,7 @@ class VpnProvide with ChangeNotifier {
       await prefs.setBool('killSwitchOn', false);
       notifyListeners();
       log("Kill Switch turned OFF");
-      
+
       // if (context.mounted) {
       //   showCustomSnackBar(
       //     context,
@@ -436,13 +472,13 @@ class VpnProvide with ChangeNotifier {
             borderRadius: BorderRadius.circular(24),
           ),
           elevation: 8,
-          backgroundColor:  const Color(0xFF1A1A1A), // Updated to 0xFF1A1A1A,
+          backgroundColor: const Color(0xFF1A1A1A), // Updated to 0xFF1A1A1A,
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
               color: const Color(0xFF1A1A1A),
-                border: Border.all(color: const Color(0xFF2A2A2A)),
+              border: Border.all(color: const Color(0xFF2A2A2A)),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -490,7 +526,7 @@ class VpnProvide with ChangeNotifier {
                   decoration: BoxDecoration(
                     color: Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(12),
-                     border: Border.all(color: const Color(0xFF2A2A2A)),
+                    border: Border.all(color: const Color(0xFF2A2A2A)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -543,7 +579,7 @@ class VpnProvide with ChangeNotifier {
                   child: ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:            Colors.deepOrange,
+                      backgroundColor: Colors.deepOrange,
                       foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
@@ -576,7 +612,7 @@ class VpnProvide with ChangeNotifier {
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-                              color: Colors.deepOrange,
+            color: Colors.deepOrange,
 
             shape: BoxShape.circle,
           ),
@@ -717,54 +753,229 @@ class VpnProvide with ChangeNotifier {
     );
   }
 
-  Future<bool> setProtocol(Protocol protocol) async {
+  Future<bool> setProtocol(Protocol protocol, {BuildContext? context}) async {
     if (selectedProtocol == protocol) {
       return true;
     }
 
     if (vpnConnectionStatus != VpnStatusConnectionStatus.disconnected) {
       log('Protocol change blocked: VPN must be disconnected.');
+      if (context != null && context.mounted) {
+        showCustomSnackBar(
+          context,
+          Icons.warning_amber_rounded,
+          'Disconnect First',
+          'Please disconnect VPN before changing protocol',
+          Colors.orange,
+        );
+      }
       notifyListeners();
       return false;
+    }
+
+    // Show loading dialog if context is provided
+    bool? dialogShown = false;
+    if (context != null && context.mounted) {
+      dialogShown = true;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext dialogContext) {
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              elevation: 8,
+              backgroundColor: Colors.white,
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.white, Color(0xFFF8F9FA)],
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Animated Icon with gradient background
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          colors: [Color(0xFF00417B), Color(0xFF0066CC)],
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF00417B).withOpacity(0.3),
+                            blurRadius: 20,
+                            offset: Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 3,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 24),
+
+                    // Title
+                    Text(
+                      'Switching Protocol',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1F2937),
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+
+                    SizedBox(height: 12),
+
+                    // Protocol badge
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xFF00417B).withOpacity(0.1),
+                            Color(0xFF0066CC).withOpacity(0.1),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Color(0xFF00417B).withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.swap_horiz_rounded,
+                            size: 18,
+                            color: Color(0xFF00417B),
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            getProtocolDisplayName(protocol).toUpperCase(),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF00417B),
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: 16),
+
+                    // Description
+                    Text(
+                      'Loading servers...',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF6B7280),
+                        height: 1.5,
+                      ),
+                    ),
+
+                    SizedBox(height: 8),
+
+                    // Subtitle
+                    Text(
+                      'Please wait a moment',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 12, color: Color(0xFF9CA3AF)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
     }
 
     selectedProtocol = protocol;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selectedProtocol', protocol.name);
-
     notifyListeners();
-    //  startGettingStages();
-    return true;
-  }
-
-  Future<bool> setAutoSelectProtocol(bool value) async {
-    if (value && vpnConnectionStatus != VpnStatusConnectionStatus.disconnected) {
-      log('Auto-select requires the VPN to be disconnected.');
-      notifyListeners();
-      return false;
-    }
-
-    if (autoSelectProtocol == value) {
-      return true;
-    }
-
-    autoSelectProtocol = value;
+    log('Protocol set to: ${protocol.name}');
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('autoSelectProtocol', value);
+    prefs.setString('selectedProtocol', protocol.name);
 
-    if (value) {
-      final applied = await setProtocol(Protocol.vless);
-      if (!applied) {
-        autoSelectProtocol = false;
-        await prefs.setBool('autoSelectProtocol', false);
-        notifyListeners();
-        return false;
-      }
+    await getServersPlease(true);
+
+    // Close loading dialog
+    if (dialogShown == true && context != null && context.mounted) {
+      Navigator.of(context, rootNavigator: true).pop();
     }
 
     notifyListeners();
     return true;
   }
+
+  String getProtocolDisplayName(Protocol protocol) {
+    switch (protocol) {
+  
+      case Protocol.hysteria:
+        return 'Turbo Mode';
+      case Protocol.vless:
+        return 'Stealth Mode';
+
+    }
+  }
+
+  // Future<bool> setAutoSelectProtocol(bool value) async {
+  //   if (value &&
+  //       vpnConnectionStatus != VpnStatusConnectionStatus.disconnected) {
+  //     log('Auto-select requires the VPN to be disconnected.');
+  //     notifyListeners();
+  //     return false;
+  //   }
+
+  //   if (autoSelectProtocol == value) {
+  //     return true;
+  //   }
+
+  //   autoSelectProtocol = value;
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setBool('autoSelectProtocol', value);
+
+  //   if (value) {
+  //     final applied = await setProtocol(Protocol.vless);
+  //     if (!applied) {
+  //       autoSelectProtocol = false;
+  //       await prefs.setBool('autoSelectProtocol', false);
+  //       notifyListeners();
+  //       return false;
+  //     }
+  //   }
+
+  //   notifyListeners();
+  //   return true;
+  // }
 
   Future<void> lProtocolFromStorage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -773,30 +984,36 @@ class VpnProvide with ChangeNotifier {
     log("Auto select protocol: $autoSelect");
     log("Saved protocol from storage: $proto");
 
+    // Map string protocol name to enum
     if (proto != null) {
       switch (proto.replaceFirst('Protocol.', '')) {
+        case 'hysteria':
+          selectedProtocol = Protocol.hysteria;
+          break;
         case 'vless':
           selectedProtocol = Protocol.vless;
           break;
+        default:
+          selectedProtocol = Protocol.hysteria;
+          break;
       }
     } else {
-      selectedProtocol = Protocol.vless;
+      selectedProtocol = Protocol.hysteria;
     }
 
     autoSelectProtocol = autoSelect;
     if (autoSelectProtocol) {
-      selectedProtocol = Protocol.vless;
+      selectedProtocol = Protocol.hysteria;
     }
 
     log("Restored protocol: ${selectedProtocol}");
     notifyListeners();
-    // startGettingStages();
   }
 
   // make me a function to load the selectedserverindex from sharedpreference
   Future<void> loadSelectedServerIndex() async {
     final prefs = await SharedPreferences.getInstance();
-    selectedServerIndex = prefs.getInt('selected_server_index') ?? 0;
+    selectedServerIndex = prefs.getInt('selectedServer') ?? 0;
     notifyListeners();
   }
 
@@ -808,7 +1025,7 @@ class VpnProvide with ChangeNotifier {
 
   Future<void> _saveSelectedServerIndex() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('selected_server_index', selectedServerIndex);
+    await prefs.setInt('selectedServer', selectedServerIndex);
   }
 
   // Set query text and filter list
@@ -946,6 +1163,7 @@ class VpnProvide with ChangeNotifier {
     notifyListeners();
     // Simulate a network call or data fetching
     try {
+      lProtocolFromStorage();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       var token = prefs.getString('token');
 
@@ -959,6 +1177,12 @@ class VpnProvide with ChangeNotifier {
           ? "macos"
           : "linux";
 
+      var protocol = 
+          selectedProtocol == Protocol.vless
+          ? "vless"
+          : "hysteria_v2";
+      log("loaded protocol: $protocol");
+
       if (net) {
         var headers = {
           'Content-Type': 'application/json',
@@ -966,7 +1190,9 @@ class VpnProvide with ChangeNotifier {
           'Authorization': 'Bearer $token',
         };
         var response = await http.get(
-          Uri.parse("${UUtils.getServers}?platform=$platform&protocol=vless"),
+          Uri.parse(
+            "${UUtils.getServers}?platform=$platform&protocol=$protocol",
+          ),
           headers: headers,
         );
 
@@ -1304,7 +1530,8 @@ class VpnProvide with ChangeNotifier {
     );
     log("Domain: $domain");
 
-    if (selectedProtocol == Protocol.vless) {
+    if (selectedProtocol == Protocol.vless ||
+        selectedProtocol == Protocol.hysteria) {
       if (vpnConnectionStatus == VpnStatusConnectionStatus.disconnected ||
           vpnConnectionStatus == VpnStatusConnectionStatus.disconnecting) {
         connectHysteriaVlessWireGuard(domain);
@@ -1345,18 +1572,22 @@ class VpnProvide with ChangeNotifier {
       // Fetch the configuration based on the selected protocol
       String? config;
 
+      log("Selected Protocol ${selectedProtocol}");
       log("Server url for config $serverUrl");
       if (selectedProtocol == Protocol.vless) {
         config = await VlessService.getVlessConfigJson(
           serverBaseUrl: "http://$serverUrl:5000",
         );
+      } else if (selectedProtocol == Protocol.hysteria) {
+        log("Hello from hysteria");
+        config = await HysteriaService.getHysteriaConfigJson(
+          serverUrl: "http://$serverUrl:5000",
+          serverAddress: serverUrl,
+        );
+        log("Hysteria config: $config");
       }
-      // } else if (selectedProtocol == Protocol.hysteria) {
-      //   config = await HysteriaService.getHysteriaConfigJson(
-      //     serverUrl: "http://$serverUrl:5000",
-      //     serverAddress: serverUrl,
-      //   );
-      // } else if (selectedProtocol == Protocol.wireguard) {
+
+      // else if (selectedProtocol == Protocol.wireguard) {
       //   config = await WireguardService.getWireguardConfigJson(
       //     serverUrl: 'http://$serverUrl:5000',
       //   );
@@ -1425,7 +1656,7 @@ class VpnProvide with ChangeNotifier {
     _googleSignIn.signOut();
 
     Navigator.of(
-      context
+      context,
     ).pushReplacement(MaterialPageRoute(builder: (context) => AuthScreen()));
     notifyListeners();
   }
@@ -1662,20 +1893,20 @@ class VpnProvide with ChangeNotifier {
   void startConnectionTimer() async {
     final prefs = await SharedPreferences.getInstance();
     final existingTime = prefs.getString('connectTime');
-    
+
     // If timer is already running (restored from app restart), don't reset it
     if (_connectionDurationTimer != null && existingTime != null) {
       log('startConnectionTimer: Timer already running, skipping reset');
       return;
     }
-    
+
     connectedDuration = Duration.zero;
     _connectionDurationTimer?.cancel();
-    
+
     // Save connection start time to SharedPreferences
     await prefs.setString('connectTime', DateTime.now().toString());
     log('startConnectionTimer: Saved new connection time');
-    
+
     _connectionDurationTimer = Timer.periodic(const Duration(seconds: 1), (
       timer,
     ) {
@@ -1689,11 +1920,11 @@ class VpnProvide with ChangeNotifier {
     _connectionDurationTimer?.cancel();
     _connectionDurationTimer = null;
     connectedDuration = Duration.zero;
-    
+
     // Clear connection start time from SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('connectTime');
-    
+
     notifyListeners();
   }
 
