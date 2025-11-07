@@ -217,19 +217,19 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
         GestureDetector(
           onTap: provider.toggleVpn,
           child: Container(
-            width: 140,
-            height: 140,
+            width: 130,
+            height: 130,
             decoration: BoxDecoration(
               color: AppColors.primary.withOpacity(0.2),
               borderRadius: BorderRadius.circular(70),
             ),
             child: Center(
               child: Container(
-                width: 100,
-                height: 100,
+                width: 110,
+                height: 110,
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(50),
+                  borderRadius: BorderRadius.circular(60),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.primary.withOpacity(0.4),
@@ -242,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
                   child: Icon(
                     Icons.power_settings_new_rounded,
                     color: Colors.white,
-                    size: 50,
+                    size: 60,
                   ),
                 ),
               ),
@@ -518,22 +518,23 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
         const SizedBox(height: 40),
 
         // Power Button
+        // Power Button
         GestureDetector(
           onTap: provider.toggleVpn,
           child: Container(
-            width: 140,
-            height: 140,
+            width: 130,
+            height: 130,
             decoration: BoxDecoration(
               color: AppColors.primary.withOpacity(0.2),
               borderRadius: BorderRadius.circular(70),
             ),
             child: Center(
               child: Container(
-                width: 100,
-                height: 100,
+                width: 110,
+                height: 110,
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(50),
+                  borderRadius: BorderRadius.circular(60),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.primary.withOpacity(0.4),
@@ -546,7 +547,7 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
                   child: Icon(
                     Icons.power_settings_new_rounded,
                     color: Colors.white,
-                    size: 50,
+                    size: 60,
                   ),
                 ),
               ),

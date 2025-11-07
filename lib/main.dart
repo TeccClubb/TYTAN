@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvide()),
-        ChangeNotifierProvider(create: (_) => VpnProvide()),
+        ChangeNotifierProvider(create: (_) => VpnProvide())
       ],
       child: MaterialApp(
         title: 'Tytan VPN',

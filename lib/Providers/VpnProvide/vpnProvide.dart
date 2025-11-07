@@ -4,17 +4,18 @@ import 'dart:async' show Timer;
 import 'dart:developer' show log;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:tytan/Defaults/utils.dart';
 import 'dart:io' show Platform, InternetAddress;
 import 'package:tytan/DataModel/userModel.dart';
+import 'package:tytan/ReusableWidgets/customSnackBar.dart' show showCustomSnackBar;
 import '../../NetworkServices/networkVless.dart';
 import 'package:tytan/DataModel/plansModel.dart';
 import 'dart:convert' show jsonDecode, jsonEncode;
 import 'package:tytan/screens/auth/auth_screen.dart';
 import 'package:tytan/DataModel/serverDataModel.dart';
-import 'package:tytan/NetworkServices/networkOpenVpn.dart';
-import 'package:tytan/ReusableWidgets/customSnackBar.dart';
+// ,import 'package:tytan/ReusableWidgets/customSnackBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_singbox/flutter_singbox.dart' show FlutterSingbox;
 import 'package:tytan/NetworkServices/networkSingbox.dart' show NetworkSingbox;
@@ -34,8 +35,11 @@ class VpnProvide with ChangeNotifier {
 
   Protocol selectedProtocol = Protocol.vless;
   // final Wireguardservices _wireguardService = Wireguardservices();
-  OVPNEngine openVPN = OVPNEngine();
+  // OVPNEngine openVPN = OVPNEngine();
   // final NetworkSingbox _singboxService = NetworkSingbox();
+  final NetworkSingbox singboxService = NetworkSingbox();
+  final FlutterSingbox _singbox = FlutterSingbox();
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   var isloading = false;
   var selectedServerIndex = 0;
   var selectedSubServerIndex = 0;
@@ -51,8 +55,7 @@ class VpnProvide with ChangeNotifier {
   var downloadSpeed = "0.0";
   var uploadSpeed = "0.0";
   var pingSpeed = "0.0";
-  final NetworkSingbox singboxService = NetworkSingbox();
-  final FlutterSingbox _singbox = FlutterSingbox();
+  
   String? _lastStatusReceived;
   DateTime? _lastStatusTime;
 
@@ -735,8 +738,7 @@ class VpnProvide with ChangeNotifier {
   }
 
   Future<bool> setAutoSelectProtocol(bool value) async {
-    if (value &&
-        vpnConnectionStatus != VpnStatusConnectionStatus.disconnected) {
+    if (value && vpnConnectionStatus != VpnStatusConnectionStatus.disconnected) {
       log('Auto-select requires the VPN to be disconnected.');
       notifyListeners();
       return false;
@@ -1420,8 +1422,10 @@ class VpnProvide with ChangeNotifier {
     servers = [];
     selectedServerIndex = 0;
     selectedSubServerIndex = 0;
+    _googleSignIn.signOut();
+
     Navigator.of(
-      context,
+      context
     ).pushReplacement(MaterialPageRoute(builder: (context) => AuthScreen()));
     notifyListeners();
   }

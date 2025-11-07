@@ -75,7 +75,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             },
                           ),
                           SizedBox(height: 6),
-                          _buildNavigationSetting(
+                          _buildServerLocationName(
                             title: 'Server Location',
                             subtitle:
                                 provider.selectedServerIndex <
@@ -431,6 +431,59 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Colors.grey,
                   size: 16,
                 ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  
+  Widget _buildServerLocationName({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconColor,
+    required VoidCallback onTap,
+    bool isLastItem = false,
+  }) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
+                Icon(icon, color: iconColor, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        subtitle,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // const Icon(
+                //   Icons.arrow_forward_ios,
+                //   color: Colors.grey,
+                //   size: 16,
+                // ),
               ],
             ),
           ),

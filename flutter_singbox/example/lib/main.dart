@@ -165,6 +165,7 @@ class _HomePageState extends State<HomePage> {
       final success = await _flutterSingboxPlugin.startVPN();
       if (!success) {
         ScaffoldMessenger.of(
+          // ignore: use_build_context_synchronously
           context,
         ).showSnackBar(const SnackBar(content: Text('Failed to start VPN')));
       }

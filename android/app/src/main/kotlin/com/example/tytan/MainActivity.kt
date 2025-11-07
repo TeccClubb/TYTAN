@@ -4,7 +4,7 @@ package com.example.tytan
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
-import id.laskarmedia.openvpn_flutter.OpenVPNFlutterPlugin
+// import id.laskarmedia.openvpn_flutter.OpenVPNFlutterPlugin
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -71,18 +71,18 @@ class MainActivity: FlutterActivity() {
     // VPN PERMISSION HANDLING
     // ═══════════════════════════════════════════════════════════════════════════
     
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        // Handle OpenVPN permission result
-        if (requestCode == 24 && resultCode == RESULT_OK) {
-            try {
-                OpenVPNFlutterPlugin.connectWhileGranted(true)
-                Log.d(TAG, "OpenVPN permission granted, connecting...")
-            } catch (e: Exception) {
-                // OpenVPN not initialized, likely using Singbox or another protocol
-                Log.e(TAG, "OpenVPN not initialized: ${e.message}")
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
+    // override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    //     // Handle OpenVPN permission result
+    //     if (requestCode == 24 && resultCode == RESULT_OK) {
+    //         try {
+    //             OpenVPNFlutterPlugin.connectWhileGranted(true)
+    //             Log.d(TAG, "OpenVPN permission granted, connecting...")
+    //         } catch (e: Exception) {
+    //             // OpenVPN not initialized, likely using Singbox or another protocol
+    //             Log.e(TAG, "OpenVPN not initialized: ${e.message}")
+    //         }
+    //     }
+    //     super.onActivityResult(requestCode, resultCode, data)
+    // }
 }
 
