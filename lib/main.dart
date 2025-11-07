@@ -10,15 +10,21 @@ import 'package:tytan/Providers/AuthProvide/authProvide.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Set status bar and navigation bar colors for a dark theme
   SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle.light.copyWith(
-      statusBarColor: Colors.white,
-      systemNavigationBarColor: const Color.fromARGB(255, 50, 50, 50),
-      systemNavigationBarIconBrightness: Brightness.dark,
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.white, // 🔹 Status bar background color
+      statusBarIconBrightness: Brightness.light, // 🔹 White icons
+      statusBarBrightness: Brightness.dark, // 🔹 For iOS
+      systemNavigationBarColor: Colors.black, // 🔹 Navigation bar background
+      systemNavigationBarIconBrightness: Brightness.light, // 🔹 White icons
     ),
-  ); 
+  );
+
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
