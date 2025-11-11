@@ -188,27 +188,29 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         const SizedBox(height: 16),
 
                         // Continue with Google
-                        _buildLoginOption(
+                        // Platform-specific login options
+                        if (Theme.of(context).platform == TargetPlatform.android)
+                          _buildLoginOption(
                           index: 1,
                           icon: Icons
-                              .g_mobiledata, // This will be ignored when useCustomIcon is true
+                            .g_mobiledata, // This will be ignored when useCustomIcon is true
                           text: 'Continue with Google',
                           useCustomIcon: true,
                           customIconPath:
-                              'assets/google (2).png', // Add your Google logo here
+                            'assets/google (2).png', // Add your Google logo here
                           onTap: () => _selectOption(1),
-                        ),
+                          ),
 
-                        const SizedBox(height: 16),
-
-                        // Continue with Apple ID
-                        _buildLoginOption(
+                        if (Theme.of(context).platform == TargetPlatform.iOS)
+                          _buildLoginOption(
                           index: 2,
                           icon: Icons.apple,
                           text: 'Continue with Apple ID',
                           useCustomIcon: false,
                           onTap: () => _selectOption(2),
-                        ),
+                          ),
+
+                        const SizedBox(height: 16),
 
                         const SizedBox(height: 32),
 

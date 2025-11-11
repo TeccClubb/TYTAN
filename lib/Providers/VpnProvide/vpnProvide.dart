@@ -39,7 +39,7 @@ class VpnProvide with ChangeNotifier {
   // final Wireguardservices _wireguardService = Wireguardservices();
   // OVPNEngine openVPN = OVPNEngine();
   // final NetworkSingbox _singboxService = NetworkSingbox();
-  var selectedProtocol = Protocol.hysteria;
+  var selectedProtocol = Protocol.vless;
   final NetworkSingbox singboxService = NetworkSingbox();
   final FlutterSingbox _singbox = FlutterSingbox();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -1021,16 +1021,16 @@ class VpnProvide with ChangeNotifier {
           selectedProtocol = Protocol.vless;
           break;
         default:
-          selectedProtocol = Protocol.hysteria;
+          selectedProtocol = Protocol.vless;
           break;
       }
     } else {
-      selectedProtocol = Protocol.hysteria;
+      selectedProtocol = Protocol.vless;
     }
 
     autoSelectProtocol = autoSelect;
     if (autoSelectProtocol) {
-      selectedProtocol = Protocol.hysteria;
+      selectedProtocol = Protocol.vless;
     }
 
     log("Restored protocol: ${selectedProtocol}");

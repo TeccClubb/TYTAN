@@ -61,7 +61,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     _animationController.forward();
 
     // Pre-fill email for demo
-    _emailController.text = 'tecclubx@gmail.com';
+    _emailController.text = '';
 
     // Add listeners to focus nodes for UI updates
     _emailFocusNode.addListener(() => setState(() {}));
