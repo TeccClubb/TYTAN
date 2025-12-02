@@ -41,50 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyArtfE12jXovLom7Q26yWh1ftFw_avtw7U',
-    appId: '1:536467881479:web:85d46862125f603d8274a2',
-    messagingSenderId: '536467881479',
-    projectId: 'tytanvpn',
-    authDomain: 'tytanvpn.firebaseapp.com',
-    storageBucket: 'tytanvpn.firebasestorage.app',
-    measurementId: 'G-M0890Y2PPX',
+    apiKey: 'AIzaSyAcp4tMoNhEEv-GepWmVDz3s3zNWYFAxDo',
+    appId: '1:557668953763:web:48f0509f5fe09e8234d916',
+    messagingSenderId: '557668953763',
+    projectId: 'tytanvpn-93208',
+    authDomain: 'tytanvpn-93208.firebaseapp.com',
+    storageBucket: 'tytanvpn-93208.firebasestorage.app',
+    measurementId: 'G-JWLRR6HF51',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCoW2Kpm7b0zdZtDM0X6IO4WJ6M06wa-Uw',
-    appId: '1:536467881479:android:3876c8a1026e6f298274a2',
-    messagingSenderId: '536467881479',
-    projectId: 'tytanvpn',
-    storageBucket: 'tytanvpn.firebasestorage.app',
+    apiKey: 'AIzaSyCzM5DsHdBoDh_eRYais7KiGWemR0gE7-Q',
+    appId: '1:557668953763:android:94b834d5b61ea88834d916',
+    messagingSenderId: '557668953763',
+    projectId: 'tytanvpn-93208',
+    storageBucket: 'tytanvpn-93208.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCf946KCgeu9QZMDO-C8xW-nTs9ED4oL-w',
-    appId: '1:536467881479:ios:777ca68a2f9f62a48274a2',
-    messagingSenderId: '536467881479',
-    projectId: 'tytanvpn',
-    storageBucket: 'tytanvpn.firebasestorage.app',
-    iosClientId: '536467881479-20agv9tq9vv925mjco583bngku71q0is.apps.googleusercontent.com',
+    apiKey: 'AIzaSyCqOcc4MDZbWcreM9tP947M7MwmXGXSDjI',
+    appId: '1:557668953763:ios:0b5463af123707d834d916',
+    messagingSenderId: '557668953763',
+    projectId: 'tytanvpn-93208',
+    storageBucket: 'tytanvpn-93208.firebasestorage.app',
     iosBundleId: 'com.example.tytan',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCf946KCgeu9QZMDO-C8xW-nTs9ED4oL-w',
-    appId: '1:536467881479:ios:777ca68a2f9f62a48274a2',
-    messagingSenderId: '536467881479',
-    projectId: 'tytanvpn',
-    storageBucket: 'tytanvpn.firebasestorage.app',
-    iosClientId: '536467881479-20agv9tq9vv925mjco583bngku71q0is.apps.googleusercontent.com',
+    apiKey: 'AIzaSyCqOcc4MDZbWcreM9tP947M7MwmXGXSDjI',
+    appId: '1:557668953763:ios:0b5463af123707d834d916',
+    messagingSenderId: '557668953763',
+    projectId: 'tytanvpn-93208',
+    storageBucket: 'tytanvpn-93208.firebasestorage.app',
     iosBundleId: 'com.example.tytan',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyArtfE12jXovLom7Q26yWh1ftFw_avtw7U',
-    appId: '1:536467881479:web:625f2dd55869b94a8274a2',
-    messagingSenderId: '536467881479',
-    projectId: 'tytanvpn',
-    authDomain: 'tytanvpn.firebaseapp.com',
-    storageBucket: 'tytanvpn.firebasestorage.app',
-    measurementId: 'G-M0VTM2HTMN',
+    apiKey: 'AIzaSyAcp4tMoNhEEv-GepWmVDz3s3zNWYFAxDo',
+    appId: '1:557668953763:web:0b481cc787937fc134d916',
+    messagingSenderId: '557668953763',
+    projectId: 'tytanvpn-93208',
+    authDomain: 'tytanvpn-93208.firebaseapp.com',
+    storageBucket: 'tytanvpn-93208.firebasestorage.app',
+    measurementId: 'G-QTZHGYR34T',
   );
+
 }

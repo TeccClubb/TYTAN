@@ -50,10 +50,7 @@ class _TunnelingState extends State<Tunneling> {
       _isLoading = true;
     });
     try {
-      List<AppInfo> apps = await InstalledApps.getInstalledApps(
-        false,
-        true,
-      );
+      List<AppInfo> apps = await InstalledApps.getInstalledApps(false, true);
       setState(() {
         _installedApps = apps;
         _isLoading = false;
@@ -120,7 +117,7 @@ class _TunnelingState extends State<Tunneling> {
     // Try to show icon if available
     if (app.icon != null && app.icon!.isNotEmpty) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(30),
         child: Container(
           width: 40,
           height: 40,
@@ -131,6 +128,7 @@ class _TunnelingState extends State<Tunneling> {
             filterQuality: FilterQuality.none,
             cacheWidth: 40,
             cacheHeight: 40,
+
             errorBuilder: (context, error, stackTrace) {
               return _buildInitialIcon(app.name);
             },
@@ -228,12 +226,11 @@ class _TunnelingState extends State<Tunneling> {
                     const Spacer(),
 
                     const SizedBox(width: 48), // placeholder
-
                   ],
                 ),
               ),
 
-                      const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
+              const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
 
               const SizedBox(height: 20),
               Padding(

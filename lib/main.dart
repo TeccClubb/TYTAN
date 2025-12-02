@@ -15,26 +15,34 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.white, // 🔹 Status bar background color
-      statusBarIconBrightness: Brightness.light, // 🔹 White icons
+      statusBarIconBrightness: Brightness.dark, // 🔹 White icons
       statusBarBrightness: Brightness.dark, // 🔹 For iOS
-      systemNavigationBarColor: Colors.black, // 🔹 Navigation bar background
-      systemNavigationBarIconBrightness: Brightness.light, // 🔹 White icons
+      systemNavigationBarColor: Colors.white, // 🔹 Navigation bar background
+      systemNavigationBarIconBrightness: Brightness.dark, // 🔹 White icons
     ),
   );
 
   runApp(const MyApp());
 }
 
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.white, // 🔹 Status bar background color
+        statusBarIconBrightness: Brightness.light, // 🔹 White icons
+        statusBarBrightness: Brightness.light, // 🔹 For iOS
+        systemNavigationBarColor: Colors.white, // 🔹 Navigation bar background
+        systemNavigationBarIconBrightness: Brightness.light, // 🔹 White icons
+      ),
+    );
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvide()),
-        ChangeNotifierProvider(create: (_) => VpnProvide())
+        ChangeNotifierProvider(create: (_) => VpnProvide()),
       ],
       child: MaterialApp(
         title: 'Tytan VPN',

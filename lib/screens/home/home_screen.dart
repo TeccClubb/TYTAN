@@ -19,7 +19,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   // For connecting animation
   late AnimationController _connectingAnimationController;
 
@@ -44,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
         await provider.getPremium();
         provider.lProtocolFromStorage();
         provider.myAutoConnect();
-       // provider.myKillSwitch();
+        // provider.myKillSwitch();
 
         // Load servers
         await provider.getServersPlease(true);
@@ -72,8 +73,6 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
     _connectingAnimationController.dispose();
     super.dispose();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -287,7 +286,9 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
                   if (provider.selectedServerIndex < provider.servers.length)
                     ClipOval(
                       child: CachedNetworkImage(
-                        imageUrl: provider.servers[provider.selectedServerIndex].image,
+                        imageUrl: provider
+                            .servers[provider.selectedServerIndex]
+                            .image,
                         width: 48,
                         height: 48,
                         fit: BoxFit.cover,
@@ -342,7 +343,8 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
                                   provider.selectedServerIndex <
                                       provider.servers.length
                               ? provider
-                                  .servers[provider.selectedServerIndex].name
+                                    .servers[provider.selectedServerIndex]
+                                    .name
                               : 'No server selected',
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 16,
@@ -369,7 +371,9 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
   Widget _buildConnectingView() {
     var provider = context.watch<VpnProvide>();
 
-    var selectedServer = provider.servers.isNotEmpty && provider.selectedServerIndex < provider.servers.length
+    var selectedServer =
+        provider.servers.isNotEmpty &&
+            provider.selectedServerIndex < provider.servers.length
         ? provider.servers[provider.selectedServerIndex]
         : null;
 
@@ -688,10 +692,13 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
                     children: [
                       // Country Flag
                       if (provider.servers.isNotEmpty &&
-                          provider.selectedServerIndex < provider.servers.length)
+                          provider.selectedServerIndex <
+                              provider.servers.length)
                         ClipOval(
                           child: CachedNetworkImage(
-                            imageUrl: provider.servers[provider.selectedServerIndex].image,
+                            imageUrl: provider
+                                .servers[provider.selectedServerIndex]
+                                .image,
                             width: 36,
                             height: 36,
                             fit: BoxFit.cover,
@@ -750,7 +757,8 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
                                     provider.selectedServerIndex <
                                         provider.servers.length
                                 ? provider
-                                    .servers[provider.selectedServerIndex].name
+                                      .servers[provider.selectedServerIndex]
+                                      .name
                                 : 'No server selected',
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 16,
@@ -759,7 +767,7 @@ class _HomeScreenState extends State<HomeScreen>  with SingleTickerProviderState
                             ),
                           ),
                           Text(
-                            selectedServer?.type ?? 'N/A',
+                            selectedServer?.subServers!.first.name ?? 'N/A',
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,

@@ -1,4 +1,4 @@
-package com.example.tytan
+package com.tytanvpn.android
 
 
 import io.flutter.embedding.android.FlutterActivity

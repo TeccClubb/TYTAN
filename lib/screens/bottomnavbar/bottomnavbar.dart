@@ -1,4 +1,6 @@
 // ignore_for_file: file_names
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,7 +20,6 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   // Current tab index (starts at 0 for Home screen)
-
 
   @override
   void initState() {
@@ -88,9 +89,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildNavItem(Icons.home_rounded, "Home", 0),
-                _buildNavItem(Icons.dns_rounded, "Servers", 1),
-                _buildNavItem(Icons.settings, "Setting", 2),
+                _buildNavItem(EvaIcons.home, "Home", 0),
+                _buildNavItem(EvaIcons.globe, "Servers", 1),
+                _buildNavItem(EvaIcons.settings2, "Setting", 2),
               ],
             ),
           ),

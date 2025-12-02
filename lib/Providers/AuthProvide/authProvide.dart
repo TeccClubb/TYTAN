@@ -65,7 +65,7 @@ class AuthProvide with ChangeNotifier {
         notifyListeners();
         showCustomSnackBar(
           context,
-          EvaIcons.chevronRight,
+          EvaIcons.checkmarkCircle2,
           'Login successful',
           'success',
           Colors.green,
@@ -122,7 +122,7 @@ class AuthProvide with ChangeNotifier {
         log('Signup successful');
         showCustomSnackBar(
           context,
-          EvaIcons.chevronRight,
+          EvaIcons.checkmarkCircle2,
           'Signup successful',
           'success',
           Colors.green,
@@ -175,7 +175,7 @@ class AuthProvide with ChangeNotifier {
         log('Password reset link sent to your email');
         showCustomSnackBar(
           context,
-          EvaIcons.chevronRight,
+          EvaIcons.checkmarkCircle2,
           'Success',
           'Password reset link sent to your email',
           Colors.green,
