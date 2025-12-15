@@ -1,13 +1,12 @@
 // ignore_for_file: file_names
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:tytan/screens/constant/Appconstant.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tytan/screens/home/home_screen.dart';
+import 'package:tytan/screens/constant/Appconstant.dart';
 import 'package:tytan/screens/server/server_screen.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:tytan/screens/setting/setting_screen.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 

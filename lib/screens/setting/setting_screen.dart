@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tytan/Providers/AuthProvide/authProvide.dart' show AuthProvide;
 import 'package:tytan/screens/premium/premium.dart';
 import 'package:tytan/screens/setting/Account.dart';
 import 'package:tytan/screens/setting/feedback.dart';
@@ -24,10 +25,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     var provider = context.watch<VpnProvide>();
+    var authProvide = context.watch<AuthProvide>();
 
     return Scaffold(
       body: AppBackground(
         child: SafeArea(
+
+          
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -160,9 +164,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         iconBackgroundColor: AppColors.primary,
                         children: [
                           _buildProfileSetting(
-                            email: provider.user.isNotEmpty
-                                ? provider.user.first.email
-                                : 'Loading...',
+                            email:  provider.user.isNotEmpty
+                                ? '${provider.user.first.email}'
+                                : authProvide.guestUser != null
+                                ? '${authProvide.guestUser?.email}'
+                                : 'loading...',
                             onTap: () {
                               Navigator.push(
                                 context,

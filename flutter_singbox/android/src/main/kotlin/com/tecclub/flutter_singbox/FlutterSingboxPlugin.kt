@@ -797,6 +797,11 @@ class FlutterSingboxPlugin :
                 }
             } else {
                 android.util.Log.e("FlutterSingboxPlugin", "VPN permission denied by user")
+                
+                // Update status to Stopped when permission is denied
+                _vpnStatus.value = Status.Stopped
+                sendStatusUpdate(Status.Stopped)
+                
                 pendingVpnPermissionResult?.error("VPN_PERMISSION_DENIED", "VPN permission denied", null)
             }
             pendingVpnPermissionResult = null

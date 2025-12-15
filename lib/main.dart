@@ -8,18 +8,21 @@ import 'package:tytan/screens/constant/Appconstant.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]);
   // Set status bar and navigation bar colors for a dark theme
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-      statusBarColor: Colors.white, // 🔹 Status bar background color
-      statusBarIconBrightness: Brightness.dark, // 🔹 White icons
-      statusBarBrightness: Brightness.dark, // 🔹 For iOS
-      systemNavigationBarColor: Colors.white, // 🔹 Navigation bar background
-      systemNavigationBarIconBrightness: Brightness.dark, // 🔹 White icons
-    ),
+      statusBarColor: Colors.white, // Status bar background color
+      statusBarIconBrightness: Brightness.dark, // White icons
+      statusBarBrightness: Brightness.dark, // For iOS
+      systemNavigationBarColor: Colors.white, // Navigation bar background
+      systemNavigationBarIconBrightness: Brightness.dark // White icons
+    )
   );
 
   runApp(const MyApp());
@@ -30,15 +33,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.white, // 🔹 Status bar background color
-        statusBarIconBrightness: Brightness.light, // 🔹 White icons
-        statusBarBrightness: Brightness.light, // 🔹 For iOS
-        systemNavigationBarColor: Colors.white, // 🔹 Navigation bar background
-        systemNavigationBarIconBrightness: Brightness.light, // 🔹 White icons
-      ),
-    );
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvide()),
@@ -50,7 +44,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
           scaffoldBackgroundColor: Colors.black,
-          useMaterial3: true,
+          useMaterial3: true
         ),
         darkTheme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),

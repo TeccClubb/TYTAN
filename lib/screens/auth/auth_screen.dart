@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';
-import 'package:tytan/screens/auth/forget.dart';
+import 'package:tytan/screens/auth/forget.dart' show ForgotPasswordScreen;
+import 'package:tytan/screens/background/background.dart' show AppBackground;
 import 'package:tytan/screens/background/background.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
 
@@ -23,8 +24,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   // Form controllers
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   // Focus nodes for handling focus states
   final FocusNode _emailFocusNode = FocusNode();

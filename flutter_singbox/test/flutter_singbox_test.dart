@@ -129,7 +129,7 @@ void main() {
     });
 
     test('getPerAppProxyMode', () async {
-      expect(await flutterSingboxPlugin.getPerAppProxyMode(), 'off');
+      expect(await flutterSingboxPlugin.getPerAppProxyMode('include'), 'off');
     });
 
     test('setPerAppProxyList', () async {

@@ -1,5 +1,5 @@
 class UUtils {
-  static const String baseUrl = "https://yallavpn.tecclubb.com/api/";
+  static const String baseUrl = "https://tytanvpn.tecclubb.com/api/";
   static const String login = "${baseUrl}login";
   static const String register = "${baseUrl}signup";
   static const String forgotPassword = "${baseUrl}forgot-password";
@@ -10,11 +10,9 @@ class UUtils {
   static const String logout = "${baseUrl}logout";
   static const String plans = "${baseUrl}plans";
   static const String feedback = "${baseUrl}feedback/store";
-
-
-  
+  static const String guestLogin = "${baseUrl}guest/user/create";
+  static const String getGuestLogin = "${baseUrl}guest/user";
+  static const String linkGuestLogin = "${baseUrl}account/link";
 }
 
-
 const String VPS_API_KEY = "a3f7b9c2-d1e5-4f68-8a0b-95c6e7f4d8a1";
-

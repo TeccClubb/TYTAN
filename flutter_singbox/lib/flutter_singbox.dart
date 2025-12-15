@@ -84,7 +84,7 @@ class FlutterSingbox {
   }
 
   /// Get current per-app tunneling mode
-  Future<String> getPerAppProxyMode() {
+  Future<String> getPerAppProxyMode(String exclude) {
     return FlutterSingboxPlatform.instance.getPerAppProxyMode();
   }
 

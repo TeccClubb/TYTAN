@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io' show Platform;
+import 'dart:math' show Random;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tytan/Defaults/utils.dart';
@@ -13,6 +14,7 @@ import 'package:tytan/ReusableWidgets/customSnackBar.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tytan/screens/bottomnavbar/bottomnavbar.dart';
+import 'package:tytan/DataModel/guestModel.dart' show GuestUser;
 import 'package:device_info_plus/device_info_plus.dart' show DeviceInfoPlugin;
 
 class AuthProvide with ChangeNotifier {
@@ -21,6 +23,12 @@ class AuthProvide with ChangeNotifier {
   var passwordController = TextEditingController();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   var isloading = false;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  GuestUser? _guestUser;
+  GuestUser? get guestUser => _guestUser;
+  bool _isGuest = false;
+  bool get isGuest => _isGuest;
 
   Future<void> login(BuildContext context) async {
     try {
@@ -53,7 +61,7 @@ class AuthProvide with ChangeNotifier {
         var provider = Provider.of<VpnProvide>(context, listen: false);
         await provider.getServersPlease(true);
         await provider.getUser();
-        await provider.getPremium();
+        await provider.getPremium(context);
         mailController.clear();
         passwordController.clear();
 
@@ -362,7 +370,7 @@ class AuthProvide with ChangeNotifier {
         var provider = Provider.of<VpnProvide>(context, listen: false);
         await provider.getServersPlease(true);
         await provider.getUser();
-        await provider.getPremium();
+        await provider.getPremium(context);
 
         showCustomSnackBar(
           context,
@@ -405,6 +413,191 @@ class AuthProvide with ChangeNotifier {
       );
     } finally {
       isloading = false;
+    }
+  }
+
+  String generateRandomEmail() {
+    final random = Random();
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final randomNumber = random.nextInt(100000); // up to 5 digits
+    return "guest${timestamp}_$randomNumber@example.com";
+  }
+
+  String generateRandomPassword({int length = 12}) {
+    const chars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@';
+    final random = Random();
+    return List.generate(
+      length,
+      (index) => chars[random.nextInt(chars.length)],
+    ).join();
+  }
+
+  Future<void> guestlogin(BuildContext context) async {
+    try {
+      log("Guest login started");
+      _isLoading = true;
+      _isGuest = true;
+      notifyListeners();
+      var headers = {
+        'Accept': 'application/json',
+        'x-app-key': '110da8dc-0381-420e-aed9-f87098038bc4',
+      };
+
+      // Generate random email and password
+      String email = generateRandomEmail();
+      String password = generateRandomPassword();
+
+      var body = {"email": email};
+
+      var response = await http.post(
+        Uri.parse(UUtils.guestLogin),
+        body: body,
+        headers: headers
+      );
+
+      log("Guest login response is ${response.statusCode} that ${response.body}");
+      var data = jsonDecode(response.body);
+
+      log("Guest login response is ${response.statusCode} that ${response.body}");
+      if (response.statusCode == 201) {
+        log("Guest login successful with email: $email and password: $password");
+
+        // Optionally save for reuse
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("email", email);
+        prefs.setString("password", password);
+        prefs.setString("name", email);
+        
+        prefs.setString("app_account_token", data['user']['app_account_token']);
+        var vpnProvider = Provider.of<VpnProvide>(context, listen: false);
+        await vpnProvider.getServersPlease(true);
+        await vpnProvider.getPremium(context);
+        _isLoading = false;
+        _isGuest = false;
+        notifyListeners();
+
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const BottomNavBar()),
+        );
+        await getGuestUser();
+      } else {
+        log("Guest login failed");
+        _isLoading = false;
+        _isGuest = false;
+        notifyListeners();
+      }
+    } catch (error) {
+      log(error.toString());
+      _isLoading = false;
+      _isGuest = false;
+      notifyListeners();
+    }
+  }
+
+  getGuestUser() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? appAccountToken = prefs.getString("app_account_token");
+      log("Account token $appAccountToken ");
+      log("${UUtils.getGuestLogin}/$appAccountToken");
+
+      var response = await http.get(
+        Uri.parse("${UUtils.getGuestLogin}/$appAccountToken"),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'x-app-key': '110da8dc-0381-420e-aed9-f87098038bc4'
+        }
+      );
+
+      log(
+        "Get guest user status ${response.statusCode} response: ${response.body}",
+      );
+      var data = jsonDecode(response.body);
+      log("Guest user data: $data");
+      if (response.statusCode == 200) {
+        log("Guest user fetched successfully");
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("email", data['user']['email']);
+        _guestUser = GuestUser.fromJson(data['user']);
+        notifyListeners();
+        // prefs.setString("name", data['user']['email']);
+        // prefs.setString("app_account_token", data['user']['app_account_token']);
+      } else {
+        log("Fetching guest user failed");
+      }
+    } catch (error) {
+      log(error.toString());
+      // showCustomSnackBar(
+      //   context,
+      //   Icons.error_outline,
+      //   'Error',
+      //   'Failed to get guest user',
+      //   Colors.red,
+      // );
+    }
+  }
+
+  Future<void> createLink(String accesstoken, BuildContext context) async {
+    try {
+      log("Creating link with access token: $accesstoken");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String email = prefs.getString("email") ?? '';
+      String token = prefs.getString("app_account_token") ?? '';
+      log("Email: $email");
+      log("App Account Token: $token");
+      log("AccessToken: $accesstoken");
+      var headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'x-app-key': '110da8dc-0381-420e-aed9-f87098038bc4',
+        'Authorization': 'Bearer $accesstoken',
+      };
+      var response = await http.post(
+        Uri.parse(UUtils.linkGuestLogin),
+        headers: headers,
+        body: jsonEncode({
+          "guest_email": email,
+          "guest_app_account_token": token,
+        }),
+      );
+
+      log(
+        "Response from createLink: ${response.statusCode} - ${response.body}",
+      );
+      var data = jsonDecode(response.body);
+      log("Data from createLink: $data");
+      if (response.statusCode == 200) {
+        log("Guest account linked successfully");
+        showCustomSnackBar(
+          context,
+          EvaIcons.checkmarkCircle2Outline,
+          'Success',
+          'Guest account linked successfully',
+          Colors.green,
+        );
+      } else {
+        String message = data['errors'] != null
+            ? data['errors'].toString().replaceAll('[', '').replaceAll(']', '')
+            : data['message'];
+        log("Linking guest account failed: $message");
+      }
+    } catch (error) {
+      log("Error in createLink: $error");
+    }
+  }
+
+  // Get current user token
+  Future<String?> getToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString("app_account_token");
+    } catch (e) {
+      log('Error getting token: $e');
+      return null;
     }
   }
 }

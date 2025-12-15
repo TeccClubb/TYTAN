@@ -638,11 +638,11 @@ class _ServersScreenState extends State<ServersScreen> {
                   width: 40,
                   height: 40,
                   child: Center(
-                    child: server.image.isNotEmpty
+                    child: (server.image ?? '').isNotEmpty
                         ? ClipRRect(
                             borderRadius: BorderRadius.circular(4),
                             child: Image.network(
-                              server.image,
+                              server.image!,
                               fit: BoxFit.cover,
                               width: 30,
                               height: 30,

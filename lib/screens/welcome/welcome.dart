@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:tytan/Providers/AuthProvide/authProvide.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tytan/screens/auth/auth_screen.dart';
-import 'package:tytan/screens/background/background.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
+import 'package:tytan/screens/background/background.dart';
+import 'package:tytan/Providers/AuthProvide/authProvide.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -91,6 +91,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvide>(context, listen: false);
     return Scaffold(
       body: AppBackground(
         child: SafeArea(
@@ -182,6 +183,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           icon: Icons.email_outlined,
                           text: 'Continue with Email',
                           useCustomIcon: false,
+                          isGuest: false,
                           onTap: () => _selectOption(0),
                         ),
 
@@ -189,28 +191,40 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
                         // Continue with Google
                         // Platform-specific login options
-                        if (Theme.of(context).platform == TargetPlatform.android)
+                        if (Theme.of(context).platform ==
+                            TargetPlatform.android)
                           _buildLoginOption(
-                          index: 1,
-                          icon: Icons
-                            .g_mobiledata, // This will be ignored when useCustomIcon is true
-                          text: 'Continue with Google',
-                          useCustomIcon: true,
-                          customIconPath:
-                            'assets/google (2).png', // Add your Google logo here
-                          onTap: () => _selectOption(1),
+                            index: 1,
+                            icon: Icons
+                                .g_mobiledata, // This will be ignored when useCustomIcon is true
+                            text: 'Continue with Google',
+                            useCustomIcon: true,
+                            isGuest: false,
+                            customIconPath:
+                                'assets/google (2).png', // Add your Google logo here
+                            onTap: () => _selectOption(1),
                           ),
 
                         if (Theme.of(context).platform == TargetPlatform.iOS)
                           _buildLoginOption(
-                          index: 2,
-                          icon: Icons.apple,
-                          text: 'Continue with Apple ID',
-                          useCustomIcon: false,
-                          onTap: () => _selectOption(2),
+                            index: 2,
+                            icon: Icons.apple,
+                            text: 'Continue with Apple ID',
+                            useCustomIcon: false,
+                            isGuest: false,
+                            onTap: () => _selectOption(2),
                           ),
 
                         const SizedBox(height: 16),
+
+                        _buildLoginOption(
+                          index: 3,
+                          icon: Icons.person,
+                          text: 'Continue with Guest',
+                          useCustomIcon: false,
+                          isGuest: authProvider.isGuest,
+                          onTap: () => authProvider.guestlogin(context),
+                        ),
 
                         const SizedBox(height: 32),
 
@@ -268,11 +282,13 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     required IconData icon,
     required String text,
     required VoidCallback onTap,
+    required bool isGuest,
     bool useCustomIcon = false,
     String? customIconPath,
   }) {
     final isSelected = _selectedOption == index;
     final isEmailOption = index == -1;
+    var authProvide = context.watch<AuthProvide>();
 
     return GestureDetector(
       onTap: onTap,
@@ -323,8 +339,19 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 color: isSelected
                     ? AppColors.primary
                     : (isEmailOption ? AppColors.primary : AppColors.textWhite),
-              ),
+              )
             ),
+            SizedBox(width: 10),
+            authProvide.isLoading && isGuest
+                ? SizedBox(
+                    height: 24,
+                    width: 24,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 5,
+                      color: Colors.white,
+                    ),
+                  )
+                : const SizedBox(),
           ],
         ),
       ),

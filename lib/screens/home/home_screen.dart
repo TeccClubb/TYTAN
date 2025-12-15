@@ -1,14 +1,14 @@
-// ignore_for_file: deprecated_member_use
-
+// ignore_for_file: deprecated_member_use, use_super_parameters
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tytan/screens/background/map.dart';
-import 'package:tytan/screens/constant/Appconstant.dart';
-import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/screens/premium/premium.dart';
+import 'package:tytan/screens/constant/Appconstant.dart';
 import 'package:tytan/screens/server/server_screen.dart';
+import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onNavigateToServers;
@@ -19,8 +19,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   // For connecting animation
   late AnimationController _connectingAnimationController;
 
@@ -42,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen>
       if (provider.servers.isEmpty) {
         // Load user data and premium status first
         await provider.getUser();
-        await provider.getPremium();
+        await provider.getPremium(context);
         provider.lProtocolFromStorage();
         provider.myAutoConnect();
         // provider.myKillSwitch();
@@ -55,8 +54,7 @@ class _HomeScreenState extends State<HomeScreen>
 
         // Auto-select fastest server if no valid server is selected
         if (provider.servers.isNotEmpty) {
-          if (provider.selectedServerIndex == 0 ||
-              provider.selectedServerIndex >= provider.servers.length) {
+          if (provider.selectedServerIndex == 0 || provider.selectedServerIndex >= provider.servers.length) {
             if (provider.isPremium) {
               await provider.selectFastestServerByHealth();
             } else {
@@ -184,11 +182,11 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget _buildDisconnectedView() {
     final provider = context.watch<VpnProvide>();
-    // final selectedServer =
-    //     provider.servers.isNotEmpty &&
-    //         provider.selectedServerIndex < provider.servers.length
-    //     ? provider.servers[provider.selectedServerIndex]
-    //     : null;
+    final selectedServer =
+        provider.servers.isNotEmpty &&
+            provider.selectedServerIndex < provider.servers.length
+        ? provider.servers[provider.selectedServerIndex]
+        : null;
 
     return Column(
       children: [
@@ -200,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen>
           style: GoogleFonts.plusJakartaSans(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: const Color(0xFFFF1706),
           ),
         ),
         const SizedBox(height: 10),
@@ -283,46 +281,59 @@ class _HomeScreenState extends State<HomeScreen>
               child: Row(
                 children: [
                   // Server Flag
-                  if (provider.selectedServerIndex < provider.servers.length)
-                    ClipOval(
-                      child: CachedNetworkImage(
-                        imageUrl: provider
-                            .servers[provider.selectedServerIndex]
-                            .image,
-                        width: 48,
-                        height: 48,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey.withOpacity(0.2),
-                          ),
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.primary,
+                  Builder(
+                    builder: (context) {
+                      final hasValidServer = selectedServer != null && (selectedServer.image ?? '').isNotEmpty;
+
+                      if (hasValidServer) {
+                        return ClipOval(
+                          child: CachedNetworkImage(
+                            imageUrl: selectedServer.image!,
+                            width: 48,
+                            height: 48,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.grey.withOpacity(0.2),
+                              ),
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.primary,
+                                ),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.grey.withOpacity(0.2),
+                              ),
+                              child: const Icon(
+                                Icons.flag,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
+                        );
+                      }
+
+                      // Fallback placeholder when no image/selected server
+                      return Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey.withOpacity(0.2),
                         ),
-                      ),
-                    )
-                  else
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey.withOpacity(0.2),
-                      ),
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppColors.primary,
-                        ),
-                      ),
-                    ),
+                        child: const Icon(Icons.flag, color: Colors.white),
+                      );
+                    },
+                  ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -371,38 +382,87 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _buildConnectingView() {
     var provider = context.watch<VpnProvide>();
 
-    var selectedServer =
-        provider.servers.isNotEmpty &&
+    var selectedServer = provider.servers.isNotEmpty &&
             provider.selectedServerIndex < provider.servers.length
         ? provider.servers[provider.selectedServerIndex]
         : null;
 
+    final bool isDisconnecting = provider.vpnConnectionStatus == VpnStatusConnectionStatus.disconnecting;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Connecting Animation
+        const Spacer(flex: 2),
+
+        // Modern Connecting Animation
         AnimatedBuilder(
           animation: _connectingAnimationController,
           builder: (context, child) {
+            final animValue = _connectingAnimationController.value;
+            final pulseValue = 0.95 + 0.1 * math.sin(animValue * 2 * math.pi);
+            final glowOpacity = 0.3 + 0.3 * math.sin(animValue * 2 * math.pi);
+
             return SizedBox(
-              width: 200,
-              height: 200,
+              width: 280,
+              height: 280,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Outer rotating circle
-                  Transform.rotate(
-                    angle: _connectingAnimationController.value * 2 * 3.14159,
+                  // Outermost pulsing glow
+                  Transform.scale(
+                    scale: pulseValue,
                     child: Container(
-                      width: 180,
-                      height: 180,
+                      width: 260,
+                      height: 260,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            AppColors.primary.withOpacity(0.0),
+                            AppColors.primary.withOpacity(0.05),
+                            AppColors.primary.withOpacity(glowOpacity * 0.15),
+                          ],
+                          stops: const [0.4, 0.7, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Rotating gradient arc - outer
+                  Transform.rotate(
+                    angle: animValue * 2 * math.pi,
+                    child: Container(
+                      width: 220,
+                      height: 220,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: SweepGradient(
                           colors: [
                             AppColors.primary.withOpacity(0),
-                            AppColors.primary.withOpacity(0.8),
+                            AppColors.primary.withOpacity(0.5),
+                            AppColors.primary,
+                            AppColors.primary.withOpacity(0.5),
                             AppColors.primary.withOpacity(0),
+                          ],
+                          stops: const [0.0, 0.2, 0.5, 0.8, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Counter-rotating inner arc
+                  Transform.rotate(
+                    angle: -animValue * 2 * math.pi * 0.7,
+                    child: Container(
+                      width: 190,
+                      height: 190,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: SweepGradient(
+                          colors: [
+                            Colors.transparent,
+                            AppColors.primary.withOpacity(0.25),
+                            Colors.transparent,
                           ],
                           stops: const [0.0, 0.5, 1.0],
                         ),
@@ -410,46 +470,117 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                   ),
 
-                  // Middle dotted circle
+                  // Dotted orbit circle
                   Container(
-                    width: 150,
-                    height: 150,
+                    width: 170,
+                    height: 170,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: AppColors.primary.withOpacity(0.3),
+                        color: AppColors.primary.withOpacity(0.15),
                         width: 1,
-                        style: BorderStyle.solid,
                       ),
                     ),
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        return CustomPaint(
-                          painter: DottedCirclePainter(
-                            color: Colors.white.withOpacity(0.5),
-                            dottedLength: 5,
-                            spaceLength: 5,
-                          ),
-                        );
-                      },
+                    child: CustomPaint(
+                      painter: DottedCirclePainter(
+                        color: AppColors.primary.withOpacity(0.35),
+                        dottedLength: 4,
+                        spaceLength: 8,
+                      ),
                     ),
                   ),
 
-                  // Inner orange circle
-                  Center(
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFF1E1E1E),
-                        border: Border.all(color: AppColors.primary, width: 2),
+                  // Orbiting particles
+                  ...List.generate(6, (index) {
+                    final particleAngle =
+                        (animValue * 2 * math.pi * 0.5) + (index * math.pi / 3);
+                    final radius = 85.0;
+                    final particleSize = 4.0 + (index % 3) * 1.5;
+                    final opacity = 0.4 + (index % 3) * 0.2;
+                    return Positioned(
+                      left:
+                          140 +
+                          radius * math.cos(particleAngle) -
+                          particleSize / 2,
+                      top:
+                          140 +
+                          radius * math.sin(particleAngle) -
+                          particleSize / 2,
+                      child: Container(
+                        width: particleSize,
+                        height: particleSize,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primary.withOpacity(opacity),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withOpacity(0.4),
+                              blurRadius: 4,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
                       ),
-                      child: Center(
-                        child: Image.asset(
-                          'assets/Tytan Logo.png',
-                          width: 60,
-                          height: 60,
+                    );
+                  }),
+
+                  // Glowing background behind center
+                  Container(
+                    width: 135,
+                    height: 135,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(
+                            glowOpacity * 0.6,
+                          ),
+                          blurRadius: 35,
+                          spreadRadius: 8,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Center circle with gradient border
+                  Container(
+                    width: 130,
+                    height: 130,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppColors.primary,
+                          AppColors.primary.withOpacity(0.6),
+                        ],
+                      ),
+                    ),
+                    child: Center(
+                      child: Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFF1A1A1A),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Transform.scale(
+                            scale: 0.95 + (pulseValue - 0.95) * 0.3,
+                            child: Image.asset(
+                              'assets/Tytan Logo.png',
+                              width: 55,
+                              height: 55,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -460,35 +591,189 @@ class _HomeScreenState extends State<HomeScreen>
           },
         ),
 
-        const SizedBox(height: 30),
+        const SizedBox(height: 40),
 
-        // Connecting Text
-        Center(
-          child: Text(
-            provider.vpnConnectionStatus ==
-                    VpnStatusConnectionStatus.disconnecting
-                ? 'Disconnecting....'
-                : 'Connecting....',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-              color: AppColors.primary,
-            ),
-          ),
+        // Status Text with animated dots
+        AnimatedBuilder(
+          animation: _connectingAnimationController,
+          builder: (context, child) {
+            final dotOpacity1 =
+                (_connectingAnimationController.value * 3) % 1.0 > 0.33
+                ? 1.0
+                : 0.3;
+            final dotOpacity2 =
+                (_connectingAnimationController.value * 3) % 1.0 > 0.66
+                ? 1.0
+                : 0.3;
+            final dotOpacity3 =
+                (_connectingAnimationController.value * 3) % 1.0 > 0.9
+                ? 1.0
+                : 0.3;
+
+            return Column(
+              children: [
+                Text(
+                  isDisconnecting ? 'Disconnecting' : 'Connecting',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildAnimatedDot(dotOpacity1),
+                    const SizedBox(width: 6),
+                    _buildAnimatedDot(dotOpacity2),
+                    const SizedBox(width: 6),
+                    _buildAnimatedDot(dotOpacity3),
+                  ],
+                ),
+              ],
+            );
+          },
         ),
 
-        const SizedBox(height: 20),
+        const SizedBox(height: 30),
 
-        // Server Name
-        Text(
-          ' ${selectedServer?.name} # ${selectedServer!.id}',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+        // Server info card
+        if (selectedServer != null)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E1E1E).withOpacity(0.85),
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: AppColors.primary.withOpacity(0.25),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withOpacity(0.08),
+                  blurRadius: 15,
+                  spreadRadius: 0,
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if ((selectedServer.image ?? '').isNotEmpty)
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(0.2),
+                          blurRadius: 6,
+                          spreadRadius: 0,
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: selectedServer.image!,
+                        width: 28,
+                        height: 28,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.grey.withOpacity(0.2),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          width: 28,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.grey.withOpacity(0.2),
+                          ),
+                          child: const Icon(
+                            Icons.flag,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                const SizedBox(width: 10),
+                Text(
+                  selectedServer.name,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 7,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '#${selectedServer.id}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+        const Spacer(flex: 3),
+
+        // Secure connection indicator
+        Padding(
+          padding: const EdgeInsets.only(bottom: 35),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.shield_outlined,
+                size: 16,
+                color: AppColors.primary.withOpacity(0.5),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                isDisconnecting
+                    ? 'Securing your data...'
+                    : 'Establishing secure tunnel...',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textGray,
+                ),
+              ),
+            ],
           ),
         ),
       ],
+    );
+  }
+
+  // Helper widget for animated dots
+  Widget _buildAnimatedDot(double opacity) {
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColors.primary.withOpacity(opacity),
+      ),
     );
   }
 
@@ -510,7 +795,7 @@ class _HomeScreenState extends State<HomeScreen>
           style: GoogleFonts.plusJakartaSans(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: const Color(0xFF02F30A),
           ),
         ),
         const SizedBox(height: 10),
@@ -520,7 +805,7 @@ class _HomeScreenState extends State<HomeScreen>
           style: GoogleFonts.plusJakartaSans(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFFA0A0A0),
+            color: Colors.white,
           ),
         ),
         const SizedBox(height: 40),
@@ -691,62 +976,68 @@ class _HomeScreenState extends State<HomeScreen>
                   Row(
                     children: [
                       // Country Flag
-                      if (provider.servers.isNotEmpty &&
-                          provider.selectedServerIndex <
-                              provider.servers.length)
-                        ClipOval(
-                          child: CachedNetworkImage(
-                            imageUrl: provider
-                                .servers[provider.selectedServerIndex]
-                                .image,
-                            width: 36,
-                            height: 36,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.green.withOpacity(0.1),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) => Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.green.withOpacity(0.1),
-                                border: Border.all(
-                                  color: Colors.green.withOpacity(0.5),
-                                  width: 2,
+                      Builder(
+                        builder: (context) {
+                          final hasValidServer =
+                              selectedServer != null &&
+                              (selectedServer.image ?? '').isNotEmpty;
+
+                          if (hasValidServer) {
+                            return ClipOval(
+                              child: CachedNetworkImage(
+                                imageUrl: selectedServer!.image!,
+                                width: 36,
+                                height: 36,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.green.withOpacity(0.1),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.green.withOpacity(0.1),
+                                    border: Border.all(
+                                      color: Colors.green.withOpacity(0.5),
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.flag,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
                                 ),
                               ),
-                              child: const Icon(
-                                Icons.flag,
-                                color: Colors.white,
-                                size: 20,
+                            );
+                          }
+
+                          // Fallback placeholder when no image/selected server
+                          return Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.green.withOpacity(0.1),
+                              border: Border.all(
+                                color: Colors.green.withOpacity(0.5),
+                                width: 2,
                               ),
                             ),
-                          ),
-                        )
-                      else
-                        Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.green.withOpacity(0.1),
-                            border: Border.all(
-                              color: Colors.green.withOpacity(0.5),
-                              width: 2,
+                            child: const Icon(
+                              Icons.flag,
+                              color: Colors.white,
+                              size: 20,
                             ),
-                          ),
-                          child: const Icon(
-                            Icons.flag,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                        ),
+                          );
+                        },
+                      ),
                       const SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -767,7 +1058,9 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                           ),
                           Text(
-                            selectedServer?.subServers!.first.name ?? 'N/A',
+                            (selectedServer?.subServers.isNotEmpty ?? false)
+                                ? selectedServer!.subServers.first.name
+                                : 'N/A',
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,

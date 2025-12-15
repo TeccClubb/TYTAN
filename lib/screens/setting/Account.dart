@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:tytan/Providers/AuthProvide/authProvide.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/screens/background/background.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
@@ -18,11 +19,7 @@ class AccountScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(context),
-              const Divider(
-                  color: Color(0xFF2A2A2A),
-                  height: 1,
-                  thickness: 1,
-                ),
+              const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
@@ -83,6 +80,7 @@ class AccountScreen extends StatelessWidget {
     return Builder(
       builder: (context) {
         final provider = Provider.of<VpnProvide>(context);
+        final authProvider = Provider.of<AuthProvide>(context);
 
         return Container(
           decoration: BoxDecoration(
@@ -143,8 +141,10 @@ class AccountScreen extends StatelessWidget {
                         children: [
                           Text(
                             provider.user.isNotEmpty
-                                ? provider.user.first.name
-                                : 'Loading...',
+                                ? '${provider.user.first.email}'
+                                : authProvider.guestUser != null
+                                ? '${authProvider.guestUser?.name}'
+                                : 'loading...',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.plusJakartaSans(
@@ -197,7 +197,9 @@ class AccountScreen extends StatelessWidget {
                           Text(
                             provider.user.isNotEmpty
                                 ? '${provider.user.first.email}'
-                                : 'Loading...',
+                                : authProvider.guestUser != null
+                                ? '${authProvider.guestUser?.email}'
+                                : 'loading...',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.plusJakartaSans(
@@ -230,7 +232,7 @@ class AccountScreen extends StatelessWidget {
               ),
 
               // Member since
-              Padding(
+            authProvider.guestUser != null  ?  SizedBox.shrink() :    Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,
@@ -247,7 +249,7 @@ class AccountScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                        Text(
                             provider.user.isNotEmpty
                                 ? provider.user.first.createdAt
                                       .toLocal()

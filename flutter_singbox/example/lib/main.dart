@@ -82,7 +82,7 @@ class _HomePageState extends State<HomePage> {
 
       // Get current VPN status and log it
       final vpnStatus = await _flutterSingboxPlugin.getVPNStatus();
-      log('Initial VPN status: $vpnStatus');
+      print('Initial VPN status: $vpnStatus');
 
       // Get saved config
       await _flutterSingboxPlugin.getConfig();
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
         event,
       ) {
         if (event['status'] != null) {
-          log('VPN status update: ${event['status']}');
+          print('VPN status update: ${event['status']}');
           setState(() {
             _vpnStatus = event['status'] as String;
           });
@@ -165,7 +165,6 @@ class _HomePageState extends State<HomePage> {
       final success = await _flutterSingboxPlugin.startVPN();
       if (!success) {
         ScaffoldMessenger.of(
-          // ignore: use_build_context_synchronously
           context,
         ).showSnackBar(const SnackBar(content: Text('Failed to start VPN')));
       }
@@ -196,6 +195,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Icon(Icons.alarm),
         title: const Text('SingBox VPN Plugin Example'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),

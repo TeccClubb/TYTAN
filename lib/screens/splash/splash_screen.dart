@@ -1,12 +1,14 @@
+// ignore_for_file: use_super_parameters
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
-import 'package:tytan/screens/background/background.dart';
-import 'package:tytan/screens/constant/Appconstant.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tytan/screens/welcome/welcome.dart';
-import 'package:tytan/screens/bottomnavbar/bottomnavbar.dart';
+import 'package:tytan/screens/constant/Appconstant.dart';
+import 'package:tytan/screens/background/background.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
+import 'package:tytan/screens/bottomnavbar/bottomnavbar.dart';
+import 'package:tytan/Providers/AuthProvide/authProvide.dart' show AuthProvide;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -69,17 +71,21 @@ class _SplashScreenState extends State<SplashScreen>
     // Check if user is already logged in
     final prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');
-    final bool isLoggedIn = token != null && token.isNotEmpty;
+    final String? appAccountToken = prefs.getString('app_account_token');
+    final bool isLoggedIn =
+        token != null && token.isNotEmpty ||
+        appAccountToken != null && appAccountToken.isNotEmpty;
 
     // If user is logged in, preload servers and user data
     if (isLoggedIn && mounted) {
       final provider = context.read<VpnProvide>();
+      final authProvider = context.read<AuthProvide>();
 
       // Preload all necessary data in parallel
       await Future.wait([
         provider.getServersPlease(true),
         provider.getUser(),
-        provider.getPremium(),
+        provider.getPremium(context),
         provider.loadFavoriteServers(),
         provider.loadSelectedServerIndex(),
       ]);
@@ -90,6 +96,7 @@ class _SplashScreenState extends State<SplashScreen>
       provider.loadKillSwitchState();
       provider.loadAdBlocker();
       provider.loadDnsLeakProtection();
+      authProvider.getGuestUser();
 
       // Auto-select fastest server if no valid server is selected
       if (provider.servers.isNotEmpty &&

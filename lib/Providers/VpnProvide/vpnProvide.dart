@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:tytan/Defaults/utils.dart';
 import 'dart:io' show Platform, InternetAddress;
 import 'package:tytan/DataModel/userModel.dart';
+import 'package:tytan/screens/onboarding/onboarding_screen.dart';
+import 'package:tytan/screens/welcome/welcome.dart';
 import '../../NetworkServices/networkVless.dart';
 import 'package:tytan/DataModel/plansModel.dart';
 import 'dart:convert' show jsonDecode, jsonEncode;
@@ -15,11 +17,10 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tytan/screens/auth/auth_screen.dart';
 import 'package:tytan/DataModel/serverDataModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// ,import 'package:tytan/ReusableWidgets/customSnackBar.dart';
 import 'package:flutter_singbox/flutter_singbox.dart' show FlutterSingbox;
+import 'package:tytan/NetworkServices/networkSingbox.dart' show NetworkSingbox;
 import 'package:tytan/NetworkServices/networkHysteria.dart'
     show HysteriaService;
-import 'package:tytan/NetworkServices/networkSingbox.dart' show NetworkSingbox;
 import 'package:tytan/ReusableWidgets/customSnackBar.dart'
     show showCustomSnackBar;
 
@@ -733,11 +734,9 @@ class VpnProvide with ChangeNotifier {
         // Each server can have multiple subServers, so find the best among them
         final subServers = servers[i].subServers ?? [];
         for (var sub in subServers) {
-          final vpsGroup = sub.vpsGroup;
-          if (vpsGroup != null) {
-            final score =
-                double.tryParse(vpsGroup.servers![0].healthScore.toString()) ??
-                0.0;
+          final vpsServer = sub.vpsServer;
+          if (vpsServer != null) {
+            final score = double.tryParse(vpsServer.createdAt) ?? 0.0;
             if (score > highestScore) {
               highestScore = score;
               fastestIndex = i;
@@ -965,12 +964,10 @@ class VpnProvide with ChangeNotifier {
 
   String getProtocolDisplayName(Protocol protocol) {
     switch (protocol) {
-  
       case Protocol.hysteria:
         return 'Turbo Mode';
       case Protocol.vless:
         return 'Stealth Mode';
-
     }
   }
 
@@ -1204,8 +1201,7 @@ class VpnProvide with ChangeNotifier {
           ? "macos"
           : "linux";
 
-      var protocol = 
-          selectedProtocol == Protocol.vless
+      var protocol = selectedProtocol == Protocol.vless
           ? "vless"
           : "hysteria_v2";
       log("loaded protocol: $protocol");
@@ -1257,7 +1253,7 @@ class VpnProvide with ChangeNotifier {
   //   return servers[selectedServerIndex]
   //       .subServers![selectedSubServerIndex]
   //       .vpsGroup!
-  //       .servers![0]
+  //       .serfvers![0]
   //       .domain;
   // }
 
@@ -1538,23 +1534,11 @@ class VpnProvide with ChangeNotifier {
   //   }
   // }
 
-  getPrimaryServer(List<VpsServer> servers) {
-    for (var server in servers) {
-      // Your logic here
-      if (server.role == 'primary') {
-        return server.domain;
-      }
-    }
-    return servers.isNotEmpty ? servers[0].domain : null;
-  }
-
   toggleVpn() async {
-    var domain = getPrimaryServer(
-      servers[selectedServerIndex]
-          .subServers![selectedSubServerIndex]
-          .vpsGroup!
-          .servers!,
-    );
+    var domain = servers[selectedServerIndex]
+        .subServers[selectedSubServerIndex]
+        .vpsServer!
+        .domain;
     log("Domain: $domain");
 
     if (selectedProtocol == Protocol.vless ||
@@ -1680,11 +1664,12 @@ class VpnProvide with ChangeNotifier {
     servers = [];
     selectedServerIndex = 0;
     selectedSubServerIndex = 0;
+    bottomBarIndex.value = 0;
     _googleSignIn.signOut();
+    user = {};
 
-    Navigator.of(
-      context,
-    ).pushReplacement(MaterialPageRoute(builder: (context) => AuthScreen()));
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (context) => WelcomeScreen()));
     notifyListeners();
   }
 
@@ -1712,59 +1697,58 @@ class VpnProvide with ChangeNotifier {
     }
   }
 
-  Future<void> getPremium() async {
+  Future<void> getPremium(BuildContext context) async {
     log("premium function called");
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');
-    var headers = {
+
+    final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': 'Bearer $token',
+      'Authorization': 'Bearer $token'
     };
-    var response = await http.get(
+
+    final response = await http.get(
       Uri.parse(UUtils.subscription),
       headers: headers,
     );
 
     log("Response body: ${response.body}");
-    var data = jsonDecode(response.body);
-
     log("Response status code: ${response.statusCode}");
 
     try {
-      // Consider premium ONLY if response OK and there is at least one active/available plan
+      final data = jsonDecode(response.body);
+
       if (response.statusCode == 200) {
-        final plans = data['plans'];
-        bool hasPlans = false;
-        if (plans is List) {
-          // If API provides status flags per plan, prefer those; otherwise any plan means premium
-          hasPlans = plans.isNotEmpty;
-          try {
-            // If any plan has an 'active' or 'status' truthy, prefer that signal
-            final anyActive = plans.any((p) {
-              if (p is Map) {
-                final s = p['status'];
-                final a = p['active'];
-                return (s == true) || (a == true);
-              }
-              return false;
-            });
-            if (anyActive) {
-              hasPlans = true;
-            }
-          } catch (_) {}
+        final subscription = data['subscription'];
+
+        if (subscription != null) {
+          final subStatus = subscription['status'] ?? '';
+
+          // Treat user as premium if they have active or trial subscription
+          final activeStatuses = ['active', 'trialing', 'grace_period'];
+
+          isPremium = activeStatuses.contains(subStatus.toLowerCase());
+
+          log("User subscription status: $subStatus");
+          log("Computed isPremium: $isPremium");
+        } else {
+          // No subscription object → not premium
+          isPremium = false;
+          log("No subscription found -> isPremium: false");
         }
 
-        isPremium = hasPlans;
-        log('Computed isPremium: $isPremium');
         notifyListeners();
       } else {
-        log('Subscription endpoint error: ${data['message'] ?? response.reasonPhrase}');
+        log(
+          "Subscription endpoint error: ${data['message'] ?? response.reasonPhrase}",
+        );
         isPremium = false;
         notifyListeners();
       }
     } catch (e) {
-      log('Error parsing subscription response: $e');
+      log("Error parsing subscription response: $e");
       isPremium = false;
       notifyListeners();
     }
@@ -1849,7 +1833,7 @@ class VpnProvide with ChangeNotifier {
           context,
           Icons.error,
           'Error',
-          data['message'] ?? 'Failed to submit feedback',
+         "As a guest user u can't add feedback" ?? 'Failed to submit feedback',
           Colors.red,
         );
       }
