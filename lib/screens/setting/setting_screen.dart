@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tytan/Providers/AuthProvide/authProvide.dart' show AuthProvide;
 import 'package:tytan/screens/premium/premium.dart';
 import 'package:tytan/screens/setting/Account.dart';
 import 'package:tytan/screens/setting/feedback.dart';
@@ -11,6 +10,7 @@ import 'package:tytan/screens/tunneling/tunneling.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
 import 'package:tytan/screens/background/background.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
+import 'package:tytan/Providers/AuthProvide/authProvide.dart' show AuthProvide;
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -30,8 +30,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       body: AppBackground(
         child: SafeArea(
-
-          
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -408,8 +406,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required Color iconColor,
     required bool value,
     required ValueChanged<bool> onChanged,
-    bool isLastItem = false,
-  }) {
+    // bool isLastItem = false,
+    }) {
     return Column(
       children: [
         Padding(

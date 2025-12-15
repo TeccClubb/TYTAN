@@ -472,8 +472,12 @@ class AuthProvide with ChangeNotifier {
         prefs.setString("app_account_token", data['user']['app_account_token']);
         var vpnProvider = Provider.of<VpnProvide>(context, listen: false);
         await vpnProvider.getServersPlease(true);
-        await vpnProvider.getPremium(context);
-        _isLoading = false;
+        await vpnProvider.getPremium(context);        
+        // Auto-select fastest free server for guest users
+        if (vpnProvider.servers.isNotEmpty) {
+          await vpnProvider.selectFastestServerByHealth(freeOnly: true);
+        }
+                _isLoading = false;
         _isGuest = false;
         notifyListeners();
 

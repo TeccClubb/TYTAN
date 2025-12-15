@@ -681,8 +681,8 @@ class _ServersScreenState extends State<ServersScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      server.subServers != null && server.subServers!.isNotEmpty
-                          ? server.subServers![0].name
+                      server.subServers != null && server.subServers.isNotEmpty
+                          ? server.subServers[0].name
                           : '',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 12,

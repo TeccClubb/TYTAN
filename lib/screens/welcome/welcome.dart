@@ -217,14 +217,60 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
                         const SizedBox(height: 16),
 
-                        _buildLoginOption(
-                          index: 3,
-                          icon: Icons.person,
-                          text: 'Continue with Guest',
-                          useCustomIcon: false,
-                          isGuest: authProvider.isGuest,
-                          onTap: () => authProvider.guestlogin(context),
-                        ),
+                      Container(
+                          width: double.infinity,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E1E1E),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: _selectedOption == 3
+                                  ? AppColors.primary
+                                  : const Color(0xFF404040),
+                              width: _selectedOption == 3 ? 1.5 : 1.5,
+                            ),
+                          ),
+                          child: TextButton(
+                            onPressed: () async {
+                              setState(() {
+                                _selectedOption = 3;
+                              });
+                              await authProvider.guestlogin(context);
+                            },
+                            child: authProvider.isLoading
+                                ? SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: const CircularProgressIndicator(
+                                      strokeWidth: 5,
+                                      color: Colors.white,
+                                    ),
+                                )
+                                : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.person_outline,
+                                      color: _selectedOption == 3
+                                          ? AppColors.primary
+                                          : AppColors.textWhite,
+                                      size: 24,
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Text(
+                                        'Continue as Guest',
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: _selectedOption == 3
+                                              ? AppColors.primary
+                                              : AppColors.textWhite,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                          ),
+                      ),
 
                         const SizedBox(height: 32),
 

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tytan/ReusableWidgets/customSnackBar.dart' show showCustomSnackBar;
 import 'package:tytan/screens/background/map.dart';
 import 'package:tytan/screens/premium/premium.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
@@ -53,8 +54,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         await provider.loadSelectedServerIndex();
 
         // Auto-select fastest server if no valid server is selected
+        // OR if user is not premium but has a premium server selected
         if (provider.servers.isNotEmpty) {
-          if (provider.selectedServerIndex == 0 || provider.selectedServerIndex >= provider.servers.length) {
+          final currentIndex = provider.selectedServerIndex;
+          final isInvalidIndex = currentIndex == 0 || currentIndex >= provider.servers.length;
+          final isNonPremiumWithPremiumServer = !provider.isPremium && 
+              !isInvalidIndex && 
+              provider.servers[currentIndex].type.toLowerCase() == 'premium';
+          
+          if (isInvalidIndex || isNonPremiumWithPremiumServer) {
             if (provider.isPremium) {
               await provider.selectFastestServerByHealth();
             } else {
@@ -216,7 +224,36 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
         // Power Button
         GestureDetector(
-          onTap: provider.toggleVpn,
+          onTap: () async {
+            // Ensure we have servers
+            if (provider.servers.isEmpty) {
+              showCustomSnackBar(
+                context,
+                Icons.error,
+                'No servers',
+                'No servers available to connect.',
+                Colors.red,
+              );
+              return;
+            }
+
+            final selectedServer = provider.servers[provider.selectedServerIndex];
+            final isServerPremium = selectedServer.type.toLowerCase() == 'premium';
+
+            if (isServerPremium && !provider.isPremium) {
+              // Block non-premium users from connecting to premium servers
+              showCustomSnackBar(
+                context,
+                Icons.lock,
+                'Premium Required',
+                '${selectedServer.name} is available for premium users only.',
+                Colors.orange,
+              );
+              return;
+            }
+
+            await provider.toggleVpn();
+          },
           child: Container(
             width: 130,
             height: 130,
@@ -985,7 +1022,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           if (hasValidServer) {
                             return ClipOval(
                               child: CachedNetworkImage(
-                                imageUrl: selectedServer!.image!,
+                                imageUrl: selectedServer.image!,
                                 width: 36,
                                 height: 36,
                                 fit: BoxFit.cover,

@@ -14,6 +14,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]);
+  
   // Set status bar and navigation bar colors for a dark theme
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(

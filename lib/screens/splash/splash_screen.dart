@@ -99,10 +99,21 @@ class _SplashScreenState extends State<SplashScreen>
       authProvider.getGuestUser();
 
       // Auto-select fastest server if no valid server is selected
-      if (provider.servers.isNotEmpty &&
-          (provider.selectedServerIndex == 0 ||
-              provider.selectedServerIndex >= provider.servers.length)) {
-        await provider.selectFastestServerByHealth();
+      // OR if user is not premium but has a premium server selected
+      if (provider.servers.isNotEmpty) {
+        final currentIndex = provider.selectedServerIndex;
+        final isInvalidIndex = currentIndex == 0 || currentIndex >= provider.servers.length;
+        final isNonPremiumWithPremiumServer = !provider.isPremium && 
+            !isInvalidIndex && 
+            provider.servers[currentIndex].type.toLowerCase() == 'premium';
+        
+        if (isInvalidIndex || isNonPremiumWithPremiumServer) {
+          if (provider.isPremium) {
+            await provider.selectFastestServerByHealth();
+          } else {
+            await provider.selectFastestServerByHealth(freeOnly: true);
+          }
+        }
       }
     }
 

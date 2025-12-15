@@ -2,8 +2,8 @@
 
 import 'dart:convert';
 import 'dart:developer' show log;
-import 'package:flutter_singbox/flutter_singbox.dart';
 import 'package:flutter/services.dart' show PlatformException;
+import 'package:flutter_singbox_vpn/flutter_singbox.dart' show FlutterSingbox, ProxyMode;
 import 'package:shared_preferences/shared_preferences.dart' show SharedPreferences;
 
 class NetworkSingbox {

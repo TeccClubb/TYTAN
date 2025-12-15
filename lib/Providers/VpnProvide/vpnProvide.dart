@@ -1,4 +1,5 @@
 // ignore_for_file: file_names, use_build_context_synchronously, unnecessary_brace_in_string_interps, unused_field
+import 'package:flutter_singbox_vpn/flutter_singbox.dart' show FlutterSingbox;
 import 'package:get/get.dart';
 import 'dart:async' show Timer;
 import 'dart:developer' show log;
@@ -8,21 +9,16 @@ import 'package:http/http.dart' as http;
 import 'package:tytan/Defaults/utils.dart';
 import 'dart:io' show Platform, InternetAddress;
 import 'package:tytan/DataModel/userModel.dart';
-import 'package:tytan/screens/onboarding/onboarding_screen.dart';
 import 'package:tytan/screens/welcome/welcome.dart';
 import '../../NetworkServices/networkVless.dart';
 import 'package:tytan/DataModel/plansModel.dart';
 import 'dart:convert' show jsonDecode, jsonEncode;
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:tytan/screens/auth/auth_screen.dart';
 import 'package:tytan/DataModel/serverDataModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_singbox/flutter_singbox.dart' show FlutterSingbox;
 import 'package:tytan/NetworkServices/networkSingbox.dart' show NetworkSingbox;
-import 'package:tytan/NetworkServices/networkHysteria.dart'
-    show HysteriaService;
-import 'package:tytan/ReusableWidgets/customSnackBar.dart'
-    show showCustomSnackBar;
+import 'package:tytan/NetworkServices/networkHysteria.dart' show HysteriaService;
+import 'package:tytan/ReusableWidgets/customSnackBar.dart' show showCustomSnackBar;
 
 enum Protocol { vless, hysteria }
 
@@ -1535,6 +1531,18 @@ class VpnProvide with ChangeNotifier {
   // }
 
   toggleVpn() async {
+    // Prevent connecting to premium servers when user is not premium
+    if (servers.isEmpty) {
+      log('toggleVpn called but servers list is empty');
+      return;
+    }
+
+    final selServer = servers[selectedServerIndex];
+    if (selServer.type.toLowerCase() == 'premium' && !isPremium) {
+      log('User is not premium; cannot connect to premium server: ${selServer.name}');
+      return;
+    }
+
     var domain = servers[selectedServerIndex]
         .subServers[selectedSubServerIndex]
         .vpsServer!
