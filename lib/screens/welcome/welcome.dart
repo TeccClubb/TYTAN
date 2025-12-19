@@ -189,22 +189,23 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
                         const SizedBox(height: 16),
 
-                        // Continue with Google
-                        // Platform-specific login options
-                        if (Theme.of(context).platform ==
-                            TargetPlatform.android)
-                          _buildLoginOption(
-                            index: 1,
-                            icon: Icons
-                                .g_mobiledata, // This will be ignored when useCustomIcon is true
-                            text: 'Continue with Google',
-                            useCustomIcon: true,
-                            isGuest: false,
-                            customIconPath:
-                                'assets/google (2).png', // Add your Google logo here
-                            onTap: () => _selectOption(1),
-                          ),
+                        // Continue with Google - Always show
+                        _buildLoginOption(
+                          index: 1,
+                          icon: Icons
+                              .g_mobiledata, // This will be ignored when useCustomIcon is true
+                          text: 'Continue with Google',
+                          useCustomIcon: true,
+                          isGuest: false,
+                          isGoogleOption: true,
+                          customIconPath:
+                              'assets/google (2).png', // Add your Google logo here
+                          onTap: () => _selectOption(1),
+                        ),
 
+                        const SizedBox(height: 16),
+
+                        // Continue with Apple ID - iOS only
                         if (Theme.of(context).platform == TargetPlatform.iOS)
                           _buildLoginOption(
                             index: 2,
@@ -215,7 +216,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             onTap: () => _selectOption(2),
                           ),
 
-                        const SizedBox(height: 16),
+                        if (Theme.of(context).platform == TargetPlatform.iOS)
+                          const SizedBox(height: 16),
 
                       Container(
                           width: double.infinity,
@@ -331,13 +333,15 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     required bool isGuest,
     bool useCustomIcon = false,
     String? customIconPath,
+    bool isGoogleOption = false,
   }) {
     final isSelected = _selectedOption == index;
     final isEmailOption = index == -1;
     var authProvide = context.watch<AuthProvide>();
+    final isGoogleLoading = isGoogleOption && authProvide.isGoogleSigningIn;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: isGoogleLoading ? null : onTap,
       child: Container(
         width: double.infinity,
         height: 56,
@@ -361,7 +365,18 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 ]
               : null,
         ),
-        child: Row(
+        child: isGoogleLoading
+            ? const Center(
+                child: SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 5,
+                    color: Colors.white,
+                  ),
+                ),
+              )
+            : Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Icon or Custom Image

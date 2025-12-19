@@ -41,13 +41,18 @@ class MethodChannelFlutterSingbox extends FlutterSingboxPlatform {
       if (event is Map) {
         _statusStreamController.add(Map<String, dynamic>.from(event));
       }
+    }, onError: (error) {
+      debugPrint('Status event channel error: $error');
     });
 
     // Listen to traffic events
     _trafficEventChannel.receiveBroadcastStream().listen((event) {
+      debugPrint('Traffic event received in channel: $event');
       if (event is Map) {
         _trafficStreamController.add(Map<String, dynamic>.from(event));
       }
+    }, onError: (error) {
+      debugPrint('Traffic event channel error: $error');
     });
   }
 

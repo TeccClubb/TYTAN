@@ -2,18 +2,24 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CLIENT_ID</key>
+	<string>536467881479-20agv9tq9vv925mjco583bngku71q0is.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.536467881479-20agv9tq9vv925mjco583bngku71q0is</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>536467881479-6oghu58f048v04dmevt6ltgqg8eqa950.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCqOcc4MDZbWcreM9tP947M7MwmXGXSDjI</string>
+	<string>AIzaSyCf946KCgeu9QZMDO-C8xW-nTs9ED4oL-w</string>
 	<key>GCM_SENDER_ID</key>
-	<string>557668953763</string>
+	<string>536467881479</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.example.tytan</string>
 	<key>PROJECT_ID</key>
-	<string>tytanvpn-93208</string>
+	<string>tytanvpn</string>
 	<key>STORAGE_BUCKET</key>
-	<string>tytanvpn-93208.firebasestorage.app</string>
+	<string>tytanvpn.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:557668953763:ios:0b5463af123707d834d916</string>
+	<string>1:536467881479:ios:777ca68a2f9f62a48274a2</string>
 </dict>
 </plist>

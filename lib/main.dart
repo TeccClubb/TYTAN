@@ -15,7 +15,7 @@ void main() async {
     DeviceOrientation.portraitDown
   ]);
   
-  // Set status bar and navigation bar colors for a dark theme
+  // Set status bcar and navigation bar colors for a dark theme
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.white, // Status bar background color
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvide()),
-        ChangeNotifierProvider(create: (_) => VpnProvide()),
+        ChangeNotifierProvider(create: (_) => VpnProvide())
       ],
       child: MaterialApp(
         title: 'Tytan VPN',

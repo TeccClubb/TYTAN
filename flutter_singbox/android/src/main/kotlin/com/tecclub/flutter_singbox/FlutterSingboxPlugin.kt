@@ -927,7 +927,12 @@ class FlutterSingboxPlugin :
         // Send traffic stats to Flutter
         val handler = Handler(Looper.getMainLooper())
         handler.post {
-            trafficEventSink?.success(stats)
+            if (trafficEventSink != null) {
+                android.util.Log.d("FlutterSingboxPlugin", "Sending traffic stats to Flutter: uplink=${stats["formattedUplinkSpeed"]}, downlink=${stats["formattedDownlinkSpeed"]}")
+                trafficEventSink?.success(stats)
+            } else {
+                android.util.Log.e("FlutterSingboxPlugin", "trafficEventSink is null, cannot send traffic stats")
+            }
         }
     }
     

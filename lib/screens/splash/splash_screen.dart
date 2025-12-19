@@ -29,12 +29,12 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
 
     _logoController = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 4),
       vsync: this,
     );
 
     _loadingController = AnimationController(
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 5),
       vsync: this,
     );
 

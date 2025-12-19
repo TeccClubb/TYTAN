@@ -1,5 +1,4 @@
 // ignore_for_file: file_names, use_build_context_synchronously, unnecessary_brace_in_string_interps, unused_field
-import 'package:flutter_singbox_vpn/flutter_singbox.dart' show FlutterSingbox;
 import 'package:get/get.dart';
 import 'dart:async' show Timer;
 import 'dart:developer' show log;
@@ -9,13 +8,14 @@ import 'package:http/http.dart' as http;
 import 'package:tytan/Defaults/utils.dart';
 import 'dart:io' show Platform, InternetAddress;
 import 'package:tytan/DataModel/userModel.dart';
-import 'package:tytan/screens/welcome/welcome.dart';
 import '../../NetworkServices/networkVless.dart';
 import 'package:tytan/DataModel/plansModel.dart';
 import 'dart:convert' show jsonDecode, jsonEncode;
+import 'package:tytan/screens/welcome/welcome.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tytan/DataModel/serverDataModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_singbox_vpn/flutter_singbox.dart' show FlutterSingbox;
 import 'package:tytan/NetworkServices/networkSingbox.dart' show NetworkSingbox;
 import 'package:tytan/NetworkServices/networkHysteria.dart' show HysteriaService;
 import 'package:tytan/ReusableWidgets/customSnackBar.dart' show showCustomSnackBar;
@@ -27,7 +27,7 @@ enum VpnStatusConnectionStatus {
   disconnected,
   connecting,
   disconnecting,
-  reconnecting,
+  reconnecting
 }
 
 class VpnProvide with ChangeNotifier {
@@ -97,12 +97,27 @@ class VpnProvide with ChangeNotifier {
 
   init() {
     _singbox.onTrafficUpdate.listen((event) {
-      if (event['formattedDownlinkSpeed'].toString() != "0 B/s" &&
-          event['formattedUplinkSpeed'].toString() != "0 B/s") {
-        downloadSpeed = event['formattedDownlinkSpeed'].toString();
-        uploadSpeed = event['formattedUplinkSpeed'].toString();
-        notifyListeners();
-      }
+      log("Traffic update received: $event");
+      
+      String downSpeed = event['formattedDownlinkSpeed']?.toString() ?? "0 B/s";
+      String upSpeed = event['formattedUplinkSpeed']?.toString() ?? "0 B/s";
+      
+      // Ignore invalid speeds (containing negative values)
+      // if (downSpeed.contains('-') || upSpeed.contains('-')) {
+      //   return;
+      // }
+      // if (downSpeed.isEmpty) {
+      //   downSpeed = "0 kB/s";
+      // }
+      // if (upSpeed.isEmpty) {
+      //   upSpeed = "0 kB/s";
+      // }
+      
+      downloadSpeed = downSpeed;
+      uploadSpeed = upSpeed;
+      notifyListeners();
+    }, onError: (error) {
+      log("Traffic update error: $error");
     });
 
     _singbox.onStatusChanged.listen((event) {
@@ -122,13 +137,26 @@ class VpnProvide with ChangeNotifier {
         _lastStatusReceived = status;
         _lastStatusTime = now;
 
-        // Ignore status updates while we're actively connecting/disconnecting
-        if (isConnecting == true && status != 'started') {
+        // Ignore ALL status updates while we're actively connecting/disconnecting
+        // The connect/disconnect methods will manage the state transitions
+        if (isConnecting == true) {
           log('Singbox VPN status: $status ignored (currently connecting)');
           return;
         }
-        if (isDisconnecting == true && status != 'stopped') {
+        if (isDisconnecting == true) {
           log('Singbox VPN status: $status ignored (currently disconnecting)');
+          return;
+        }
+        
+        // Ignore stale "started" status if we recently disconnected
+        if (status == 'started' && vpnConnectionStatus == VpnStatusConnectionStatus.disconnected) {
+          log('Singbox VPN status: started ignored (we are disconnected)');
+          return;
+        }
+        
+        // Ignore stale "stopped" status if we recently connected
+        if (status == 'stopped' && vpnConnectionStatus == VpnStatusConnectionStatus.connected) {
+          log('Singbox VPN status: stopped ignored (we are connected)');
           return;
         }
 
@@ -156,11 +184,13 @@ class VpnProvide with ChangeNotifier {
             }
             break;
           case 'starting':
-            if (vpnConnectionStatus != VpnStatusConnectionStatus.connecting) {
+            // Only update to connecting if we're not already controlling the animation
+            if (!isConnecting && vpnConnectionStatus != VpnStatusConnectionStatus.connecting) {
               vpnConnectionStatus = VpnStatusConnectionStatus.connecting;
               log('Connecting to VPN...');
-              // vpnConnectionStatus = VpnStatusConnectionStatus.connecting;
               notifyListeners();
+            } else {
+              log('Singbox VPN status: starting (animation in progress)');
             }
             break;
           case 'stopping':
@@ -728,7 +758,7 @@ class VpnProvide with ChangeNotifier {
       }
       try {
         // Each server can have multiple subServers, so find the best among them
-        final subServers = servers[i].subServers ?? [];
+        final subServers = servers[i].subServers;
         for (var sub in subServers) {
           final vpsServer = sub.vpsServer;
           if (vpsServer != null) {
@@ -1531,6 +1561,16 @@ class VpnProvide with ChangeNotifier {
   // }
 
   toggleVpn() async {
+    // Prevent rapid toggle calls while connecting or disconnecting
+    if (isConnecting) {
+      log('toggleVpn called but already connecting, ignoring');
+      return;
+    }
+    if (isDisconnecting) {
+      log('toggleVpn called but already disconnecting, ignoring');
+      return;
+    }
+
     // Prevent connecting to premium servers when user is not premium
     if (servers.isEmpty) {
       log('toggleVpn called but servers list is empty');
@@ -1551,11 +1591,12 @@ class VpnProvide with ChangeNotifier {
 
     if (selectedProtocol == Protocol.vless ||
         selectedProtocol == Protocol.hysteria) {
-      if (vpnConnectionStatus == VpnStatusConnectionStatus.disconnected ||
-          vpnConnectionStatus == VpnStatusConnectionStatus.disconnecting) {
+      if (vpnConnectionStatus == VpnStatusConnectionStatus.disconnected) {
         connectHysteriaVlessWireGuard(domain);
-      } else {
+      } else if (vpnConnectionStatus == VpnStatusConnectionStatus.connected) {
         disconnectHysteriaVlessWireGuard();
+      } else {
+        log('toggleVpn called but VPN is in transition state: $vpnConnectionStatus');
       }
     }
   }
@@ -1570,23 +1611,27 @@ class VpnProvide with ChangeNotifier {
     }
 
     try {
+      // Always stop/reset any previous duration timer before a new connect.
+      // This prevents duplicated timers and "6 + 6" style jumps after reconnect.
+      await stopConnectionTimer();
+
+      // Reset speeds to 0 at the start of connection
+      downloadSpeed = "0.0 B/s";
+      uploadSpeed = "0.0 B/s";
+      pingSpeed = "0 B/s";
+      
       // Set status to connecting
       isConnecting = true;
       vpnConnectionStatus = VpnStatusConnectionStatus.connecting;
       notifyListeners();
 
+      // Add initial delay to make the connecting state visible
+
       //Get Singbox Status to know if connected or not
       var status = await _singbox.getVPNStatus();
       if (status.toLowerCase() == "started") {
         _singbox.stopVPN();
-        await Future.delayed(Duration(milliseconds: 500));
       }
-
-      // Small delay to ensure any previous disconnection is complete
-      await Future.delayed(Duration(milliseconds: 300));
-
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('connectTime', DateTime.now().toString());
 
       // Fetch the configuration based on the selected protocol
       String? config;
@@ -1613,14 +1658,25 @@ class VpnProvide with ChangeNotifier {
       // }
 
       if (config != null) {
-        singboxService.connect(config);
+        await singboxService.connect(config);
       } else {
         isConnecting = false;
         notifyListeners();
         throw Exception("Failed to retrieve configuration");
       }
 
-      await Future.delayed(Duration(milliseconds: 800));
+      // Keep the "Connecting" state visible a bit longer.
+      // This does not delay the actual VPN start; it only delays our UI/status check.
+      await Future.delayed(const Duration(seconds: 3));
+      
+      // Check if VPN actually started
+      var finalStatus = await _singbox.getVPNStatus();
+      if (finalStatus.toLowerCase() == "started") {
+        vpnConnectionStatus = VpnStatusConnectionStatus.connected;
+        startConnectionTimer();
+        log('VPN Connected');
+      }
+      
       isConnecting = false;
       notifyListeners();
 
@@ -1629,6 +1685,7 @@ class VpnProvide with ChangeNotifier {
       // Status will be updated by the onStatusChanged listener
     } catch (error) {
       log("Error connecting Singbox: $error");
+      isConnecting = false;
       vpnConnectionStatus = VpnStatusConnectionStatus.disconnected;
       notifyListeners();
     }
@@ -1646,40 +1703,95 @@ class VpnProvide with ChangeNotifier {
       vpnConnectionStatus = VpnStatusConnectionStatus.disconnecting;
       notifyListeners();
 
-      // await Future.delayed(Duration(milliseconds: 400));
+      // Stop timer immediately so it can't keep incrementing while disconnecting.
+      await stopConnectionTimer();
 
-      singboxService.disconnect();
+      // Ensure the native stop is actually requested/completed.
+      await singboxService.disconnect();
 
-      // Small delay to ensure clean shutdown
-      await Future.delayed(Duration(milliseconds: 700));
+      // Poll status briefly to confirm stop (some devices take longer than 300ms).
+      // final DateTime deadline = DateTime.now().add(const Duration(seconds: 5));
+      // while (DateTime.now().isBefore(deadline)) {
+      //   final s = (await _singbox.getVPNStatus()).toLowerCase();
+      //   if (s == 'stopped') {
+      //     break;
+      //   }
+      //   await Future.delayed(const Duration(milliseconds: 250));
+      // }
+
+      log('VPN Disconnected');
 
       vpnConnectionStatus = VpnStatusConnectionStatus.disconnected;
       isDisconnecting = false;
       notifyListeners();
-      //   stopMonitor();
 
       log('Singbox disconnected successfully');
     } catch (e) {
       log('Error disconnecting Singbox: $e');
+      isDisconnecting = false;
       vpnConnectionStatus = VpnStatusConnectionStatus.disconnected;
       notifyListeners();
     }
   }
-
+  
   Future<void> logout(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    servers = [];
-    selectedServerIndex = 0;
-    selectedSubServerIndex = 0;
-    bottomBarIndex.value = 0;
-    _googleSignIn.signOut();
-    user = {};
+    try {
+      // FORCE Google logout and disconnect to prevent silent re-authentication
+      try {
+        await _googleSignIn.signOut();
+      } catch (e) {
+        debugPrint("Google signOut error: $e");
+      }
+      // Revoke access completely to ensure user must sign in again
+      try {
+        await _googleSignIn.disconnect();
+      } catch (e) {
+        // disconnect may fail if user wasn't signed in with Google, ignore
+        debugPrint("Google disconnect: $e");
+      }
 
-    Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (context) => WelcomeScreen()));
-    notifyListeners();
+      // Clear local storage - explicitly remove critical keys first
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('token');
+      await prefs.remove('app_account_token');
+      await prefs.remove('isLoggedIn');
+      await prefs.remove('user');
+      await prefs.remove('email');
+      await prefs.remove('password');
+      await prefs.remove('name');
+      // Then clear everything else
+      await prefs.clear();
+      
+      debugPrint("SharedPreferences cleared. Token: ${prefs.getString('token')}, AppAccountToken: ${prefs.getString('app_account_token')}");
+
+      // Reset provider state
+      servers = [];
+      filterServers = [];
+      selectedServerIndex = 0;
+      selectedSubServerIndex = 0;
+      bottomBarIndex.value = 0;
+      user = {};
+      isPremium = false;
+      favoriteServerIds = {};
+      plans = [];
+      isloading = false;
+      vpnConnectionStatus = VpnStatusConnectionStatus.disconnected;
+
+      notifyListeners();
+
+      // Clear navigation stack and go to WelcomeScreen
+      if (context.mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      debugPrint("Logout failed: $e");
+    }
   }
+
+
 
   Future<void> getUser() async {
     log("user function called");
@@ -1693,6 +1805,8 @@ class VpnProvide with ChangeNotifier {
     };
 
     var response = await http.get(Uri.parse(UUtils.user), headers: headers);
+    log("User Response body: ${response.body}");
+    log("User Response status code: ${response.statusCode}");
 
     var data = jsonDecode(response.body);
     if (data['status'] == true || response.statusCode == 200) {
@@ -1841,7 +1955,7 @@ class VpnProvide with ChangeNotifier {
           context,
           Icons.error,
           'Error',
-         "As a guest user u can't add feedback" ?? 'Failed to submit feedback',
+          "As a guest user u can't add feedback",
           Colors.red,
         );
       }
@@ -1963,7 +2077,7 @@ class VpnProvide with ChangeNotifier {
   }
 
   // Stop connection duration timer
-  void stopConnectionTimer() async {
+  Future<void> stopConnectionTimer() async {
     _connectionDurationTimer?.cancel();
     _connectionDurationTimer = null;
     connectedDuration = Duration.zero;

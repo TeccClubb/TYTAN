@@ -3,13 +3,13 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tytan/ReusableWidgets/customSnackBar.dart' show showCustomSnackBar;
 import 'package:tytan/screens/background/map.dart';
 import 'package:tytan/screens/premium/premium.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
 import 'package:tytan/screens/server/server_screen.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:tytan/ReusableWidgets/customSnackBar.dart' show showCustomSnackBar;
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onNavigateToServers;
@@ -103,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       case VpnStatusConnectionStatus.disconnected:
         return _buildDisconnectedView();
       case VpnStatusConnectionStatus.disconnecting:
-        return _buildConnectingView();
+        return _buildDisconnectedView();
       case VpnStatusConnectionStatus.reconnecting:
         return _buildDisconnectedView();
     }

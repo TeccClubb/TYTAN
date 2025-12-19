@@ -162,7 +162,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         iconBackgroundColor: AppColors.primary,
                         children: [
                           _buildProfileSetting(
-                            email:  provider.user.isNotEmpty
+                            email: provider.user.isNotEmpty
                                 ? '${provider.user.first.email}'
                                 : authProvide.guestUser != null
                                 ? '${authProvide.guestUser?.email}'
@@ -179,7 +179,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           SizedBox(height: 10),
                           _buildNavigationSetting(
                             title: 'Premium Plan',
-                            subtitle: 'Expires Dec 2024',
+                            subtitle: provider.user.isEmpty
+                                ? 'Your subscription details'
+                                : authProvide.guestUser != null
+                                ? 'Your subscription details'
+                                : 'Upgrade to premium',
                             icon: Icons.star,
                             iconColor: Colors.amber,
                             onTap: () {
@@ -219,8 +223,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               );
 
                               // Disconnect VPN if connected
-                              if (provider.vpnConnectionStatus == VpnStatusConnectionStatus.connected ||
-                                  provider.vpnConnectionStatus == VpnStatusConnectionStatus.connecting) {
+                              if (provider.vpnConnectionStatus ==
+                                      VpnStatusConnectionStatus.connected ||
+                                  provider.vpnConnectionStatus ==
+                                      VpnStatusConnectionStatus.connecting) {
                                 await provider.toggleVpn();
                                 // Wait for disconnection to complete
                                 await Future.delayed(
@@ -228,45 +234,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 );
                               }
 
-                              // Show success message
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.check_circle,
-                                          color: Colors.white,
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Text(
-                                          'Your account is signed out',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    backgroundColor: Colors.green,
-                                    behavior: SnackBarBehavior.floating,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    margin: const EdgeInsets.all(16),
-                                    duration: const Duration(seconds: 2),
-                                  ),
-                                );
-                              }
-
-                              // Wait a moment for the snackbar to show
-                              await Future.delayed(
-                                const Duration(milliseconds: 500),
-                              );
-
-                              if (context.mounted) {
-                                provider.logout(context);
-                              }
+                              // Perform logout - this will clear data and navigate to WelcomeScreen
+                              await provider.logout(context);
                             },
                             isLastItem: true,
                           ),
@@ -407,7 +376,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required bool value,
     required ValueChanged<bool> onChanged,
     // bool isLastItem = false,
-    }) {
+  }) {
     return Column(
       children: [
         Padding(

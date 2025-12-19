@@ -63,21 +63,18 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
-  flutter_launcher_icons: 
   change_app_package_name: ^1.5.0
+  flutter_launcher_icons: 
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-flutter_icons:
-  android: "ic_launcher"
+flutter_launcher_icons:
+  android: "launcher_icon"
   ios: true
-  image_path: "assets/Tytan.png"
-  adaptive_icon_background: "#000000" # black background
-  macos:
-    generate: true
-    image_path: "assets/Tytan.png"
-
+  image_path: "assets/tytan_logo.png"
+  min_sdk_android: 24 # android min sdk min:16, default 21
+  remove_alpha_ios: true
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/tytan_logo.png"
+  
 # The following section is specific to Flutter packages.
 flutter:
   # The following line ensures that the Material Icons font is

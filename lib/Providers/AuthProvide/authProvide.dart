@@ -25,6 +25,8 @@ class AuthProvide with ChangeNotifier {
   var isloading = false;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  bool _isGoogleSigningIn = false;
+  bool get isGoogleSigningIn => _isGoogleSigningIn;
   GuestUser? _guestUser;
   GuestUser? get guestUser => _guestUser;
   bool _isGuest = false;
@@ -49,7 +51,6 @@ class AuthProvide with ChangeNotifier {
 
       var data = jsonDecode(response.body);
       if (data['status'] == true) {
-        isloading = true;
         notifyListeners();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('user', jsonEncode(data['user']));
@@ -312,11 +313,21 @@ class AuthProvide with ChangeNotifier {
 
   Future<void> googleSignIn(BuildContext context) async {
     try {
-      isloading = true;
-      // Initiate Google Sign-In
+      _isGoogleSigningIn = true;
+      notifyListeners();
+      
+      // Sign out first to ensure the account picker banner always shows
+      try {
+        await _googleSignIn.signOut();
+      } catch (e) {
+        log('Google signOut before signIn: $e');
+      }
+      
+      // Initiate Google Sign-In - will now show account picker
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        isloading = false;
+        _isGoogleSigningIn = false;
+        notifyListeners();
         return; // User canceled the sign-in
       }
 
@@ -358,7 +369,6 @@ class AuthProvide with ChangeNotifier {
       log("Data $data");
 
       if (data['status'] == true) {
-        isloading = true;
         notifyListeners();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('user', jsonEncode(data['user']));
@@ -371,6 +381,11 @@ class AuthProvide with ChangeNotifier {
         await provider.getServersPlease(true);
         await provider.getUser();
         await provider.getPremium(context);
+
+        // Auto-select fastest free server for new free users
+        if (!provider.isPremium && provider.servers.isNotEmpty) {
+          await provider.selectFastestServerByHealth(freeOnly: true);
+        }
 
         showCustomSnackBar(
           context,
@@ -412,7 +427,8 @@ class AuthProvide with ChangeNotifier {
         Colors.red,
       );
     } finally {
-      isloading = false;
+      _isGoogleSigningIn = false;
+      notifyListeners();
     }
   }
 
@@ -425,7 +441,7 @@ class AuthProvide with ChangeNotifier {
 
   String generateRandomPassword({int length = 12}) {
     const chars =
-        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@';
+        'abcdefghijklmnopqrstuvwxyzABCDEFGIJKLMNOPQRSTUVWXYZ0123456789!@';
     final random = Random();
     return List.generate(
       length,

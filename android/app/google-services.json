@@ -1,45 +1,81 @@
 {
   "project_info": {
-    "project_number": "557668953763",
-    "project_id": "tytanvpn-93208",
-    "storage_bucket": "tytanvpn-93208.firebasestorage.app"
+    "project_number": "536467881479",
+    "project_id": "tytanvpn",
+    "storage_bucket": "tytanvpn.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:557668953763:android:94b834d5b61ea88834d916",
+        "mobilesdk_app_id": "1:536467881479:android:3876c8a1026e6f298274a2",
         "android_client_info": {
-          "package_name": "com.tytanvpn.android"
+          "package_name": "com.example.tytan"
         }
       },
       "oauth_client": [
         {
-          "client_id": "557668953763-hdukulesfj292shtv8gis3ql2lidk9r4.apps.googleusercontent.com",
+          "client_id": "536467881479-jblum2uf69bnprca7tflqvhonqp1ap4r.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.tytanvpn.android",
-            "certificate_hash": "d999ee571652e5519ed9467584df2191e988451f"
+            "package_name": "com.example.tytan",
+            "certificate_hash": "ea4a830051fb22496b6421566280b14b14124ac2"
           }
         },
         {
-          "client_id": "557668953763-kf7guu1ujgl7a6d9m2891hrahp7399po.apps.googleusercontent.com",
+          "client_id": "536467881479-tchelmge28utlnesdcamiusfrp181dj0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCzM5DsHdBoDh_eRYais7KiGWemR0gE7-Q"
+          "current_key": "AIzaSyCoW2Kpm7b0zdZtDM0X6IO4WJ6M06wa-Uw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "557668953763-kf7guu1ujgl7a6d9m2891hrahp7399po.apps.googleusercontent.com",
+              "client_id": "536467881479-tchelmge28utlnesdcamiusfrp181dj0.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "557668953763-rdeok26ek9bjoiri7d7dgtgv7c3a3g3e.apps.googleusercontent.com",
+              "client_id": "536467881479-20agv9tq9vv925mjco583bngku71q0is.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.tytan"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:536467881479:android:7f937dea7dc058788274a2",
+        "android_client_info": {
+          "package_name": "com.tytanvpn.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "536467881479-tchelmge28utlnesdcamiusfrp181dj0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoW2Kpm7b0zdZtDM0X6IO4WJ6M06wa-Uw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "536467881479-tchelmge28utlnesdcamiusfrp181dj0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "536467881479-20agv9tq9vv925mjco583bngku71q0is.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "com.example.tytan"
