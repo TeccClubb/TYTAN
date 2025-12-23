@@ -1,6 +1,154 @@
 // ignore_for_file: unnecessary_brace_in_string_interps
 
+import 'dart:io' show Platform;
+
 class SingboxConfig {
+
+  static getVmessConfig({
+    String uuid = '',
+    String serverAddress = '',
+    int serverPort = 443,
+    String path = '',
+    bool isAdblock = false
+  }) {
+    // Use AdGuard DNS if ad blocker is enabled, otherwise use Cloudflare DNS
+    final dnsServer = isAdblock ? "94.140.14.14" : "1.1.1.1";
+    final isWindows = Platform.isWindows;
+    return '''{
+    "log": {
+        "level": "warn"
+    },
+    "dns": {
+        "servers": [
+            {
+                "tag": "dns-remote",
+                "address": "1.1.1.1",
+                "address_resolver": "dns-local",
+                "detour": "proxy"
+            },
+            {
+                "tag": "dns-local",
+                "address": "local",
+                "detour": "direct"
+            }
+        ],
+        "rules": [
+            {
+                "outbound": "any",
+                "server": "dns-local"
+            }
+        ],
+        "final": "dns-remote",
+        "strategy": "ipv4_only"
+    },
+    "inbounds": [
+        {
+            "type": "tun",
+            "tag": "tun-in",
+            "interface_name": "TOTEMVPN",
+            ${isWindows ? '''
+            "address": [
+                "172.19.0.1/30"
+            ],''' : '''
+            "inet4_address": "172.19.0.1/30",
+            "inet6_address": "fdfe:dcba:9876::1/126",'''}
+            "auto_route": true,
+            "endpoint_independent_nat": false,
+            "mtu": 1400,
+            "platform": {
+                "http_proxy": {
+                    "enabled": true,
+                    "server": "127.0.0.1",
+                    "server_port": 2080
+                }
+            },
+            "sniff": true,
+            "stack": "system",
+            "strict_route": false
+        },
+        {
+            "type": "mixed",
+            "tag": "mixed-in",
+            "listen": "127.0.0.1",
+            "listen_port": 2080,
+            "sniff": true,
+            "users": []
+        }
+    ],
+    "outbounds": [
+        {
+            "type": "selector",
+            "tag": "proxy",
+            "outbounds": [
+                "Best Latency"
+            ],
+            "interrupt_exist_connections": true
+        },
+        {
+            "type": "urltest",
+            "tag": "Best Latency",
+            "outbounds": [
+                "VMESS-Server"
+            ]
+        },
+        {
+            "type": "direct",
+            "tag": "direct"
+        },
+        {
+            "type": "block",
+            "tag": "block"
+        },
+        {
+            "type": "dns",
+            "tag": "dns-out"
+        },
+        {
+            "type": "vmess",
+            "tag": "VMESS-Server",
+            "server": "${serverAddress}",
+            "server_port": ${serverPort},
+            "uuid": "${uuid}",
+            "security": "aes-128-gcm",
+            "alter_id": 0,
+            "transport": {
+                "type": "ws",
+                "path": "${path}",
+                "headers": {
+                    "Host": "${serverAddress}"
+                }
+            },
+            "tls": {
+                "enabled": true,
+                "server_name": "${serverAddress}",
+                "insecure": false
+            }
+        }
+    ],
+    "route": {
+        "rules": [
+            {
+                "protocol": "dns",
+                "outbound": "dns-out"
+            },
+            {
+                "ip_is_private": true,
+                "outbound": "direct"
+            }
+        ],
+        "final": "proxy",
+        "auto_detect_interface": true${Platform.isAndroid ? ', "override_android_vpn": true' : ''}
+    },
+    "experimental": {
+        "cache_file": {
+            "enabled": true,
+            "store_rdrc": true
+        }
+    }
+}''';
+  }
+
+
   static getHysteriaConfig({
     String serverAddress = '',
     int serverPort = 443,

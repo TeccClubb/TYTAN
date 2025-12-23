@@ -54,12 +54,24 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
                       //   iconColor: const Color(0xFF8B5CF6),
                       // ),
                       // SizedBox(height: 16),
+                      // _buildProtocolOption(
+                      //   provider: provider,
+                      //   protocol: Protocol.vless,
+                      //   name: provider.getProtocolDisplayName(Protocol.vless),
+                      //   description: 'Enjoy military-grade security with time-tested, stable, and reliable protection.',
+                      //   feature: 'Stable Connection',
+                      //   featureColor: Colors.blue,
+                      //   iconColor: const Color(0xFF0A84FF),
+                      // ),
+
+                      // SizedBox(height: 16),
+
                       _buildProtocolOption(
                         provider: provider,
-                        protocol: Protocol.vless,
-                        name: provider.getProtocolDisplayName(Protocol.vless),
-                        description: 'Enjoy military-grade security with time-tested, stable, and reliable protection.',
-                        feature: 'Stable Connection',
+                        protocol: Protocol.vmess,
+                        name: provider.getProtocolDisplayName(Protocol.vmess),
+                        description: 'Enjoy reliable security with time-tested, stable, and reliable protection.',
+                        feature: 'Fast Connection',
                         featureColor: Colors.blue,
                         iconColor: const Color(0xFF0A84FF),
                       ),

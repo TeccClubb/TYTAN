@@ -15,12 +15,12 @@ import 'package:tytan/screens/welcome/welcome.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tytan/DataModel/serverDataModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tytan/NetworkServices/networkVmess.dart' show VmessService;
 import 'package:flutter_singbox_vpn/flutter_singbox.dart' show FlutterSingbox;
 import 'package:tytan/NetworkServices/networkSingbox.dart' show NetworkSingbox;
-import 'package:tytan/NetworkServices/networkHysteria.dart' show HysteriaService;
 import 'package:tytan/ReusableWidgets/customSnackBar.dart' show showCustomSnackBar;
 
-enum Protocol { vless, hysteria }
+enum Protocol { vless, vmess }
 
 enum VpnStatusConnectionStatus {
   connected,
@@ -36,7 +36,7 @@ class VpnProvide with ChangeNotifier {
   // final Wireguardservices _wireguardService = Wireguardservices();
   // OVPNEngine openVPN = OVPNEngine();
   // final NetworkSingbox _singboxService = NetworkSingbox();
-  var selectedProtocol = Protocol.vless;
+  var selectedProtocol = Protocol.vmess;
   final NetworkSingbox singboxService = NetworkSingbox();
   final FlutterSingbox _singbox = FlutterSingbox();
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -709,7 +709,7 @@ class VpnProvide with ChangeNotifier {
     // If VPN is connected, disconnect first
     if (wasConnected) {
       log("Disconnecting from current server before switching...");
-      await disconnectHysteriaVlessWireGuard();
+      await disconnectVmessVlessWireGuard();
       // Wait for clean disconnection
       await Future.delayed(Duration(milliseconds: 300));
       log("Disconnected from previous server");
@@ -990,10 +990,12 @@ class VpnProvide with ChangeNotifier {
 
   String getProtocolDisplayName(Protocol protocol) {
     switch (protocol) {
-      case Protocol.hysteria:
+      case Protocol.vmess:
         return 'Turbo Mode';
-      case Protocol.vless:
-        return 'Stealth Mode';
+      default: 
+        return 'Turbo Mode';
+      // case Protocol.vless:
+      //   return 'Stealth Mode';
     }
   }
 
@@ -1037,23 +1039,23 @@ class VpnProvide with ChangeNotifier {
     // Map string protocol name to enum
     if (proto != null) {
       switch (proto.replaceFirst('Protocol.', '')) {
-        case 'hysteria':
-          selectedProtocol = Protocol.hysteria;
+        case 'vmess':
+          selectedProtocol = Protocol.vmess;
           break;
         case 'vless':
           selectedProtocol = Protocol.vless;
           break;
         default:
-          selectedProtocol = Protocol.vless;
+          selectedProtocol = Protocol.vmess;
           break;
       }
     } else {
-      selectedProtocol = Protocol.vless;
+      selectedProtocol = Protocol.vmess;
     }
 
     autoSelectProtocol = autoSelect;
     if (autoSelectProtocol) {
-      selectedProtocol = Protocol.vless;
+      selectedProtocol = Protocol.vmess;
     }
 
     log("Restored protocol: ${selectedProtocol}");
@@ -1590,18 +1592,18 @@ class VpnProvide with ChangeNotifier {
     log("Domain: $domain");
 
     if (selectedProtocol == Protocol.vless ||
-        selectedProtocol == Protocol.hysteria) {
+        selectedProtocol == Protocol.vmess) {
       if (vpnConnectionStatus == VpnStatusConnectionStatus.disconnected) {
-        connectHysteriaVlessWireGuard(domain);
+        connectVmessVlessWireGuard(domain);
       } else if (vpnConnectionStatus == VpnStatusConnectionStatus.connected) {
-        disconnectHysteriaVlessWireGuard();
+        disconnectVmessVlessWireGuard();
       } else {
         log('toggleVpn called but VPN is in transition state: $vpnConnectionStatus');
       }
     }
   }
 
-  connectHysteriaVlessWireGuard(String serverUrl) async {
+  connectVmessVlessWireGuard(String serverUrl) async {
     log("Starting Singbox connection for ${selectedProtocol.name}");
 
     // Prevent rapid connection attempts
@@ -1642,13 +1644,12 @@ class VpnProvide with ChangeNotifier {
         config = await VlessService.getVlessConfigJson(
           serverBaseUrl: "http://$serverUrl:5000",
         );
-      } else if (selectedProtocol == Protocol.hysteria) {
-        log("Hello from hysteria");
-        config = await HysteriaService.getHysteriaConfigJson(
-          serverUrl: "http://$serverUrl:5000",
-          serverAddress: serverUrl,
+      } else if (selectedProtocol == Protocol.vmess) {
+        log("Hello from vmess");
+        config = await VmessService.getVmessConfigJson(
+          serverBaseUrl: "http://$serverUrl:5000",
         );
-        log("Hysteria config: $config");
+        log("Vmess config: $config");
       }
 
       // else if (selectedProtocol == Protocol.wireguard) {
@@ -1691,7 +1692,7 @@ class VpnProvide with ChangeNotifier {
     }
   }
 
-  disconnectHysteriaVlessWireGuard() async {
+  disconnectVmessVlessWireGuard() async {
     // Prevent rapid disconnect attempts
     if (vpnConnectionStatus == VpnStatusConnectionStatus.disconnecting) {
       log("Already disconnecting, ignoring duplicate request");

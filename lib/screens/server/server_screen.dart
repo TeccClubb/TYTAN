@@ -667,6 +667,7 @@ class _ServersScreenState extends State<ServersScreen> {
                             color: Colors.white,
                           ),
                         ),
+                        
                         if (isPremium) ...[
                           const SizedBox(width: 6),
                           // Using the crown image instead of an icon
