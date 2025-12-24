@@ -141,7 +141,7 @@ class AccountScreen extends StatelessWidget {
                         children: [
                           Text(
                             provider.user.isNotEmpty
-                                ? '${provider.user.first.email}'
+                                ? '${provider.user.first.name}'
                                 : authProvider.guestUser != null
                                 ? '${authProvider.guestUser?.name}'
                                 : 'loading...',

@@ -1,4 +1,6 @@
 // ignore_for_file: file_names, use_build_context_synchronously, unnecessary_brace_in_string_interps, unused_field
+import 'dart:math' show Random;
+
 import 'package:get/get.dart';
 import 'dart:async' show Timer;
 import 'dart:developer' show log;
@@ -10,15 +12,18 @@ import 'dart:io' show Platform, InternetAddress;
 import 'package:tytan/DataModel/userModel.dart';
 import '../../NetworkServices/networkVless.dart';
 import 'package:tytan/DataModel/plansModel.dart';
+import 'package:tytan/NetworkServices/networkVmessService.dart' show VmessUserConfig;
 import 'dart:convert' show jsonDecode, jsonEncode;
 import 'package:tytan/screens/welcome/welcome.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tytan/DataModel/serverDataModel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tytan/NetworkServices/networkVmess.dart' show VmessService;
+import 'package:tytan/Defaults/singboxConfigs.dart' show SingboxConfig;
 import 'package:flutter_singbox_vpn/flutter_singbox.dart' show FlutterSingbox;
 import 'package:tytan/NetworkServices/networkSingbox.dart' show NetworkSingbox;
-import 'package:tytan/ReusableWidgets/customSnackBar.dart' show showCustomSnackBar;
+import 'package:tytan/ReusableWidgets/customSnackBar.dart'
+    show showCustomSnackBar;
 
 enum Protocol { vless, vmess }
 
@@ -27,12 +32,11 @@ enum VpnStatusConnectionStatus {
   disconnected,
   connecting,
   disconnecting,
-  reconnecting
+  reconnecting,
 }
 
 class VpnProvide with ChangeNotifier {
   var vpnConnectionStatus = VpnStatusConnectionStatus.disconnected;
-
   // final Wireguardservices _wireguardService = Wireguardservices();
   // OVPNEngine openVPN = OVPNEngine();
   // final NetworkSingbox _singboxService = NetworkSingbox();
@@ -96,29 +100,33 @@ class VpnProvide with ChangeNotifier {
   }
 
   init() {
-    _singbox.onTrafficUpdate.listen((event) {
-      log("Traffic update received: $event");
-      
-      String downSpeed = event['formattedDownlinkSpeed']?.toString() ?? "0 B/s";
-      String upSpeed = event['formattedUplinkSpeed']?.toString() ?? "0 B/s";
-      
-      // Ignore invalid speeds (containing negative values)
-      // if (downSpeed.contains('-') || upSpeed.contains('-')) {
-      //   return;
-      // }
-      // if (downSpeed.isEmpty) {
-      //   downSpeed = "0 kB/s";
-      // }
-      // if (upSpeed.isEmpty) {
-      //   upSpeed = "0 kB/s";
-      // }
-      
-      downloadSpeed = downSpeed;
-      uploadSpeed = upSpeed;
-      notifyListeners();
-    }, onError: (error) {
-      log("Traffic update error: $error");
-    });
+    _singbox.onTrafficUpdate.listen(
+      (event) {
+        log("Traffic update received: $event");
+
+        String downSpeed =
+            event['formattedDownlinkSpeed']?.toString() ?? "0 B/s";
+        String upSpeed = event['formattedUplinkSpeed']?.toString() ?? "0 B/s";
+
+        // Ignore invalid speeds (containing negative values)
+        // if (downSpeed.contains('-') || upSpeed.contains('-')) {
+        //   return;
+        // }
+        // if (downSpeed.isEmpty) {
+        //   downSpeed = "0 kB/s";
+        // }
+        // if (upSpeed.isEmpty) {
+        //   upSpeed = "0 kB/s";
+        // }
+
+        downloadSpeed = downSpeed;
+        uploadSpeed = upSpeed;
+        notifyListeners();
+      },
+      onError: (error) {
+        log("Traffic update error: $error");
+      },
+    );
 
     _singbox.onStatusChanged.listen((event) {
       if (event['status'] != null) {
@@ -147,15 +155,17 @@ class VpnProvide with ChangeNotifier {
           log('Singbox VPN status: $status ignored (currently disconnecting)');
           return;
         }
-        
+
         // Ignore stale "started" status if we recently disconnected
-        if (status == 'started' && vpnConnectionStatus == VpnStatusConnectionStatus.disconnected) {
+        if (status == 'started' &&
+            vpnConnectionStatus == VpnStatusConnectionStatus.disconnected) {
           log('Singbox VPN status: started ignored (we are disconnected)');
           return;
         }
-        
+
         // Ignore stale "stopped" status if we recently connected
-        if (status == 'stopped' && vpnConnectionStatus == VpnStatusConnectionStatus.connected) {
+        if (status == 'stopped' &&
+            vpnConnectionStatus == VpnStatusConnectionStatus.connected) {
           log('Singbox VPN status: stopped ignored (we are connected)');
           return;
         }
@@ -185,7 +195,8 @@ class VpnProvide with ChangeNotifier {
             break;
           case 'starting':
             // Only update to connecting if we're not already controlling the animation
-            if (!isConnecting && vpnConnectionStatus != VpnStatusConnectionStatus.connecting) {
+            if (!isConnecting &&
+                vpnConnectionStatus != VpnStatusConnectionStatus.connecting) {
               vpnConnectionStatus = VpnStatusConnectionStatus.connecting;
               log('Connecting to VPN...');
               notifyListeners();
@@ -992,7 +1003,7 @@ class VpnProvide with ChangeNotifier {
     switch (protocol) {
       case Protocol.vmess:
         return 'Turbo Mode';
-      default: 
+      default:
         return 'Turbo Mode';
       // case Protocol.vless:
       //   return 'Stealth Mode';
@@ -1562,6 +1573,72 @@ class VpnProvide with ChangeNotifier {
   //   }
   // }
 
+  Future<VmessUserConfig?> registerVmess(String serverIp) async {
+    try {
+      final headers = {
+        "Accept": "application/json"
+      };
+      final username = user.isNotEmpty
+          ? user.first.name
+          : "guest_${DateTime.now().millisecondsSinceEpoch}_${Random().nextInt(100000)}";
+      log("Username $username");
+      final body = {"ip": serverIp, "username": username};
+      log("Body vmess: $body");
+
+      log("Response vmess: ${UUtils.baseUrl}vpn/register-client");
+      final response = await http.post(
+        Uri.parse(
+          "${UUtils.baseUrl}vpn/register-client",
+        ),
+        headers: headers,
+        body: body
+      );
+
+      log("Response vmess123: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+        
+        log("Parsed body: $responseBody");
+        log("Status check: ${responseBody['status']}");
+        log("Data check: ${responseBody['data'] != null ? 'data exists' : 'data is null'}");
+        
+        if (responseBody['status'] == true &&
+            responseBody['data'] != null) {
+          final data = responseBody['data'];
+          
+          // Create VmessUserConfig from the response data
+          VmessUserConfig config = VmessUserConfig(
+            username: data['username'] ?? '',
+            port: data['port']?.toString() ?? '443',
+            path: data['ws_path'] ?? '',
+            serverIp: data['domain'] ?? data['server_ip'] ?? '',
+            uuid: data['uuid'] ?? '',
+            vmessUrl: data['vmess_url'] ?? '',
+            message: data['message'],
+            success: data['success'],
+          );
+          
+          log("Created VmessUserConfig: ${config.toString()}");
+          return config;
+        } else {
+          log("VMess data not found in response");
+          return null;
+        }
+      } else {
+        log("Request failed with status: ${response.statusCode}");
+        return null;
+      }
+    } catch (error, stackTrace) {
+      log(
+        "Exception during registration on $serverIp",
+        error: error,
+        stackTrace: stackTrace,
+      );
+      return null;
+    }
+  }
+
   toggleVpn() async {
     // Prevent rapid toggle calls while connecting or disconnecting
     if (isConnecting) {
@@ -1581,14 +1658,16 @@ class VpnProvide with ChangeNotifier {
 
     final selServer = servers[selectedServerIndex];
     if (selServer.type.toLowerCase() == 'premium' && !isPremium) {
-      log('User is not premium; cannot connect to premium server: ${selServer.name}');
+      log(
+        'User is not premium; cannot connect to premium server: ${selServer.name}',
+      );
       return;
     }
 
     var domain = servers[selectedServerIndex]
         .subServers[selectedSubServerIndex]
         .vpsServer!
-        .domain;
+        .ipAddress;
     log("Domain: $domain");
 
     if (selectedProtocol == Protocol.vless ||
@@ -1598,7 +1677,9 @@ class VpnProvide with ChangeNotifier {
       } else if (vpnConnectionStatus == VpnStatusConnectionStatus.connected) {
         disconnectVmessVlessWireGuard();
       } else {
-        log('toggleVpn called but VPN is in transition state: $vpnConnectionStatus');
+        log(
+          'toggleVpn called but VPN is in transition state: $vpnConnectionStatus',
+        );
       }
     }
   }
@@ -1621,7 +1702,7 @@ class VpnProvide with ChangeNotifier {
       downloadSpeed = "0.0 B/s";
       uploadSpeed = "0.0 B/s";
       pingSpeed = "0 B/s";
-      
+
       // Set status to connecting
       isConnecting = true;
       vpnConnectionStatus = VpnStatusConnectionStatus.connecting;
@@ -1646,10 +1727,22 @@ class VpnProvide with ChangeNotifier {
         );
       } else if (selectedProtocol == Protocol.vmess) {
         log("Hello from vmess");
-        config = await VmessService.getVmessConfigJson(
-          serverBaseUrl: "http://$serverUrl:5000",
-        );
-        log("Vmess config: $config");
+        VmessUserConfig? vmessConfig = await registerVmess(serverUrl);
+        log("Vmess config received: ${vmessConfig?.toString()}");
+        if (vmessConfig != null) {
+          // Check if ad blocker is enabled
+          bool adBlockerEnabled = await VmessService.isAdblockEnabled();
+          
+          // Generate config directly using the values from VmessUserConfig
+          config = SingboxConfig.getVmessConfig(
+            uuid: vmessConfig.uuid,
+            serverAddress: vmessConfig.serverIp,
+            path: vmessConfig.path,
+            serverPort: int.tryParse(vmessConfig.port) ?? 443,
+            isAdblock: adBlockerEnabled,
+          );
+        }
+        log("Vmess config generated: $config");
       }
 
       // else if (selectedProtocol == Protocol.wireguard) {
@@ -1669,7 +1762,7 @@ class VpnProvide with ChangeNotifier {
       // Keep the "Connecting" state visible a bit longer.
       // This does not delay the actual VPN start; it only delays our UI/status check.
       await Future.delayed(const Duration(seconds: 3));
-      
+
       // Check if VPN actually started
       var finalStatus = await _singbox.getVPNStatus();
       if (finalStatus.toLowerCase() == "started") {
@@ -1677,7 +1770,7 @@ class VpnProvide with ChangeNotifier {
         startConnectionTimer();
         log('VPN Connected');
       }
-      
+
       isConnecting = false;
       notifyListeners();
 
@@ -1734,7 +1827,7 @@ class VpnProvide with ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   Future<void> logout(BuildContext context) async {
     try {
       // FORCE Google logout and disconnect to prevent silent re-authentication
@@ -1762,8 +1855,10 @@ class VpnProvide with ChangeNotifier {
       await prefs.remove('name');
       // Then clear everything else
       await prefs.clear();
-      
-      debugPrint("SharedPreferences cleared. Token: ${prefs.getString('token')}, AppAccountToken: ${prefs.getString('app_account_token')}");
+
+      debugPrint(
+        "SharedPreferences cleared. Token: ${prefs.getString('token')}, AppAccountToken: ${prefs.getString('app_account_token')}",
+      );
 
       // Reset provider state
       servers = [];
@@ -1791,8 +1886,6 @@ class VpnProvide with ChangeNotifier {
       debugPrint("Logout failed: $e");
     }
   }
-
-
 
   Future<void> getUser() async {
     log("user function called");
@@ -1829,7 +1922,7 @@ class VpnProvide with ChangeNotifier {
     final headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': 'Bearer $token'
+      'Authorization': 'Bearer $token',
     };
 
     final response = await http.get(

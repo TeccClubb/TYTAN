@@ -73,6 +73,7 @@ class VlessService {
   /// Uses the user configuration from the server to create a properly formatted config
   static Future<String> generateVlessConfig({String? serverBaseUrl}) async {
     // Fetch or create user configuration
+    log("Server Url $serverBaseUrl");
     VlessUserConfig userConfig = await fetchOrCreateUserConfig(
       serverBaseUrl: serverBaseUrl,
     );
