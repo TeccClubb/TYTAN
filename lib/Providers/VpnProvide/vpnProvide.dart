@@ -12,7 +12,6 @@ import 'dart:io' show Platform, InternetAddress;
 import 'package:tytan/DataModel/userModel.dart';
 import '../../NetworkServices/networkVless.dart';
 import 'package:tytan/DataModel/plansModel.dart';
-import 'package:tytan/NetworkServices/networkVmessService.dart' show VmessUserConfig;
 import 'dart:convert' show jsonDecode, jsonEncode;
 import 'package:tytan/screens/welcome/welcome.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -22,8 +21,8 @@ import 'package:tytan/NetworkServices/networkVmess.dart' show VmessService;
 import 'package:tytan/Defaults/singboxConfigs.dart' show SingboxConfig;
 import 'package:flutter_singbox_vpn/flutter_singbox.dart' show FlutterSingbox;
 import 'package:tytan/NetworkServices/networkSingbox.dart' show NetworkSingbox;
-import 'package:tytan/ReusableWidgets/customSnackBar.dart'
-    show showCustomSnackBar;
+import 'package:tytan/ReusableWidgets/customSnackBar.dart' show showCustomSnackBar;
+import 'package:tytan/NetworkServices/networkVmessService.dart' show VmessUserConfig;
 
 enum Protocol { vless, vmess }
 
@@ -1578,9 +1577,9 @@ class VpnProvide with ChangeNotifier {
       final headers = {
         "Accept": "application/json"
       };
-      final username = user.isNotEmpty
-          ? user.first.name
-          : "guest_${DateTime.now().millisecondsSinceEpoch}_${Random().nextInt(100000)}";
+   // 2. Ensure username is safe (no spaces)
+    final rawName = user.isNotEmpty ? user.first.name : "guest";
+    final username = "${rawName.toLowerCase().replaceAll(' ', '_')}_${Random().nextInt(1000)}";
       log("Username $username");
       final body = {"ip": serverIp, "username": username};
       log("Body vmess: $body");
