@@ -1,5 +1,4 @@
 // ignore_for_file: unnecessary_brace_in_string_interps
-
 import 'dart:io' show Platform;
 
 class SingboxConfig {
@@ -12,7 +11,7 @@ class SingboxConfig {
     bool isAdblock = false
   }) {
     // Use AdGuard DNS if ad blocker is enabled, otherwise use Cloudflare DNS
-    final dnsServer = isAdblock ? "94.140.14.14" : "1.1.1.1";
+    // final dnsServer = isAdblock ? "94.140.14.14" : "1.1.1.1";
     final isWindows = Platform.isWindows;
     return '''{
     "log": {

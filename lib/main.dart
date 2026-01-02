@@ -9,13 +9,11 @@ import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]);
-  
   // Set status bcar and navigation bar colors for a dark theme
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
