@@ -1,11 +1,11 @@
-// ignore_for_file: file_names, use_build_context_synchronously, unnecessary_brace_in_string_interps, unused_field
-import 'dart:math' show Random;
-
+// ignore_for_file: file_names, use_build_context_synchronously, unnecessary_brace_in_string_interps, unused_field, deprecated_member_use
 import 'package:get/get.dart';
+import 'dart:math' show Random;
 import 'dart:async' show Timer;
 import 'dart:developer' show log;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:http/http.dart' as http;
 import 'package:tytan/Defaults/utils.dart';
 import 'dart:io' show Platform, InternetAddress;
@@ -547,7 +547,7 @@ class VpnProvide with ChangeNotifier {
                 // Title
                 Text(
                   'Enable Kill Switch',
-                  style: TextStyle(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Colors.deepOrange,
@@ -597,7 +597,7 @@ class VpnProvide with ChangeNotifier {
                     Expanded(
                       child: Text(
                         'This will block all internet when VPN is disconnected',
-                        style: TextStyle(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           color: Color(0xFF6B7280),
                           height: 1.4,
@@ -625,7 +625,7 @@ class VpnProvide with ChangeNotifier {
                     ),
                     child: Text(
                       'Got it',
-                      style: TextStyle(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
@@ -656,7 +656,7 @@ class VpnProvide with ChangeNotifier {
           child: Center(
             child: Text(
               number,
-              style: TextStyle(
+              style: GoogleFonts.plusJakartaSans(
                 color: Colors.white,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
@@ -668,7 +668,7 @@ class VpnProvide with ChangeNotifier {
         Expanded(
           child: Text(
             text,
-            style: TextStyle(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               color: Color(0xFF374151),
               height: 1.4,
@@ -1855,9 +1855,7 @@ class VpnProvide with ChangeNotifier {
       // Then clear everything else
       await prefs.clear();
 
-      debugPrint(
-        "SharedPreferences cleared. Token: ${prefs.getString('token')}, AppAccountToken: ${prefs.getString('app_account_token')}",
-      );
+      debugPrint("SharedPreferences cleared. Token: ${prefs.getString('token')}, AppAccountToken: ${prefs.getString('app_account_token')}");
 
       // Reset provider state
       servers = [];
@@ -2015,7 +2013,7 @@ class VpnProvide with ChangeNotifier {
       var body = {
         'email': emailController.text,
         'message': messageController.text,
-        'subject': subjectController.text,
+        'subject': subjectController.text
       };
 
       log('Submitting feedback with email: ${emailController.text}');
@@ -2040,7 +2038,7 @@ class VpnProvide with ChangeNotifier {
           Icons.check,
           'Success',
           'Feedback submitted successfully',
-          Colors.green,
+          Colors.green
         );
       } else {
         log('Error submitting feedback: ${data['message']}');
@@ -2049,7 +2047,7 @@ class VpnProvide with ChangeNotifier {
           Icons.error,
           'Error',
           "As a guest user u can't add feedback",
-          Colors.red,
+          Colors.red
         );
       }
     } catch (error) {

@@ -1,6 +1,5 @@
 
 // ignore_for_file: use_super_parameters
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
-import 'package:tytan/screens/background/background.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
+import 'package:tytan/screens/background/background.dart';
+import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 
 class PremiumScreen extends StatefulWidget {
   const PremiumScreen({Key? key}) : super(key: key);
@@ -12,12 +12,22 @@ class PremiumScreen extends StatefulWidget {
   State<PremiumScreen> createState() => _PremiumScreenState();
 }
 
-class _PremiumScreenState extends State<PremiumScreen>
-    with SingleTickerProviderStateMixin {
+class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  late Animation<double> _animation;
   bool _showPlanSelection = false;
-  String _selectedPlan = 'yearly'; // Default to yearly plan (best value)
+  String _selectedPlan = '';
+
+  // The Data for your Comparison Table
+  final List<Map<String, dynamic>> _comparisonData = [
+    {"feature": "Stable connection", "desc": "(No drops during use)", "free": true, "premium": true},
+    {"feature": "No speed limits", "desc": "(Maximum network speed)", "free": false, "premium": true},
+    {"feature": "Global servers", "desc": "(Access all countries)", "free": false, "premium": true},
+    {"feature": "Secure encryption", "desc": "(Data is protected)", "free": true, "premium": true},
+    {"feature": "Kill Switch", "desc": "(Internet block on drop)", "free": false, "premium": true},
+    {"feature": "DNS leak protection", "desc": "(ISP cannot see requests)", "free": false, "premium": true},
+    {"feature": "App-level control", "desc": "(Choose apps for VPN)", "free": false, "premium": true},
+    {"feature": "Ad & tracker block", "desc": "(Less ads & traffic)", "free": false, "premium": true},
+  ];
 
   @override
   void initState() {
@@ -26,15 +36,8 @@ class _PremiumScreenState extends State<PremiumScreen>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _animation = CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    );
-
-    // Load plans from VPN provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = Provider.of<VpnProvide>(context, listen: false);
-      provider.getPlans();
+      Provider.of<VpnProvide>(context, listen: false).getPlans();
     });
   }
 
@@ -46,13 +49,8 @@ class _PremiumScreenState extends State<PremiumScreen>
 
   void _toggleView() {
     setState(() {
-      if (_showPlanSelection) {
-        _showPlanSelection = false;
-        _animationController.reverse();
-      } else {
-        _showPlanSelection = true;
-        _animationController.forward();
-      }
+      _showPlanSelection = !_showPlanSelection;
+      _showPlanSelection ? _animationController.forward() : _animationController.reverse();
     });
   }
 
@@ -63,39 +61,17 @@ class _PremiumScreenState extends State<PremiumScreen>
         child: SafeArea(
           child: Column(
             children: [
-              AnimatedBuilder(
-                animation: _animation,
-                builder: (context, child) {
-                  return _buildHeader(
-                    context,
-                    _showPlanSelection ? 'Choose Your Plan' : 'Premium',
-                  );
-                },
-              ),
+              _buildHeader(context, _showPlanSelection ? 'Choose Your Plan' : 'Premium Access'),
               const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
               Expanded(
-                child: Stack(
-                  children: [
-                    // Features View (First Screen)
-                    AnimatedOpacity(
-                      opacity: _showPlanSelection ? 0.0 : 1.0,
-                      duration: const Duration(milliseconds: 300),
-                      child: IgnorePointer(
-                        ignoring: _showPlanSelection,
-                        child: _buildFeaturesView(),
-                      ),
-                    ),
-
-                    // Plan Selection View (Second Screen)
-                    AnimatedOpacity(
-                      opacity: _showPlanSelection ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 300),
-                      child: IgnorePointer(
-                        ignoring: !_showPlanSelection,
-                        child: _buildPlanSelectionView(),
-                      ),
-                    ),
-                  ],
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      if (!_showPlanSelection) _buildComparisonView() else _buildPlanSelectionView(),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -105,477 +81,158 @@ class _PremiumScreenState extends State<PremiumScreen>
     );
   }
 
+  // --- HEADER ---
   Widget _buildHeader(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
-            onTap: () {
-              if (_showPlanSelection) {
-                _toggleView(); // Go back to features view
-              } else {
-                Navigator.pop(context); // Exit the screen
-              }
-            },
+            onTap: () => _showPlanSelection ? _toggleView() : Navigator.pop(context),
             child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color(0xFF2A2A2A),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Colors.white,
-                size: 18,
-              ),
+              width: 40, height: 40,
+              decoration: BoxDecoration(color: const Color(0xFF2A2A2A), shape: BoxShape.circle),
+              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 18),
             ),
           ),
-          Expanded(
-            child: Center(
-              child: Text(
-                title,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 40), // Balance the header
+          Text(title, style: GoogleFonts.plusJakartaSans(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+          const SizedBox(width: 40),
         ],
       ),
     );
   }
 
-  // FIRST SCREEN - FEATURES VIEW
-  Widget _buildFeaturesView() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            _buildLogo(),
-            const SizedBox(height: 20),
-            _buildTitle(),
-            const SizedBox(height: 30),
-            _buildFeatureItem(
-              icon: Icons.all_inclusive,
-              title: 'Unlimited Bandwidth',
-              description: 'Stream, download, and browse without limits',
-            ),
-            const SizedBox(height: 15),
-            _buildFeatureItem(
-              icon: Icons.flash_on,
-              title: 'Ultra-Fast Speeds',
-              description: '10× faster than free tier connections',
-            ),
-            const SizedBox(height: 15),
-            _buildFeatureItem(
-              icon: Icons.shield_outlined,
-              title: 'Advanced Security',
-              description: 'Military-grade encryption & kill switch',
-            ),
-            const SizedBox(height: 15),
-            _buildFeatureItem(
-              icon: Icons.public,
-              title: 'Global Server Access',
-              description: 'Connect to 80+ countries worldwide',
-            ),
-            const SizedBox(height: 40),
-            _buildContinueButton(),
-            const SizedBox(height: 20),
-          ],
+  // --- SECTION 1: COMPARISON VIEW (Marketing Hero) ---
+  Widget _buildComparisonView() {
+    return Column(
+      children: [
+        Text(
+          'Go Premium for Full Access',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.plusJakartaSans(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
         ),
-      ),
-    );
-  }
-
-  Widget _buildLogo() {
-    return Container(
-      width: 120,
-      height: 120,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/Tytan Logo.png'),
-          fit: BoxFit.contain,
+        const SizedBox(height: 25),
+        
+        // The Comparison Table
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A1A1A),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFF2A2A2A)),
+          ),
+          child: Column(
+            children: [
+              _buildTableHead(),
+              const Divider(color: Color(0xFF2A2A2A), height: 30),
+              ..._comparisonData.map((item) => _buildTableRow(item)),
+            ],
+          ),
         ),
-      ),
+        
+        const SizedBox(height: 25),
+        
+        // Marketing Philosophy Text
+        Text(
+          "We provide 5 GB of traffic for free every month, with no speed or feature limitations. Once the limit is reached, VPN access is paused.\n\nTo continue using the service, upgrade to Premium with unlimited traffic.",
+          textAlign: TextAlign.center,
+          style: GoogleFonts.plusJakartaSans(fontSize: 14, color: Colors.grey, height: 1.5),
+        ),
+        
+        const SizedBox(height: 30),
+        _buildActionButton("Upgrade to Premium", _toggleView),
+        const SizedBox(height: 20),
+      ],
     );
   }
 
-  Widget _buildTitle() {
-    return Text(
-      'Unlock Premium',
-      style: GoogleFonts.plusJakartaSans(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-      ),
+  Widget _buildTableHead() {
+    return Row(
+      children: [
+        const Expanded(flex: 3, child: SizedBox()),
+        Expanded(flex: 1, child: Text("Free", textAlign: TextAlign.center, style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontWeight: FontWeight.bold))),
+        Expanded(flex: 1, child: Text("Premium", textAlign: TextAlign.center, style: GoogleFonts.plusJakartaSans(color: AppColors.primary, fontWeight: FontWeight.bold))),
+      ],
     );
   }
 
-  Widget _buildFeatureItem({
-    required IconData icon,
-    required String title,
-    required String description,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: const Color(0xFF2A2A2A)),
-      ),
+  Widget _buildTableRow(Map<String, dynamic> item) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: Colors.white, size: 24),
-          ),
-          const SizedBox(width: 16),
           Expanded(
+            flex: 3,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
-                ),
+                Text(item['feature'], style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
+                Text(item['desc'], style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 11)),
               ],
             ),
           ),
+          Expanded(flex: 1, child: Icon(item['free'] ? Icons.check_circle : Icons.cancel, color: item['free'] ? Colors.green : Colors.grey[800], size: 20)),
+          Expanded(flex: 1, child: Icon(Icons.check_circle, color: AppColors.primary, size: 20)),
         ],
       ),
     );
   }
 
-  Widget _buildContinueButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 54,
-      child: ElevatedButton(
-        onPressed: _toggleView,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Text(
-          'Continue',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-
-  // SECOND SCREEN - PLAN SELECTION VIEW
+  // --- SECTION 2: PLAN SELECTION VIEW ---
   Widget _buildPlanSelectionView() {
     return Consumer<VpnProvide>(
       builder: (context, provider, child) {
-        // Show loading indicator while plans are being fetched
-        if (provider.plans.isEmpty) {
-          return Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
-          );
-        }
-
-        return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                const SizedBox(height: 20),
-                // Display plans from VPN provider
-                ...provider.plans.map((plan) {
-                  // Calculate monthly price
-                  final monthlyPrice = plan.discountPrice > 0
-                      ? plan.discountPrice
-                      : plan.originalPrice;
-
-                  // Calculate savings percentage
-                  final savingsPercent = plan.originalPrice > 0
-                      ? ((plan.originalPrice - plan.discountPrice) /
-                                plan.originalPrice *
-                                100)
-                            .round()
-                      : 0;
-
-                  // Determine icon based on interval
-                  IconData planIcon;
-                  if (plan.invoiceInterval.toLowerCase().contains('month') &&
-                      plan.invoicePeriod == 1) {
-                    planIcon = Icons.calendar_month;
-                  } else if (plan.invoiceInterval.toLowerCase().contains(
-                    'year',
-                  )) {
-                    planIcon = Icons.star;
-                  } else {
-                    planIcon = Icons.access_time;
-                  }
-
-                  // Build subtitle with savings info
-                  String subtitle = plan.description;
-                  if (savingsPercent > 0 && plan.isBestDeal) {
-                    subtitle = 'Best value • Save $savingsPercent%';
-                  } else if (savingsPercent > 0) {
-                    subtitle = 'Save $savingsPercent%';
-                  }
-
-                  // Build billing info
-                  String billingInfo =
-                      'Billed \$${plan.originalPrice.toStringAsFixed(2)} ${plan.invoiceInterval}';
-                  if (plan.invoicePeriod > 1) {
-                    billingInfo =
-                        'Billed \$${plan.originalPrice.toStringAsFixed(2)} every ${plan.invoicePeriod} ${plan.invoiceInterval}s';
-                  }
-                  if (plan.trialPeriod > 0) {
-                    billingInfo +=
-                        ' • ${plan.trialPeriod} ${plan.trialInterval} free trial';
-                  }
-
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 15),
-                    child: _buildPlanOption(
-                      planId: plan.slug,
-                      title: plan.name,
-                      subtitle: subtitle,
-                      price: '\$${monthlyPrice.toStringAsFixed(2)}',
-                      billingInfo: billingInfo,
-                      icon: planIcon,
-                      isPopular: plan.isBestDeal,
-                    ),
-                  );
-                }).toList(),
-                const SizedBox(height: 40),
-                _buildStartTrialButton(),
-                const SizedBox(height: 20),
-                _buildTrialInfo(),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
+        if (provider.plans.isEmpty) return const Center(child: CircularProgressIndicator());
+        return Column(
+          children: [
+            ...provider.plans.map((plan) => _buildPlanCard(plan)),
+            const SizedBox(height: 30),
+            _buildActionButton("Start Premium Trial", () {}),
+            const SizedBox(height: 20),
+          ],
         );
       },
     );
   }
 
-  Widget _buildPlanOption({
-    required String planId,
-    required String title,
-    required String subtitle,
-    required String price,
-    required String billingInfo,
-    required IconData icon,
-    required bool isPopular,
-  }) {
-    final bool isSelected = _selectedPlan == planId;
-
+  Widget _buildPlanCard(dynamic plan) {
+    bool isSelected = _selectedPlan == plan.slug;
     return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedPlan = planId;
-        });
-      },
+      onTap: () => setState(() => _selectedPlan = plan.slug),
       child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: const Color(0xFF1A1A1A),
           borderRadius: BorderRadius.circular(15),
-          border: isSelected
-              ? Border.all(color: AppColors.primary, width: 1.5)
-              : Border.all(color: const Color(0xFF2A2A2A)),
+          border: Border.all(color: isSelected ? AppColors.primary : const Color(0xFF2A2A2A), width: 2),
         ),
-        child: Column(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Popular badge if applicable
-            if (isPopular)
-              Align(
-                alignment: Alignment.topRight,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Text(
-                    'Most Popular',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-                RichText(
-                  text: TextSpan(
-                    text: price,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: '\n/month',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                  textAlign: TextAlign.right,
-                ),
+                Text(plan.name, style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+                Text(plan.invoiceInterval, style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 14)),
               ],
             ),
-
-            const SizedBox(height: 16),
-
-            // Billing info
-            Row(
-              children: [
-                Icon(
-                  icon,
-                  size: 16,
-                  color: isPopular ? Colors.amber : AppColors.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  billingInfo,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
+            Text('\$${plan.discountPrice.toStringAsFixed(2)}', style: GoogleFonts.plusJakartaSans(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStartTrialButton() {
+  Widget _buildActionButton(String text, VoidCallback onPressed) {
     return SizedBox(
       width: double.infinity,
-      height: 54,
+      height: 56,
       child: ElevatedButton(
-        onPressed: () {
-          // Start premium trial with selected plan
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Starting premium trial with ${_selectedPlan.toUpperCase()} plan',
-                style: GoogleFonts.plusJakartaSans(),
-              ),
-              backgroundColor: AppColors.primary,
-            ),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Text(
-          'Start Premium Trial',
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTrialInfo() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildInfoItem('7-day\nfree trial'),
-        _buildInfoDot(),
-        _buildInfoItem('Cancel\nanytime'),
-        _buildInfoDot(),
-        _buildInfoItem('No\ncommitments'),
-      ],
-    );
-  }
-
-  Widget _buildInfoItem(String text) {
-    return Text(
-      text,
-      textAlign: TextAlign.start,
-      style: GoogleFonts.plusJakartaSans(fontSize: 13, color: Colors.grey),
-    );
-  }
-
-  Widget _buildInfoDot() {
-    return Container(
-      width: 4,
-      height: 4,
-      decoration: const BoxDecoration(
-        color: Colors.grey,
-        shape: BoxShape.circle,
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+        child: Text(text, style: GoogleFonts.plusJakartaSans(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
       ),
     );
   }

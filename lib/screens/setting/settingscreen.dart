@@ -4,12 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tytan/screens/premium/premium.dart';
 import 'package:tytan/screens/setting/Account.dart';
-import 'package:tytan/screens/setting/feedback.dart';
 import 'package:tytan/screens/setting/protocol.dart';
 import 'package:tytan/screens/tunneling/tunneling.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
 import 'package:tytan/screens/background/background.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
+import 'package:tytan/screens/setting/contactus.dart' show ContactSupport;
 import 'package:tytan/Providers/AuthProvide/authProvide.dart' show AuthProvide;
 
 class SettingsScreen extends StatefulWidget {
@@ -95,7 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                       // Security Section
                       _buildSectionCard(
-                        title: 'Security',
+                        title: 'Security & Privacy',
                         image: 'assets/sheild.png',
                         iconBackgroundColor: AppColors.primary,
                         children: [
@@ -157,7 +157,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                       // Account Section
                       _buildSectionCard(
-                        title: 'Account',
+                        title: 'Account & System',
                         image: 'assets/person.png',
                         iconBackgroundColor: AppColors.primary,
                         children: [
@@ -197,7 +197,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           SizedBox(height: 10),
                           _buildNavigationSetting(
-                            title: 'Feedback',
+                            title: 'Contact Support',
                             subtitle: 'Help us improve our app',
                             icon: Icons.feedback_outlined,
                             iconColor: AppColors.primary,
@@ -205,7 +205,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const FeedbackScreen(),
+                                  builder: (context) => const ContactSupport(),
                                 ),
                               );
                             },

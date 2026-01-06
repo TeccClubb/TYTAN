@@ -3,8 +3,6 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart'
-    show SharedPreferences;
 import 'package:tytan/screens/premium/premium.dart';
 import 'package:tytan/DataModel/serverDataModel.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
@@ -20,7 +18,7 @@ class ServersScreen extends StatefulWidget {
   State<ServersScreen> createState() => _ServersScreenState();
 }
 
-class _ServersScreenState extends State<ServersScreen> {
+class _ServersScreenState extends State<ServersScreen>{
   final TextEditingController _searchController = TextEditingController();
   String _selectedRegion = 'All';
 
@@ -46,8 +44,6 @@ class _ServersScreenState extends State<ServersScreen> {
               _buildHeader(),
               const SizedBox(height: 20),
               _buildSearchBar(provider),
-              const SizedBox(height: 20),
-              _buildQuickAction(provider),
               const SizedBox(height: 20),
               _buildRegionFilter(),
               const SizedBox(height: 20),
@@ -80,8 +76,7 @@ class _ServersScreenState extends State<ServersScreen> {
         decoration: BoxDecoration(
           color: const Color(0xFF1E1E1E),
           border: Border.all(color: const Color(0xFF2A2A2A)),
-
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10)
         ),
         child: TextField(
           controller: _searchController,
@@ -106,9 +101,9 @@ class _ServersScreenState extends State<ServersScreen> {
   }
 
   Widget _buildRegionFilter() {
-    final regions = ['All', 'Free', 'Premium'];
+    final regions = ['All', 'Free', 'Premium', 'Favourites'];
 
-    return Padding(
+    return Padding( 
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -155,327 +150,327 @@ class _ServersScreenState extends State<ServersScreen> {
     );
   }
 
-  Widget _buildQuickAction(VpnProvide provider) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Quick Actions',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 12),
+  // Widget _buildQuickAction(VpnProvide provider) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 20),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           'Quick Actions',
+  //           style: GoogleFonts.plusJakartaSans(
+  //             fontSize: 18,
+  //             fontWeight: FontWeight.bold,
+  //             color: Colors.white,
+  //           ),
+  //         ),
+  //         const SizedBox(height: 12),
 
-          // Fastest Server (Free servers only)
-          GestureDetector(
-            onTap: () async {
-              log('Fastest Server button tapped');
+  //         // Fastest Server (Free servers only)
+  //         GestureDetector(
+  //           onTap: () async {
+  //             log('Fastest Server button tapped');
 
-              if (provider.servers.isEmpty) {
-                log('No servers available');
-                return;
-              }
+  //             if (provider.servers.isEmpty) {
+  //               log('No servers available');
+  //               return;
+  //             }
 
-              log('Total servers available: ${provider.servers.length}');
+  //             log('Total servers available: ${provider.servers.length}');
 
-              // Filter only free servers
-              final freeServers = provider.servers
-                  .where((server) => server.type.toLowerCase() != 'premium')
-                  .toList();
+  //             // Filter only free servers
+  //             final freeServers = provider.servers
+  //                 .where((server) => server.type.toLowerCase() != 'premium')
+  //                 .toList();
 
-              log('Free servers found: ${freeServers.length}');
+  //             log('Free servers found: ${freeServers.length}');
 
-              if (freeServers.isEmpty) {
-                log('No free servers available - showing error message');
-                _showNoServersAvailableMessage('No free servers available');
-                return;
-              }
+  //             if (freeServers.isEmpty) {
+  //               log('No free servers available - showing error message');
+  //               _showNoServersAvailableMessage('No free servers available');
+  //               return;
+  //             }
 
-              // Get last rotation index from SharedPreferences
-              final prefs = await SharedPreferences.getInstance();
-              int lastRotationIndex =
-                  prefs.getInt('fastest_server_rotation_index') ?? -1;
+  //             // Get last rotation index from SharedPreferences
+  //             final prefs = await SharedPreferences.getInstance();
+  //             int lastRotationIndex =
+  //                 prefs.getInt('fastest_server_rotation_index') ?? -1;
 
-              log('Last rotation index from storage: $lastRotationIndex');
+  //             log('Last rotation index from storage: $lastRotationIndex');
 
-              // Cycle through free servers - select next one each time
-              int nextIndex = 0;
+  //             // Cycle through free servers - select next one each time
+  //             int nextIndex = 0;
 
-              if (lastRotationIndex >= 0 &&
-                  lastRotationIndex < freeServers.length) {
-                // Select next server in rotation
-                nextIndex = (lastRotationIndex + 1) % freeServers.length;
-                log('Cycling to next free server at index: $nextIndex');
-              } else {
-                log('First time selection or invalid index, starting at 0');
-                nextIndex = 0;
-              }
+  //             if (lastRotationIndex >= 0 &&
+  //                 lastRotationIndex < freeServers.length) {
+  //               // Select next server in rotation
+  //               nextIndex = (lastRotationIndex + 1) % freeServers.length;
+  //               log('Cycling to next free server at index: $nextIndex');
+  //             } else {
+  //               log('First time selection or invalid index, starting at 0');
+  //               nextIndex = 0;
+  //             }
 
-              // Save the new rotation index
-              await prefs.setInt('fastest_server_rotation_index', nextIndex);
-              log('Saved new rotation index: $nextIndex');
+  //             // Save the new rotation index
+  //             await prefs.setInt('fastest_server_rotation_index', nextIndex);
+  //             log('Saved new rotation index: $nextIndex');
 
-              final selectedFreeServer = freeServers[nextIndex];
+  //             final selectedFreeServer = freeServers[nextIndex];
 
-              log(
-                'Selected free server: ${selectedFreeServer.name} (ID: ${selectedFreeServer.id}, Type: ${selectedFreeServer.type}, Rotation Index: $nextIndex)',
-              );
+  //             log(
+  //               'Selected free server: ${selectedFreeServer.name} (ID: ${selectedFreeServer.id}, Type: ${selectedFreeServer.type}, Rotation Index: $nextIndex)',
+  //             );
 
-              // Find the index in the main servers list
-              final mainIndex = provider.servers.indexWhere(
-                (s) => s.id == selectedFreeServer.id,
-              );
+  //             // Find the index in the main servers list
+  //             final mainIndex = provider.servers.indexWhere(
+  //               (s) => s.id == selectedFreeServer.id,
+  //             );
 
-              log('Main server index: $mainIndex');
+  //             log('Main server index: $mainIndex');
 
-              if (mainIndex != -1) {
-                provider.setSelectedServerIndex(mainIndex);
-                log(
-                  'Server selection updated in provider: index=$mainIndex, server=${selectedFreeServer.name}',
-                );
-                _showServerSelectedMessage(
-                  "${selectedFreeServer.name} (Free Server)",
-                );
+  //             if (mainIndex != -1) {
+  //               provider.setSelectedServerIndex(mainIndex);
+  //               log(
+  //                 'Server selection updated in provider: index=$mainIndex, server=${selectedFreeServer.name}',
+  //               );
+  //               _showServerSelectedMessage(
+  //                 "${selectedFreeServer.name} (Free Server)",
+  //               );
 
-                // If VPN is connected, disconnect first
-                if (provider.vpnConnectionStatus ==
-                    VpnStatusConnectionStatus.connected) {
-                  log(
-                    'VPN is connected, disconnecting before switching to fastest server...',
-                  );
-                  await provider
-                      .toggleVpn(); // This will disconnect and reset timer
-                  // Wait for disconnection to complete
-                  await Future.delayed(const Duration(seconds: 2));
-                  log('VPN disconnected, timer reset to 0');
-                }
+  //               // If VPN is connected, disconnect first
+  //               if (provider.vpnConnectionStatus ==
+  //                   VpnStatusConnectionStatus.connected) {
+  //                 log(
+  //                   'VPN is connected, disconnecting before switching to fastest server...',
+  //                 );
+  //                 await provider
+  //                     .toggleVpn(); // This will disconnect and reset timer
+  //                 // Wait for disconnection to complete
+  //                 await Future.delayed(const Duration(seconds: 2));
+  //                 log('VPN disconnected, timer reset to 0');
+  //               }
 
-                // Switch to home screen (either via callback or pop)
-                if (widget.onServerSelected != null) {
-                  log('Using callback to switch to home tab');
-                  // If callback exists (bottom nav), use it to switch tabs
-                  widget.onServerSelected!();
-                } else {
-                  log('Using Navigator.pop() to return to previous screen');
-                  // Otherwise, pop back to previous screen
-                  if (mounted && Navigator.of(context).canPop()) {
-                    Navigator.of(context).pop();
-                  }
-                }
+  //               // Switch to home screen (either via callback or pop)
+  //               if (widget.onServerSelected != null) {
+  //                 log('Using callback to switch to home tab');
+  //                 // If callback exists (bottom nav), use it to switch tabs
+  //                 widget.onServerSelected!();
+  //               } else {
+  //                 log('Using Navigator.pop() to return to previous screen');
+  //                 // Otherwise, pop back to previous screen
+  //                 if (mounted && Navigator.of(context).canPop()) {
+  //                   Navigator.of(context).pop();
+  //                 }
+  //               }
 
-                log('Waiting 500ms before auto-connect');
-                // Wait a brief moment for navigation, then auto-connect
-                await Future.delayed(const Duration(milliseconds: 500));
+  //               log('Waiting 500ms before auto-connect');
+  //               // Wait a brief moment for navigation, then auto-connect
+  //               await Future.delayed(const Duration(milliseconds: 500));
 
-                log('VPN status: ${provider.vpnConnectionStatus}');
-                // Auto-connect to the new server
-                if (provider.vpnConnectionStatus ==
-                    VpnStatusConnectionStatus.disconnected) {
-                  log('Starting auto-connect to ${selectedFreeServer.name}');
-                  await provider.toggleVpn();
-                  log('Auto-connect initiated');
-                } else {
-                  log('VPN still not disconnected - retrying');
-                }
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E1E1E),
-                border: Border.all(color: const Color(0xFF2A2A2A)),
+  //               log('VPN status: ${provider.vpnConnectionStatus}');
+  //               // Auto-connect to the new server
+  //               if (provider.vpnConnectionStatus ==
+  //                   VpnStatusConnectionStatus.disconnected) {
+  //                 log('Starting auto-connect to ${selectedFreeServer.name}');
+  //                 await provider.toggleVpn();
+  //                 log('Auto-connect initiated');
+  //               } else {
+  //                 log('VPN still not disconnected - retrying');
+  //               }
+  //             }
+  //           },
+  //           child: Container(
+  //             padding: const EdgeInsets.all(12),
+  //             decoration: BoxDecoration(
+  //               color: const Color(0xFF1E1E1E),
+  //               border: Border.all(color: const Color(0xFF2A2A2A)),
 
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      color: Colors.green,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.flash_on,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Fastest Server',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          'Connect to the best free server',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+  //               borderRadius: BorderRadius.circular(12),
+  //             ),
+  //             child: Row(
+  //               children: [
+  //                 Container(
+  //                   width: 40,
+  //                   height: 40,
+  //                   decoration: const BoxDecoration(
+  //                     color: Colors.green,
+  //                     shape: BoxShape.circle,
+  //                   ),
+  //                   child: const Icon(
+  //                     Icons.flash_on,
+  //                     color: Colors.white,
+  //                     size: 20,
+  //                   ),
+  //                 ),
+  //                 const SizedBox(width: 12),
+  //                 Expanded(
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       Text(
+  //                         'Fastest Server',
+  //                         style: GoogleFonts.plusJakartaSans(
+  //                           fontSize: 14,
+  //                           fontWeight: FontWeight.w600,
+  //                           color: Colors.white,
+  //                         ),
+  //                       ),
+  //                       Text(
+  //                         'Connect to the best free server',
+  //                         style: GoogleFonts.plusJakartaSans(
+  //                           fontSize: 12,
+  //                           color: Colors.grey,
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
 
-          const SizedBox(height: 10),
+  //         const SizedBox(height: 10),
 
-          // Random Server (Premium servers only if user is premium, otherwise show upgrade message)
-          GestureDetector(
-            onTap: () async {
-              if (provider.servers.isEmpty) return;
+  //         // Random Server (Premium servers only if user is premium, otherwise show upgrade message)
+  //         GestureDetector(
+  //           onTap: () async {
+  //             if (provider.servers.isEmpty) return;
 
-              // Check if user is premium
-              if (!provider.isPremium) {
-                _showPremiumRequiredForRandomMessage();
-                return;
-              }
+  //             // Check if user is premium
+  //             if (!provider.isPremium) {
+  //               _showPremiumRequiredForRandomMessage();
+  //               return;
+  //             }
 
-              // Filter only premium servers
-              final premiumServers = provider.servers
-                  .where((server) => server.type.toLowerCase() == 'premium')
-                  .toList();
+  //             // Filter only premium servers
+  //             final premiumServers = provider.servers
+  //                 .where((server) => server.type.toLowerCase() == 'premium')
+  //                 .toList();
 
-              if (premiumServers.isEmpty) {
-                _showNoServersAvailableMessage('No premium servers available');
-                return;
-              }
+  //             if (premiumServers.isEmpty) {
+  //               _showNoServersAvailableMessage('No premium servers available');
+  //               return;
+  //             }
 
-              // Select random premium server
-              final randomIndex =
-                  DateTime.now().millisecond % premiumServers.length;
-              final randomServer = premiumServers[randomIndex];
+  //             // Select random premium server
+  //             final randomIndex =
+  //                 DateTime.now().millisecond % premiumServers.length;
+  //             final randomServer = premiumServers[randomIndex];
 
-              // Find the index in the main servers list
-              final mainIndex = provider.servers.indexWhere(
-                (s) => s.id == randomServer.id,
-              );
+  //             // Find the index in the main servers list
+  //             final mainIndex = provider.servers.indexWhere(
+  //               (s) => s.id == randomServer.id,
+  //             );
 
-              if (mainIndex != -1) {
-                provider.setSelectedServerIndex(mainIndex);
-                log(
-                  'Random server selection: index=$mainIndex, server=${randomServer.name}',
-                );
-                _showServerSelectedMessage(
-                  "${randomServer.name} (Random Premium)",
-                );
+  //             if (mainIndex != -1) {
+  //               provider.setSelectedServerIndex(mainIndex);
+  //               log(
+  //                 'Random server selection: index=$mainIndex, server=${randomServer.name}',
+  //               );
+  //               _showServerSelectedMessage(
+  //                 "${randomServer.name} (Random Premium)",
+  //               );
 
-                // If VPN is connected, disconnect first
-                if (provider.vpnConnectionStatus ==
-                    VpnStatusConnectionStatus.connected) {
-                  log(
-                    'VPN is connected, disconnecting before switching to random server...',
-                  );
-                  await provider
-                      .toggleVpn(); // This will disconnect and reset timer
-                  // Wait for disconnection to complete
-                  await Future.delayed(const Duration(seconds: 2));
-                  log('VPN disconnected, timer reset to 0');
-                }
+  //               // If VPN is connected, disconnect first
+  //               if (provider.vpnConnectionStatus ==
+  //                   VpnStatusConnectionStatus.connected) {
+  //                 log(
+  //                   'VPN is connected, disconnecting before switching to random server...',
+  //                 );
+  //                 await provider
+  //                     .toggleVpn(); // This will disconnect and reset timer
+  //                 // Wait for disconnection to complete
+  //                 await Future.delayed(const Duration(seconds: 2));
+  //                 log('VPN disconnected, timer reset to 0');
+  //               }
 
-                // Switch to home screen (either via callback or pop)
-                if (widget.onServerSelected != null) {
-                  // If callback exists (bottom nav), use it to switch tabs
-                  widget.onServerSelected!();
-                } else {
-                  // Otherwise, pop back to previous screen
-                  if (mounted && Navigator.of(context).canPop()) {
-                    Navigator.of(context).pop();
-                  }
-                }
+  //               // Switch to home screen (either via callback or pop)
+  //               if (widget.onServerSelected != null) {
+  //                 // If callback exists (bottom nav), use it to switch tabs
+  //                 widget.onServerSelected!();
+  //               } else {
+  //                 // Otherwise, pop back to previous screen
+  //                 if (mounted && Navigator.of(context).canPop()) {
+  //                   Navigator.of(context).pop();
+  //                 }
+  //               }
 
-                // Wait a brief moment for navigation, then auto-connect
-                await Future.delayed(const Duration(milliseconds: 500));
+  //               // Wait a brief moment for navigation, then auto-connect
+  //               await Future.delayed(const Duration(milliseconds: 500));
 
-                // Auto-connect to the new server
-                if (provider.vpnConnectionStatus ==
-                    VpnStatusConnectionStatus.disconnected) {
-                  log('Connecting to new random server: ${randomServer.name}');
-                  await provider.toggleVpn();
-                }
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1E1E1E),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF2A2A2A)),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.shuffle,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Random Server',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            Image.asset(
-                              'assets/Vector (4).png',
-                              width: 12,
-                              height: 12,
-                              color: Colors.amber,
-                            ),
-                          ],
-                        ),
-                        Text(
-                          'Connect to a random premium server',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  //               // Auto-connect to the new server
+  //               if (provider.vpnConnectionStatus ==
+  //                   VpnStatusConnectionStatus.disconnected) {
+  //                 log('Connecting to new random server: ${randomServer.name}');
+  //                 await provider.toggleVpn();
+  //               }
+  //             }
+  //           },
+  //           child: Container(
+  //             padding: const EdgeInsets.all(14),
+  //             decoration: BoxDecoration(
+  //               color: const Color(0xFF1E1E1E),
+  //               borderRadius: BorderRadius.circular(12),
+  //               border: Border.all(color: const Color(0xFF2A2A2A)),
+  //             ),
+  //             child: Row(
+  //               children: [
+  //                 Container(
+  //                   width: 40,
+  //                   height: 40,
+  //                   decoration: BoxDecoration(
+  //                     color: AppColors.primary,
+  //                     shape: BoxShape.circle,
+  //                   ),
+  //                   child: const Icon(
+  //                     Icons.shuffle,
+  //                     color: Colors.white,
+  //                     size: 20,
+  //                   ),
+  //                 ),
+  //                 const SizedBox(width: 12),
+  //                 Expanded(
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       Row(
+  //                         children: [
+  //                           Text(
+  //                             'Random Server',
+  //                             style: GoogleFonts.plusJakartaSans(
+  //                               fontSize: 14,
+  //                               fontWeight: FontWeight.w600,
+  //                               color: Colors.white,
+  //                             ),
+  //                           ),
+  //                           const SizedBox(width: 6),
+  //                           Image.asset(
+  //                             'assets/Vector (4).png',
+  //                             width: 12,
+  //                             height: 12,
+  //                             color: Colors.amber,
+  //                           ),
+  //                         ],
+  //                       ),
+  //                       Text(
+  //                         'Connect to a random premium server',
+  //                         style: GoogleFonts.plusJakartaSans(
+  //                           fontSize: 12,
+  //                           color: Colors.grey,
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildServerList(VpnProvide provider) {
     // Apply region filter before showing
@@ -483,6 +478,9 @@ class _ServersScreenState extends State<ServersScreen> {
       if (_selectedRegion == 'All') return true;
       if (_selectedRegion == 'Free') return server.type == 'free';
       if (_selectedRegion == 'Premium') return server.type == 'premium';
+      if (_selectedRegion == 'Favourites') {
+        return provider.favoriteServerIds.contains(server.id);
+      }
       return true;
     }).toList();
 

@@ -199,7 +199,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Column(
       children: [
         _buildAppHeader(),
-        const Spacer(flex: 1),
+        SizedBox(
+          height: 70,
+        ),
         // Status Text
         Text(
           'Disconnected',
@@ -429,7 +431,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Spacer(flex: 2),
+        const Spacer(flex: 1),
 
         // Modern Connecting Animation
         AnimatedBuilder(
@@ -825,7 +827,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Column(
       children: [
         _buildAppHeader(),
-        const Spacer(flex: 1),
+        SizedBox(
+          height: 50
+        ),
         // Status Text
         Text(
           'Connected',

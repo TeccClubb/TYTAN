@@ -7,7 +7,7 @@ import 'package:tytan/screens/home/home_screen.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
 import 'package:tytan/screens/server/server_screen.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:tytan/screens/setting/setting_screen.dart';
+import 'package:tytan/screens/setting/settingscreen.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 
 class BottomNavBar extends StatefulWidget {

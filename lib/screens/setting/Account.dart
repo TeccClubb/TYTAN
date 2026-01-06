@@ -28,6 +28,72 @@ class AccountScreen extends StatelessWidget {
                       _buildPersonalDetailsCard(),
                       const SizedBox(height: 20),
                       _buildSubscriptionCard(context),
+                      const SizedBox(height: 20),
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.red.withOpacity(0.3),
+                          ),
+                          color: Colors.red.withOpacity(0.05),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Delete Account',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.redAccent,
+                              ),
+                            ),
+
+                            const SizedBox(height: 8),
+
+                            Text(
+                              'Permanently delete your account and all associated data. '
+                              'This action cannot be undone.',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                color: Colors.grey,
+                                height: 1.4,
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.redAccent,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Provider.of<AuthProvide>(context, listen: false)
+                                      .deleteAccount(context);
+                                  //      _showDeleteAccountDialog(context);
+                                },
+                                child: Text(
+                                  'Delete Account',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -232,49 +298,51 @@ class AccountScreen extends StatelessWidget {
               ),
 
               // Member since
-            authProvider.guestUser != null  ?  SizedBox.shrink() :    Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.calendar_today_outlined,
-                      color: Colors.grey,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+              authProvider.guestUser != null
+                  ? SizedBox.shrink()
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      child: Row(
                         children: [
-                        Text(
-                            provider.user.isNotEmpty
-                                ? provider.user.first.createdAt
-                                      .toLocal()
-                                      .toString()
-                                      .split(' ')[0]
-                                : 'Loading...',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
+                          const Icon(
+                            Icons.calendar_today_outlined,
+                            color: Colors.grey,
+                            size: 20,
                           ),
-                          Text(
-                            'Member since',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
-                              color: Colors.grey,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  provider.user.isNotEmpty
+                                      ? provider.user.first.createdAt
+                                            .toLocal()
+                                            .toString()
+                                            .split(' ')[0]
+                                      : 'Loading...',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Text(
+                                  'Member since',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-              ),
             ],
           ),
         );

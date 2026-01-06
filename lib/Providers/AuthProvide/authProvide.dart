@@ -315,14 +315,14 @@ class AuthProvide with ChangeNotifier {
     try {
       _isGoogleSigningIn = true;
       notifyListeners();
-      
+
       // Sign out first to ensure the account picker banner always shows
       try {
         await _googleSignIn.signOut();
       } catch (e) {
         log('Google signOut before signIn: $e');
       }
-      
+
       // Initiate Google Sign-In - will now show account picker
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
@@ -432,6 +432,61 @@ class AuthProvide with ChangeNotifier {
     }
   }
 
+  Future<void> deleteAccount(BuildContext context) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString("token");
+      log("Deleting account with token: $token");
+
+      var response = await http.delete(
+        Uri.parse(UUtils.deleteAccount),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        }
+      );
+      log("Delete account response: ${response.statusCode} - ${response.body}");
+      var data = jsonDecode(response.body);
+
+      log("Data $data");
+
+      if (response.statusCode == 200) {
+        log("Account deleted successfully");
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        Navigator.of(
+          context
+        ).push(MaterialPageRoute(builder: (_) => const AuthScreen()));
+        showCustomSnackBar(
+          context,
+          Icons.delete_forever_rounded,
+          'Account Deleted',
+          'Your account has been deleted successfully',
+          Colors.green,
+        );
+      } else {
+        log("Failed to delete account");
+        showCustomSnackBar(
+          context,
+          Icons.error_outline_rounded,
+          'Deletion Failed',
+          'Failed to delete your account. Please try again later.',
+          Colors.red,
+        );
+      }
+    } catch (error) {
+      log("Some error occured $error");
+      showCustomSnackBar(
+        context,
+        Icons.error_outline_rounded,
+        'Google Sign-In Failed',
+        error.toString(),
+        Colors.red,
+      );
+    }
+  }
+
   String generateRandomEmail() {
     final random = Random();
     final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -469,34 +524,39 @@ class AuthProvide with ChangeNotifier {
       var response = await http.post(
         Uri.parse(UUtils.guestLogin),
         body: body,
-        headers: headers
+        headers: headers,
       );
 
-      log("Guest login response is ${response.statusCode} that ${response.body}");
+      log(
+        "Guest login response is ${response.statusCode} that ${response.body}",
+      );
       var data = jsonDecode(response.body);
 
-      log("Guest login response is ${response.statusCode} that ${response.body}");
+      log(
+        "Guest login response is ${response.statusCode} that ${response.body}",
+      );
       if (response.statusCode == 201) {
-        log("Guest login successful with email: $email and password: $password");
+        log(
+          "Guest login successful with email: $email and password: $password",
+        );
 
         // Optionally save for reuse
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString("email", email);
         prefs.setString("password", password);
         prefs.setString("name", email);
-        
+
         prefs.setString("app_account_token", data['user']['app_account_token']);
         var vpnProvider = Provider.of<VpnProvide>(context, listen: false);
         await vpnProvider.getServersPlease(true);
-        await vpnProvider.getPremium(context);        
+        await vpnProvider.getPremium(context);
         // Auto-select fastest free server for guest users
         if (vpnProvider.servers.isNotEmpty) {
           await vpnProvider.selectFastestServerByHealth(freeOnly: true);
         }
-                _isLoading = false;
+        _isLoading = false;
         _isGuest = false;
         notifyListeners();
-
 
         Navigator.pushReplacement(
           context,
@@ -529,8 +589,8 @@ class AuthProvide with ChangeNotifier {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
-          'x-app-key': '110da8dc-0381-420e-aed9-f87098038bc4'
-        }
+          'x-app-key': '110da8dc-0381-420e-aed9-f87098038bc4',
+        },
       );
 
       log(

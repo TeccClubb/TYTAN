@@ -7,14 +7,13 @@ import 'package:tytan/screens/splash/splash_screen.dart';
 import 'package:tytan/screens/constant/Appconstant.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]);
-  // Set status bcar and navigation bar colors for a dark theme
+  // Set status bar and navigation bar colors for a dark theme
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.white, // Status bar background color
@@ -24,13 +23,10 @@ void main() async {
       systemNavigationBarIconBrightness: Brightness.dark // White icons
     )
   );
-
   runApp(const MyApp());
 }
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
