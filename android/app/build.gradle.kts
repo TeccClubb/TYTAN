@@ -8,6 +8,7 @@ plugins {
 
 android {
     namespace = "com.tytanvpn.android"
+    
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 

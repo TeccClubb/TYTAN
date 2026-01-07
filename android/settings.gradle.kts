@@ -18,10 +18,14 @@ pluginManagement {
 
 plugins {
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
-    id("com.android.application") version "8.7.3" apply false
-    // START: FlutterFire Configuration
-    id("com.google.gms.google-services") version("4.3.15") apply false
-    // END: FlutterFire Configuration
+    
+    // 1. Update AGP to 8.9.1 as required by the error
+    id("com.android.application") version "8.9.1" apply false
+    
+    // 2. Update Google Services (4.3.15 is quite old, 4.4.2 is more stable for 2026)
+    id("com.google.gms.google-services") version "4.4.2" apply false
+    
+    // 3. Keep Kotlin at 2.1.0 or update to 2.2.0 for better compatibility with AGP 8.9
     id("org.jetbrains.kotlin.android") version "2.1.0" apply false
 }
 
