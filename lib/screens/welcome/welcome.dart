@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tytan/screens/auth/auth_screen.dart';
-import 'package:tytan/screens/constant/Appconstant.dart';
-import 'package:tytan/screens/background/background.dart';
+import 'package:tytan/Screens/auth/auth_screen.dart';
+import 'package:tytan/Screens/constant/Appconstant.dart';
+import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
-
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
@@ -219,7 +218,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         if (Theme.of(context).platform == TargetPlatform.iOS)
                           const SizedBox(height: 16),
 
-                      Container(
+                        Container(
                           width: double.infinity,
                           height: 56,
                           decoration: BoxDecoration(
@@ -241,25 +240,25 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             },
                             child: authProvider.isLoading
                                 ? SizedBox(
-                                  height: 24,
-                                  width: 24,
-                                  child: const CircularProgressIndicator(
+                                    height: 24,
+                                    width: 24,
+                                    child: const CircularProgressIndicator(
                                       strokeWidth: 5,
                                       color: Colors.white,
                                     ),
-                                )
+                                  )
                                 : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.person_outline,
-                                      color: _selectedOption == 3
-                                          ? AppColors.primary
-                                          : AppColors.textWhite,
-                                      size: 24,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Text(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.person_outline,
+                                        color: _selectedOption == 3
+                                            ? AppColors.primary
+                                            : AppColors.textWhite,
+                                        size: 24,
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Text(
                                         'Continue as Guest',
                                         style: GoogleFonts.plusJakartaSans(
                                           fontSize: 16,
@@ -269,10 +268,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                               : AppColors.textWhite,
                                         ),
                                       ),
-                                  ],
-                                ),
+                                    ],
+                                  ),
                           ),
-                      ),
+                        ),
 
                         const SizedBox(height: 32),
 
@@ -377,44 +376,46 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 ),
               )
             : Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Icon or Custom Image
-            useCustomIcon && customIconPath != null
-                ? Image.asset(customIconPath, width: 24, height: 24)
-                : Icon(
-                    icon,
-                    color: isSelected
-                        ? AppColors.primary
-                        : (isEmailOption
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Icon or Custom Image
+                  useCustomIcon && customIconPath != null
+                      ? Image.asset(customIconPath, width: 24, height: 24)
+                      : Icon(
+                          icon,
+                          color: isSelected
                               ? AppColors.primary
-                              : AppColors.textWhite),
-                    size: 24,
-                  ),
-            const SizedBox(width: 12),
-            Text(
-              text,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: isSelected
-                    ? AppColors.primary
-                    : (isEmailOption ? AppColors.primary : AppColors.textWhite),
-              )
-            ),
-            SizedBox(width: 10),
-            authProvide.isLoading && isGuest
-                ? SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: const CircularProgressIndicator(
-                      strokeWidth: 5,
-                      color: Colors.white,
+                              : (isEmailOption
+                                    ? AppColors.primary
+                                    : AppColors.textWhite),
+                          size: 24,
+                        ),
+                  const SizedBox(width: 12),
+                  Text(
+                    text,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: isSelected
+                          ? AppColors.primary
+                          : (isEmailOption
+                                ? AppColors.primary
+                                : AppColors.textWhite),
                     ),
-                  )
-                : const SizedBox(),
-          ],
-        ),
+                  ),
+                  SizedBox(width: 10),
+                  authProvide.isLoading && isGuest
+                      ? SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 5,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const SizedBox(),
+                ],
+              ),
       ),
     );
   }

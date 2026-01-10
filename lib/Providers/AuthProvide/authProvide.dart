@@ -5,17 +5,18 @@ import 'dart:io' show Platform;
 import 'dart:math' show Random;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart' show Provider;
 import 'package:tytan/Defaults/utils.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:tytan/screens/auth/auth_screen.dart';
-import 'package:provider/provider.dart' show Provider;
+import 'package:tytan/Screens/auth/auth_screen.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:tytan/ReusableWidgets/customSnackBar.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tytan/screens/bottomnavbar/bottomnavbar.dart';
+import 'package:tytan/Screens/bottomnavbar/bottomnavbar.dart';
 import 'package:tytan/DataModel/guestModel.dart' show GuestUser;
 import 'package:device_info_plus/device_info_plus.dart' show DeviceInfoPlugin;
+import 'package:tytan/Screens/welcome/welcome.dart';
 
 class AuthProvide with ChangeNotifier {
   var mailController = TextEditingController();
@@ -432,19 +433,21 @@ class AuthProvide with ChangeNotifier {
     }
   }
 
-  Future<void> deleteAccount(BuildContext context) async {
+  Future<void> deleteAccount(BuildContext context, String password) async {
     try {
+      isloading = true;
+      notifyListeners();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString("token");
       log("Deleting account with token: $token");
-
+      var body = {"password": password};
       var response = await http.delete(
         Uri.parse(UUtils.deleteAccount),
+        body: body,
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token'
-        }
+          'Authorization': 'Bearer $token',
+        },
       );
       log("Delete account response: ${response.statusCode} - ${response.body}");
       var data = jsonDecode(response.body);
@@ -452,20 +455,19 @@ class AuthProvide with ChangeNotifier {
       log("Data $data");
 
       if (response.statusCode == 200) {
+        isloading = false;
+        notifyListeners();
         log("Account deleted successfully");
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.clear();
-        Navigator.of(
-          context
-        ).push(MaterialPageRoute(builder: (_) => const AuthScreen()));
-        showCustomSnackBar(
-          context,
-          Icons.delete_forever_rounded,
-          'Account Deleted',
-          'Your account has been deleted successfully',
-          Colors.green,
+        // Navigate to auth screen - successful deletion is implicit
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const WelcomeScreen()),
+          (route) => false,
         );
       } else {
+        isloading = false;
+        notifyListeners();
         log("Failed to delete account");
         showCustomSnackBar(
           context,
@@ -476,12 +478,14 @@ class AuthProvide with ChangeNotifier {
         );
       }
     } catch (error) {
+      isloading = false;
+      notifyListeners();
       log("Some error occured $error");
       showCustomSnackBar(
         context,
         Icons.error_outline_rounded,
-        'Google Sign-In Failed',
-        error.toString(),
+        'Error',
+        'An error occurred while deleting your account',
         Colors.red,
       );
     }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tytan/screens/constant/Appconstant.dart';
+import 'package:tytan/Screens/constant/Appconstant.dart';
 
 class AppBackground extends StatelessWidget {
   final Widget child;

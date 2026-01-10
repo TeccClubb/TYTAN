@@ -12,7 +12,7 @@ class ConnectionTimer extends StatelessWidget {
       builder: (context, provider, child) {
         return Text(
           provider.getFormattedDuration(),
-          style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold,),
+          style: const TextStyle(fontSize: 36, fontWeight: FontWeight.bold),
         );
       },
     );

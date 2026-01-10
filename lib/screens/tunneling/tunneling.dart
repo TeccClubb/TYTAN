@@ -4,7 +4,7 @@ import 'package:installed_apps/installed_apps.dart';
 import 'package:installed_apps/app_info.dart' show AppInfo;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
-import 'package:tytan/screens/background/background.dart' show AppBackground;
+import 'package:tytan/Screens/background/background.dart' show AppBackground;
 
 class Tunneling extends StatefulWidget {
   const Tunneling({super.key});

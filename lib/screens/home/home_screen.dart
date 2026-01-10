@@ -3,13 +3,14 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tytan/screens/background/map.dart';
-import 'package:tytan/screens/premium/premium.dart';
-import 'package:tytan/screens/constant/Appconstant.dart';
-import 'package:tytan/screens/server/server_screen.dart';
+import 'package:tytan/Screens/background/map.dart';
+import 'package:tytan/Screens/premium/premium.dart';
+import 'package:tytan/Screens/constant/Appconstant.dart';
+import 'package:tytan/Screens/server/server_screen.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:tytan/ReusableWidgets/customSnackBar.dart' show showCustomSnackBar;
+import 'package:tytan/ReusableWidgets/customSnackBar.dart'
+    show showCustomSnackBar;
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onNavigateToServers;
@@ -20,7 +21,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   // For connecting animation
   late AnimationController _connectingAnimationController;
 
@@ -57,11 +59,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         // OR if user is not premium but has a premium server selected
         if (provider.servers.isNotEmpty) {
           final currentIndex = provider.selectedServerIndex;
-          final isInvalidIndex = currentIndex == 0 || currentIndex >= provider.servers.length;
-          final isNonPremiumWithPremiumServer = !provider.isPremium && 
-              !isInvalidIndex && 
+          final isInvalidIndex =
+              currentIndex == 0 || currentIndex >= provider.servers.length;
+          final isNonPremiumWithPremiumServer =
+              !provider.isPremium &&
+              !isInvalidIndex &&
               provider.servers[currentIndex].type.toLowerCase() == 'premium';
-          
+
           if (isInvalidIndex || isNonPremiumWithPremiumServer) {
             if (provider.isPremium) {
               await provider.selectFastestServerByHealth();
@@ -117,8 +121,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         children: [
           Row(
             children: [
-              Image.asset('assets/Tytan Logo.png', width: 44, height: 44),
-              const SizedBox(width: 10),
+              Image.asset('assets/tytan_logo.png', width: 80, height: 80),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -133,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           color: AppColors.primary,
                         ),
                       ),
+                      SizedBox(width: 5),
                       Text(
                         'VPN',
                         style: GoogleFonts.plusJakartaSans(
@@ -199,9 +203,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Column(
       children: [
         _buildAppHeader(),
-        SizedBox(
-          height: 70,
-        ),
+        SizedBox(height: 70),
         // Status Text
         Text(
           'Disconnected',
@@ -239,8 +241,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               return;
             }
 
-            final selectedServer = provider.servers[provider.selectedServerIndex];
-            final isServerPremium = selectedServer.type.toLowerCase() == 'premium';
+            final selectedServer =
+                provider.servers[provider.selectedServerIndex];
+            final isServerPremium =
+                selectedServer.type.toLowerCase() == 'premium';
 
             if (isServerPremium && !provider.isPremium) {
               // Block non-premium users from connecting to premium servers
@@ -322,7 +326,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   // Server Flag
                   Builder(
                     builder: (context) {
-                      final hasValidServer = selectedServer != null && (selectedServer.image ?? '').isNotEmpty;
+                      final hasValidServer =
+                          selectedServer != null &&
+                          (selectedServer.image ?? '').isNotEmpty;
 
                       if (hasValidServer) {
                         return ClipOval(
@@ -421,12 +427,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget _buildConnectingView() {
     var provider = context.watch<VpnProvide>();
 
-    var selectedServer = provider.servers.isNotEmpty &&
+    var selectedServer =
+        provider.servers.isNotEmpty &&
             provider.selectedServerIndex < provider.servers.length
         ? provider.servers[provider.selectedServerIndex]
         : null;
 
-    final bool isDisconnecting = provider.vpnConnectionStatus == VpnStatusConnectionStatus.disconnecting;
+    final bool isDisconnecting =
+        provider.vpnConnectionStatus == VpnStatusConnectionStatus.disconnecting;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -827,9 +835,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Column(
       children: [
         _buildAppHeader(),
-        SizedBox(
-          height: 50
-        ),
+        SizedBox(height: 50),
         // Status Text
         Text(
           'Connected',

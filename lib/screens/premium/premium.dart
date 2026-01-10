@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tytan/screens/constant/Appconstant.dart';
-import 'package:tytan/screens/background/background.dart';
+import 'package:tytan/Screens/constant/Appconstant.dart';
+import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
-
 class PremiumScreen extends StatefulWidget {
   const PremiumScreen({Key? key}) : super(key: key);
 
   @override
   State<PremiumScreen> createState() => _PremiumScreenState();
 }
-
 class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   bool _showPlanSelection = false;
   String _selectedPlan = '';
-
   // The Data for your Comparison Table
   final List<Map<String, dynamic>> _comparisonData = [
     {"feature": "Stable connection", "desc": "(No drops during use)", "free": true, "premium": true},
@@ -28,7 +25,6 @@ class _PremiumScreenState extends State<PremiumScreen> with SingleTickerProvider
     {"feature": "App-level control", "desc": "(Choose apps for VPN)", "free": false, "premium": true},
     {"feature": "Ad & tracker block", "desc": "(Less ads & traffic)", "free": false, "premium": true},
   ];
-
   @override
   void initState() {
     super.initState();

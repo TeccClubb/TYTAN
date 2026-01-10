@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
-import 'package:tytan/screens/background/background.dart';
-import 'package:tytan/screens/constant/Appconstant.dart';
-import 'package:tytan/screens/premium/premium.dart';
+import 'package:tytan/Screens/background/background.dart';
+import 'package:tytan/Screens/constant/Appconstant.dart';
+import 'package:tytan/Screens/premium/premium.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({Key? key}) : super(key: key);
@@ -77,9 +77,7 @@ class AccountScreen extends StatelessWidget {
                                   ),
                                 ),
                                 onPressed: () {
-                                  Provider.of<AuthProvide>(context, listen: false)
-                                      .deleteAccount(context);
-                                  //      _showDeleteAccountDialog(context);
+                                  _showDeleteDialog(context);
                                 },
                                 child: Text(
                                   'Delete Account',
@@ -548,4 +546,104 @@ class AccountScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _showDeleteDialog(BuildContext context) async {
+  final TextEditingController passwordController = TextEditingController();
+
+  return showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        backgroundColor: const Color(0xFF1E1E1E),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Delete Account?',
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.bold,
+            color: AppColors.primary,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'This action is permanent. Please enter your password to confirm.',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                color: Colors.grey[300],
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Enter password',
+                hintStyle: GoogleFonts.plusJakartaSans(
+                  fontSize: 14,
+                  color: Colors.grey[500],
+                ),
+                filled: true,
+                fillColor: const Color(0xFF2A2A2A),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(
+                    color: AppColors.primary,
+                    width: 1.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.plusJakartaSans(color: Colors.grey[400]),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            onPressed: () {
+              final password = passwordController.text;
+              Provider.of<AuthProvide>(
+                context,
+                listen: false,
+              ).deleteAccount(context, password);
+            },
+            child: Provider.of<AuthProvide>(context).isloading
+                ? const SizedBox(
+                    height: 22,
+                    width: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 5,
+                      color: Colors.white,
+                    ),
+                  )
+                : Text(
+                    'Confirm Delete',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+          ),
+        ],
+      );
+    },
+  );
 }

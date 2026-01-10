@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:tytan/screens/setting/feedback.dart';
-import 'package:tytan/screens/background/background.dart';
+import 'package:tytan/Screens/setting/feedback.dart';
+import 'package:tytan/Screens/background/background.dart';
 
 class ContactSupport extends StatelessWidget {
   const ContactSupport({Key? key}) : super(key: key);

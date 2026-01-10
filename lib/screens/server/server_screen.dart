@@ -3,10 +3,10 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tytan/screens/premium/premium.dart';
+import 'package:tytan/Screens/premium/premium.dart';
 import 'package:tytan/DataModel/serverDataModel.dart';
-import 'package:tytan/screens/constant/Appconstant.dart';
-import 'package:tytan/screens/background/background.dart';
+import 'package:tytan/Screens/constant/Appconstant.dart';
+import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 
 class ServersScreen extends StatefulWidget {

@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tytan/screens/welcome/welcome.dart';
-import 'package:tytan/screens/constant/Appconstant.dart';
-import 'package:tytan/screens/background/background.dart';
+import 'package:tytan/Screens/welcome/welcome.dart';
+import 'package:tytan/Screens/constant/Appconstant.dart';
+import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tytan/screens/bottomnavbar/bottomnavbar.dart';
+import 'package:tytan/Screens/bottomnavbar/bottomnavbar.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -55,14 +55,9 @@ class _SplashScreenState extends State<SplashScreen>
     _logoAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.easeOut),
-    );
+    ).animate(CurvedAnimation(parent: _logoController, curve: Curves.easeOut));
 
-    _loadingAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(
+    _loadingAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _loadingController, curve: Curves.easeInOut),
     );
 
@@ -128,10 +123,10 @@ class _SplashScreenState extends State<SplashScreen>
 
         final isNonPremiumWithPremiumServer =
             !provider.isPremium &&
-                !isInvalidIndex &&
-                provider.servers[currentIndex].type
-                    .toLowerCase()
-                    .contains('premium');
+            !isInvalidIndex &&
+            provider.servers[currentIndex].type.toLowerCase().contains(
+              'premium',
+            );
 
         if (isInvalidIndex || isNonPremiumWithPremiumServer) {
           if (provider.isPremium) {
@@ -255,7 +250,8 @@ class _SplashScreenState extends State<SplashScreen>
                               children: [
                                 AnimatedContainer(
                                   duration: Duration.zero,
-                                  width: MediaQuery.of(context).size.width *
+                                  width:
+                                      MediaQuery.of(context).size.width *
                                       0.8 *
                                       _loadingAnimation.value,
                                   height: 8,

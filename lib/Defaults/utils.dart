@@ -13,7 +13,7 @@ class UUtils {
   static const String guestLogin = "${baseUrl}guest/user/create";
   static const String getGuestLogin = "${baseUrl}guest/user";
   static const String linkGuestLogin = "${baseUrl}account/link";
-  static const String deleteAccount = "${baseUrl}user/delete";
+  static const String deleteAccount = "${baseUrl}account/delete/request";
 }
 
 const String VPS_API_KEY = "a3f7b9c2-d1e5-4f68-8a0b-95c6e7f4d8a1";

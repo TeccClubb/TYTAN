@@ -2,31 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tytan/screens/premium/premium.dart';
-import 'package:tytan/screens/setting/Account.dart';
-import 'package:tytan/screens/setting/protocol.dart';
-import 'package:tytan/screens/tunneling/tunneling.dart';
-import 'package:tytan/screens/constant/Appconstant.dart';
-import 'package:tytan/screens/background/background.dart';
+import 'package:tytan/Providers/LanguageProvide/languageProvide.dart';
+import 'package:tytan/Screens/language/initial_language_selection.dart'
+    show InitialLanguageSelectionScreen;
+import 'package:tytan/Screens/premium/premium.dart';
+import 'package:tytan/Screens/setting/Account.dart';
+import 'package:tytan/Screens/setting/protocol.dart';
+import 'package:tytan/Screens/tunneling/tunneling.dart';
+import 'package:tytan/Screens/constant/Appconstant.dart';
+import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
-import 'package:tytan/screens/setting/contactus.dart' show ContactSupport;
+import 'package:tytan/Screens/setting/contactus.dart' show ContactSupport;
 import 'package:tytan/Providers/AuthProvide/authProvide.dart' show AuthProvide;
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
-
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
   // Toggle states (only for features not in VPN provider)
-
   @override
   Widget build(BuildContext context) {
     var provider = context.watch<VpnProvide>();
     var authProvide = context.watch<AuthProvide>();
-
     return Scaffold(
       body: AppBackground(
         child: SafeArea(
@@ -210,6 +210,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               );
                             },
                           ),
+                          SizedBox(height: 15),
+                          _buildNavigationSetting(
+                            title: 'Language',
+                            subtitle: 'Change app language',
+                            icon: Icons.language,
+                            iconColor: AppColors.primary,
+                            onTap: () {
+                              var provider = Provider.of<LanguageProvider>(
+                                context,
+                                listen: false,
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      InitialLanguageSelectionScreen(
+                                        onLanguageSelected: (language) {
+                                          provider.changeLanguage(language);
+                                        },
+                                      ),
+                                ),
+                              );
+                            },
+                          ),
+
                           SizedBox(height: 15),
                           _buildNavigationSetting(
                             title: 'Sign Out',
