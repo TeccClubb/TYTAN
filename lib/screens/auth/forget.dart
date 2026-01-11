@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
+import 'package:tytan/Defaults/extensions.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key? key}) : super(key: key);
@@ -12,7 +13,8 @@ class ForgotPasswordScreen extends StatefulWidget {
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> with TickerProviderStateMixin {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
 
@@ -155,7 +157,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> with Ticker
       child: Column(
         children: [
           Text(
-            'Forgot Password',
+            'forgot_password'.tr(context),
             style: GoogleFonts.plusJakartaSans(
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -165,7 +167,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> with Ticker
           ),
           const SizedBox(height: 12),
           Text(
-            'Please enter your email we will send you\npassword reset link to your email.',
+            'forgot_password_desc'.tr(context),
             textAlign: TextAlign.center,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
@@ -188,7 +190,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> with Ticker
         children: [
           // Email Label
           Text(
-            'Email',
+            'email'.tr(context),
             style: GoogleFonts.plusJakartaSans(
               fontSize: 15,
               fontWeight: FontWeight.w600,
@@ -242,7 +244,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> with Ticker
           fontSize: 15,
         ),
         decoration: InputDecoration(
-          hintText: 'Enter your email',
+          hintText: 'email'.tr(context),
           hintStyle: GoogleFonts.plusJakartaSans(
             color: AppColors.textGray,
             fontSize: 15,
@@ -262,10 +264,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> with Ticker
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Please enter your email';
+            return 'please_enter_email'.tr(context);
           }
           if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-            return 'Please enter a valid email';
+            return 'please_enter_valid_email'.tr(context);
           }
           return null;
         },
@@ -310,7 +312,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> with Ticker
                 ),
               )
             : Text(
-                'Submit',
+                'submit'.tr(context),
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -319,6 +321,4 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> with Ticker
       ),
     );
   }
-
- 
 }

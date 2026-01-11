@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tytan/Defaults/extensions.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -10,9 +11,12 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: Text('Onboarding Screen', style: TextStyle(fontSize: 24)),
+        child: Text(
+          'onboarding_screen'.tr(context),
+          style: const TextStyle(fontSize: 24, color: Colors.white),
+        ),
       ),
     );
   }

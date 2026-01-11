@@ -6,6 +6,7 @@ import 'package:tytan/Screens/auth/forget.dart' show ForgotPasswordScreen;
 import 'package:tytan/Screens/background/background.dart' show AppBackground;
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
+import 'package:tytan/Defaults/extensions.dart';
 
 class AuthScreen extends StatefulWidget {
   final int initialTabIndex;
@@ -24,7 +25,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   // Form controllers
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   // Focus nodes for handling focus states
   final FocusNode _emailFocusNode = FocusNode();
@@ -91,7 +93,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-  var provider = Provider.of<AuthProvide>(context);
+    var provider = Provider.of<AuthProvide>(context);
     // Update loading state based on provider
     _isLoading = provider.isloading;
 
@@ -143,7 +145,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     return Column(
       children: [
         Text(
-          isLogin ? 'Login' : 'Create Account',
+          isLogin ? 'login'.tr(context) : 'create_account'.tr(context),
           style: GoogleFonts.plusJakartaSans(
             fontSize: 28, // Reduced from 32
             fontWeight: FontWeight.bold,
@@ -195,9 +197,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           fontSize: 15, // Reduced from 16
           fontWeight: FontWeight.w500,
         ),
-        tabs: const [
-          Tab(text: 'Login'),
-          Tab(text: 'Sign Up'),
+        tabs: [
+          Tab(text: 'login'.tr(context)),
+          Tab(text: 'signup'.tr(context)),
         ],
       ),
     );

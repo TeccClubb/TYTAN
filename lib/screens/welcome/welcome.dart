@@ -5,6 +5,7 @@ import 'package:tytan/Screens/auth/auth_screen.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';
+import 'package:tytan/Defaults/extensions.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -74,7 +75,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       // Apple ID login - Not implemented yet
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Apple ID login not implemented yet'),
+          content: Text('apple_id_not_implemented'.tr(context)),
           backgroundColor: Colors.orange,
         ),
       );
@@ -128,7 +129,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   child: Column(
                     children: [
                       Text(
-                        'Welcome To',
+                        'welcome_to'.tr(context),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 32,
                           fontWeight: FontWeight.w600,
@@ -180,7 +181,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                         _buildLoginOption(
                           index: 0,
                           icon: Icons.email_outlined,
-                          text: 'Continue with Email',
+                          text: 'continue_with_email'.tr(context),
                           useCustomIcon: false,
                           isGuest: false,
                           onTap: () => _selectOption(0),
@@ -193,7 +194,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           index: 1,
                           icon: Icons
                               .g_mobiledata, // This will be ignored when useCustomIcon is true
-                          text: 'Continue with Google',
+                          text: 'continue_with_google'.tr(context),
                           useCustomIcon: true,
                           isGuest: false,
                           isGoogleOption: true,
@@ -209,7 +210,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           _buildLoginOption(
                             index: 2,
                             icon: Icons.apple,
-                            text: 'Continue with Apple ID',
+                            text: 'continue_with_apple'.tr(context),
                             useCustomIcon: false,
                             isGuest: false,
                             onTap: () => _selectOption(2),
@@ -259,7 +260,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                       ),
                                       const SizedBox(width: 16),
                                       Text(
-                                        'Continue as Guest',
+                                        'continue_as_guest'.tr(context),
                                         style: GoogleFonts.plusJakartaSans(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
@@ -280,7 +281,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Don't have an account? ",
+                              "dont_have_account".tr(context),
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
@@ -300,7 +301,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                 );
                               },
                               child: Text(
-                                'Sign up',
+                                'signup'.tr(context),
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,

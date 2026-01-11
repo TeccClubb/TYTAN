@@ -14,6 +14,7 @@ import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/Screens/setting/contactus.dart' show ContactSupport;
 import 'package:tytan/Providers/AuthProvide/authProvide.dart' show AuthProvide;
+import 'package:tytan/Defaults/extensions.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -42,13 +43,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       // Connection Section
                       _buildSectionCard(
-                        title: 'Connection',
+                        title: 'connection'.tr(context),
                         image: 'assets/wifi.png',
                         iconBackgroundColor: AppColors.primary,
                         children: [
                           _buildToggleSetting(
-                            title: 'Auto-Connect',
-                            subtitle: 'Connect to fastest server',
+                            title: 'auto_connect'.tr(context),
+                            subtitle: 'auto_connect_desc'.tr(context),
                             icon: Icons.bolt,
                             iconColor: AppColors.primary,
                             value: provider.autoConnectOn,
@@ -58,7 +59,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           SizedBox(height: 6),
                           _buildNavigationSetting(
-                            title: 'Protocol',
+                            title: 'protocol'.tr(context),
                             subtitle: provider.getProtocolDisplayName(
                               provider.selectedProtocol,
                             ),
@@ -75,12 +76,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           SizedBox(height: 6),
                           _buildServerLocationName(
-                            title: 'Server Location',
+                            title: 'server_location'.tr(context),
                             subtitle:
                                 provider.selectedServerIndex <
                                     provider.servers.length
                                 ? "${provider.servers[provider.selectedServerIndex].name} "
-                                : 'Select Server',
+                                : 'select_server'.tr(context),
                             icon: Icons.public,
                             iconColor: AppColors.primary,
                             onTap: () {
@@ -95,13 +96,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                       // Security Section
                       _buildSectionCard(
-                        title: 'Security & Privacy',
+                        title: 'security_privacy'.tr(context),
                         image: 'assets/sheild.png',
                         iconBackgroundColor: AppColors.primary,
                         children: [
                           _buildToggleSetting(
-                            title: 'Kill Switch',
-                            subtitle: 'Block internet if VPN drops',
+                            title: 'kill_switch'.tr(context),
+                            subtitle: 'kill_switch_desc'.tr(context),
                             icon: Icons.power_settings_new,
                             iconColor: AppColors.primary,
                             value: provider.killSwitchOn,
@@ -111,8 +112,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           SizedBox(height: 15),
                           _buildToggleSetting(
-                            title: 'DNS Leak Protection',
-                            subtitle: 'Prevent DNS leaks',
+                            title: 'dns_leak_protection'.tr(context),
+                            subtitle: 'dns_protection_desc'.tr(context),
                             icon: Icons.visibility_off_outlined,
                             iconColor: AppColors.primary,
                             value: provider.dnsLeakProtection,
@@ -130,8 +131,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               );
                             },
                             child: _buildToggleSetting1(
-                              title: 'Split Tunneling',
-                              subtitle: 'Manage apps using VPN',
+                              title: 'split_tunneling'.tr(context),
+                              subtitle: 'split_tunneling_desc'.tr(context),
                               icon: Icons.call_split,
                               iconColor: AppColors.primary,
                               value: false,
@@ -140,8 +141,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           SizedBox(height: 15),
                           _buildToggleSetting(
-                            title: 'AD Block',
-                            subtitle: 'Block ads and trackers',
+                            title: 'ad_block'.tr(context),
+                            subtitle: 'ad_block_desc'.tr(context),
                             icon: Icons.block,
                             iconColor: AppColors.primary,
                             value: provider.adBlockerEnabled,
@@ -157,7 +158,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                       // Account Section
                       _buildSectionCard(
-                        title: 'Account & System',
+                        title: 'account_system'.tr(context),
                         image: 'assets/person.png',
                         iconBackgroundColor: AppColors.primary,
                         children: [
@@ -166,7 +167,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ? '${provider.user.first.email}'
                                 : authProvide.guestUser != null
                                 ? '${authProvide.guestUser?.email}'
-                                : 'loading...',
+                                : 'loading...'.tr(context),
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -178,12 +179,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           SizedBox(height: 10),
                           _buildNavigationSetting(
-                            title: 'Premium Plan',
+                            title: 'premium_plan'.tr(context),
                             subtitle: provider.user.isEmpty
-                                ? 'Your subscription details'
+                                ? 'subscription_details'.tr(context)
                                 : authProvide.guestUser != null
-                                ? 'Your subscription details'
-                                : 'Upgrade to premium',
+                                ? 'subscription_details'.tr(context)
+                                : 'upgrade_to_premium_q'.tr(context),
                             icon: Icons.star,
                             iconColor: Colors.amber,
                             onTap: () {
@@ -197,8 +198,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           SizedBox(height: 10),
                           _buildNavigationSetting(
-                            title: 'Contact Support',
-                            subtitle: 'Help us improve our app',
+                            title: 'contact_support'.tr(context),
+                            subtitle: 'help_improve'.tr(context),
                             icon: Icons.feedback_outlined,
                             iconColor: AppColors.primary,
                             onTap: () {
@@ -212,8 +213,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                           SizedBox(height: 15),
                           _buildNavigationSetting(
-                            title: 'Language',
-                            subtitle: 'Change app language',
+                            title: 'language'.tr(context),
+                            subtitle: 'change_language'.tr(context),
                             icon: Icons.language,
                             iconColor: AppColors.primary,
                             onTap: () {
@@ -237,8 +238,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                           SizedBox(height: 15),
                           _buildNavigationSetting(
-                            title: 'Sign Out',
-                            subtitle: 'Logout from this device',
+                            title: 'sign_out'.tr(context),
+                            subtitle: 'logout_desc'.tr(context),
                             icon: Icons.logout,
                             iconColor: Colors.red.shade300,
                             onTap: () async {
@@ -282,7 +283,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildHeader() {
     return Center(
       child: Text(
-        'Setting',
+        'setting'.tr(context),
         style: GoogleFonts.plusJakartaSans(
           fontSize: 24,
           fontWeight: FontWeight.bold,

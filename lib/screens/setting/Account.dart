@@ -6,6 +6,7 @@ import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
 import 'package:tytan/Screens/premium/premium.dart';
+import 'package:tytan/Defaults/extensions.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({Key? key}) : super(key: key);
@@ -42,7 +43,7 @@ class AccountScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Delete Account',
+                              'delete_account'.tr(context),
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -53,8 +54,7 @@ class AccountScreen extends StatelessWidget {
                             const SizedBox(height: 8),
 
                             Text(
-                              'Permanently delete your account and all associated data. '
-                              'This action cannot be undone.',
+                              'delete_account_desc'.tr(context),
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 14,
                                 color: Colors.grey,

@@ -11,6 +11,7 @@ import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:tytan/ReusableWidgets/customSnackBar.dart'
     show showCustomSnackBar;
+import 'package:tytan/Defaults/extensions.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onNavigateToServers;
@@ -149,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Secure and Quick',
+                    'secure_and_quick'.tr(context),
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 11,
                       fontWeight: FontWeight.w400,
@@ -206,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen>
         SizedBox(height: 70),
         // Status Text
         Text(
-          'Disconnected',
+          'disconnected'.tr(context),
           style: GoogleFonts.plusJakartaSans(
             fontSize: 32,
             fontWeight: FontWeight.bold,
@@ -385,7 +386,7 @@ class _HomeScreenState extends State<HomeScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Selected Server',
+                          'selected_server'.tr(context),
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,

@@ -9,6 +9,7 @@ import 'package:tytan/Screens/server/server_screen.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:tytan/Screens/setting/settingscreen.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
+import 'package:tytan/Defaults/extensions.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -88,9 +89,21 @@ class _BottomNavBarState extends State<BottomNavBar> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildNavItem(EvaIcons.home, "Home", 0),
-                _buildNavItem(EvaIcons.globe, "Servers", 1),
-                _buildNavItem(EvaIcons.settings2, "Setting", 2),
+                _buildNavItem(
+                  EvaIcons.home,
+                  TranslationExtension("home").tr(context),
+                  0,
+                ),
+                _buildNavItem(
+                  EvaIcons.globe,
+                  TranslationExtension("servers").tr(context),
+                  1,
+                ),
+                _buildNavItem(
+                  EvaIcons.settings2,
+                  TranslationExtension("settings").tr(context),
+                  2,
+                ),
               ],
             ),
           ),

@@ -10,6 +10,7 @@ import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tytan/Screens/bottomnavbar/bottomnavbar.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';
+import 'package:tytan/Defaults/extensions.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -27,12 +28,12 @@ class _SplashScreenState extends State<SplashScreen>
 
   // VPN status rotation
   final List<String> _vpnStatusTexts = [
-    'Initializing secure connection…',
-    'Establishing secure tunnel',
-    'Encrypting data traffic',
-    'Masking IP address',
-    'Applying DNS filtering',
-    'Connection protected',
+    'initializing_secure_connection',
+    'establishing_secure_tunnel',
+    'encrypting_traffic',
+    'masking_ip',
+    'applying_dns_filtering',
+    'connection_protected_status',
   ];
 
   int _currentStatusIndex = 0;
@@ -218,11 +219,11 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Secure and Quick',
+                        'secure_and_quick'.tr(context),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
-                          fontWeight: FontWeight.w400,
                           color: Colors.white,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ],
@@ -281,7 +282,7 @@ class _SplashScreenState extends State<SplashScreen>
                               );
                             },
                             child: Text(
-                              _vpnStatusTexts[_currentStatusIndex],
+                              _vpnStatusTexts[_currentStatusIndex].tr(context),
                               key: ValueKey(_currentStatusIndex),
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 14,

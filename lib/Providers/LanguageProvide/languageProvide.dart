@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tytan/DataModel/languageModel.dart' show Language;
 import 'package:tytan/Defaults/utils.dart' show UUtils;
@@ -12,7 +13,10 @@ class LanguageProvider extends ChangeNotifier {
   final String _baseUrl =
       UUtils.baseUrl; // Update this with your actual API URL
 
-  List<Language> _availableLanguages = [];
+  List<Language> _availableLanguages = [
+    Language(name: 'English', code: 'en', isRtl: false, isDefault: true),
+    Language(name: 'Russian', code: 'ru', isRtl: false, isDefault: false),
+  ];
   Language _currentLanguage = Language(
     name: 'English',
     code: 'en',
@@ -22,6 +26,10 @@ class LanguageProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   int _loadingIndex = -1;
+
+  LanguageProvider() {
+    loadLanguageFromPrefs();
+  }
 
   // Getters
   List<Language> get availableLanguages => _availableLanguages;
@@ -38,7 +46,9 @@ class LanguageProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await http.get(Uri.parse('${_baseUrl}languages'));
+      final response = await http
+          .get(Uri.parse('${_baseUrl}languages'))
+          .timeout(const Duration(seconds: 5));
       log('Fetching languages from ${_baseUrl}languages');
       log('Response: ${response.statusCode} - ${response.body}');
 
@@ -85,52 +95,77 @@ class LanguageProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await http.get(
-        Uri.parse('${_baseUrl}languages/$languageCode'),
-      );
+      // Try to load from API first
+      try {
+        final response = await http
+            .get(Uri.parse('${_baseUrl}languages/$languageCode'))
+            .timeout(const Duration(seconds: 5));
 
-      log(
-        'Fetching language translations for $languageCode from ${_baseUrl}languages/$languageCode',
-      );
-      log('Response: ${response.statusCode} - ${response.body}');
+        log(
+          'Fetching language translations for $languageCode from ${_baseUrl}languages/$languageCode',
+        );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
 
-        if (data['status'] == true) {
-          // Create a language object with translations
-          final lang = Language(
-            name: data['name'],
-            code: data['code'],
-            isRtl: data['is_rtl'],
-            isDefault: data['default'],
-            translations: jsonDecode(data['translations']),
-          );
+          if (data['status'] == true) {
+            final lang = Language(
+              name:
+                  data['name'] ??
+                  (languageCode == 'ru' ? 'Russian' : 'English'),
+              code: data['code'] ?? languageCode,
+              isRtl: data['is_rtl'] ?? false,
+              isDefault: data['default'] ?? false,
+              translations: jsonDecode(data['translations']),
+            );
 
-          _currentLanguage = lang;
-
-          Get.updateLocale(Locale(lang.code));
-
-          // Save to preferences
-          await _saveLanguageToPrefs(lang);
-          _loadingIndex = -1; // Reset loading index after successful load
-
-          notifyListeners();
-          return true;
-        } else {
-          _error = 'Invalid data format received from server';
+            _currentLanguage = lang;
+            _saveLanguageToPrefs(lang);
+            Get.updateLocale(Locale(lang.code));
+            _loadingIndex = -1;
+            notifyListeners();
+            return true;
+          }
         }
-      } else {
-        _error = 'Failed to load language: ${response.statusCode}';
+      } catch (e) {
+        log('API translation fetch failed, falling back to local assets: $e');
       }
+
+      // Fallback to local assets
+      return await loadLocalTranslations(languageCode);
     } catch (e) {
       _error = 'Error fetching language: ${e.toString()}';
     } finally {
-      _loadingIndex = -1; // Reset loading index on error
+      _loadingIndex = -1;
       notifyListeners();
     }
 
     return false;
+  }
+
+  Future<bool> loadLocalTranslations(String languageCode) async {
+    try {
+      String assetPath = 'assets/l10n/$languageCode.json';
+      String jsonString = await rootBundle.loadString(assetPath);
+      Map<String, dynamic> translations = jsonDecode(jsonString);
+
+      _currentLanguage = Language(
+        name: languageCode == 'ru' ? 'Russian' : 'English',
+        code: languageCode,
+        isRtl: languageCode == 'ar' || languageCode == 'he', // Simple check
+        isDefault: languageCode == 'en',
+        translations: translations,
+      );
+
+      _saveLanguageToPrefs(_currentLanguage);
+      Get.updateLocale(Locale(languageCode));
+      log('Loaded local translations for $languageCode');
+      notifyListeners();
+      return true;
+    } catch (e) {
+      log('Failed to load local translations for $languageCode: $e');
+      return false;
+    }
   }
 
   // Change current language
@@ -152,22 +187,13 @@ class LanguageProvider extends ChangeNotifier {
 
       if (languageData != null) {
         _currentLanguage = Language.fromJson(jsonDecode(languageData));
+        if (_currentLanguage.translations == null) {
+          await loadLocalTranslations(_currentLanguage.code);
+        }
         notifyListeners();
       } else {
-        // If no language is stored, use default (English) or first available language
-        final defaultLang = _availableLanguages.firstWhere(
-          (lang) => lang.isDefault,
-          orElse: () => _availableLanguages.isNotEmpty
-              ? _availableLanguages.first
-              : Language(
-                  name: 'English',
-                  code: 'en',
-                  isRtl: false,
-                  isDefault: true,
-                ),
-        );
-
-        await changeLanguage(defaultLang.code);
+        // If no language is stored, use default (English)
+        await loadLocalTranslations('en');
       }
     } catch (e) {
       _error = 'Error loading language preferences: ${e.toString()}';

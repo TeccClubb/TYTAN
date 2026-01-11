@@ -8,6 +8,7 @@ import 'package:tytan/DataModel/serverDataModel.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
+import 'package:tytan/Defaults/extensions.dart';
 
 class ServersScreen extends StatefulWidget {
   final VoidCallback? onServerSelected;
@@ -18,7 +19,7 @@ class ServersScreen extends StatefulWidget {
   State<ServersScreen> createState() => _ServersScreenState();
 }
 
-class _ServersScreenState extends State<ServersScreen>{
+class _ServersScreenState extends State<ServersScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _selectedRegion = 'All';
 
@@ -58,7 +59,7 @@ class _ServersScreenState extends State<ServersScreen>{
   Widget _buildHeader() {
     return Center(
       child: Text(
-        'Select Location',
+        'select_location'.tr(context),
         style: GoogleFonts.plusJakartaSans(
           fontSize: 24,
           fontWeight: FontWeight.bold,
@@ -76,14 +77,14 @@ class _ServersScreenState extends State<ServersScreen>{
         decoration: BoxDecoration(
           color: const Color(0xFF1E1E1E),
           border: Border.all(color: const Color(0xFF2A2A2A)),
-          borderRadius: BorderRadius.circular(10)
+          borderRadius: BorderRadius.circular(10),
         ),
         child: TextField(
           controller: _searchController,
           onChanged: provider.setQueryText,
           style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 15),
           decoration: InputDecoration(
-            hintText: 'Search countries or cities...',
+            hintText: 'search_servers_hint'.tr(context),
             hintStyle: GoogleFonts.plusJakartaSans(
               color: Colors.grey,
               fontSize: 15,
@@ -101,50 +102,63 @@ class _ServersScreenState extends State<ServersScreen>{
   }
 
   Widget _buildRegionFilter() {
-    final regions = ['All', 'Free', 'Premium', 'Favourites'];
+    final regions = [
+      'all'.tr(context),
+      'free'.tr(context),
+      'premium'.tr(context),
+      'favourites'.tr(context),
+    ];
+    // Map of translated regions back to internal keys if needed,
+    // but the code uses internal keys for logic.
+    // Let's use internal keys for logic and translate for display.
+    final regionMap = {
+      'all'.tr(context): 'All',
+      'free'.tr(context): 'Free',
+      'premium'.tr(context): 'Premium',
+      'favourites'.tr(context): 'Favourites',
+    };
 
-    return Padding( 
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          children: regions
-              .map(
-                (region) => Padding(
-                  padding: const EdgeInsets.only(right: 12),
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedRegion = region;
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: _selectedRegion == region
-                            ? AppColors.primary
-                            : const Color(0xFF1E1E1E),
-                        border: Border.all(color: const Color(0xFF2A2A2A)),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        region,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: _selectedRegion == region
-                              ? Colors.white
-                              : Colors.grey,
-                        ),
-                      ),
+          children: regions.map((region) {
+            final internalKey = regionMap[region] ?? region;
+            return Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _selectedRegion = internalKey;
+                  });
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _selectedRegion == internalKey
+                        ? AppColors.primary
+                        : const Color(0xFF1E1E1E),
+                    border: Border.all(color: const Color(0xFF2A2A2A)),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    region,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: _selectedRegion == internalKey
+                          ? Colors.white
+                          : Colors.grey,
                     ),
                   ),
                 ),
-              )
-              .toList(),
+              ),
+            );
+          }).toList(),
         ),
       ),
     );
@@ -495,7 +509,7 @@ class _ServersScreenState extends State<ServersScreen>{
               child: filteredServers.isEmpty
                   ? Center(
                       child: Text(
-                        'No servers available',
+                        'no_servers_available'.tr(context),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -528,7 +542,7 @@ class _ServersScreenState extends State<ServersScreen>{
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'All Servers',
+          'all_servers'.tr(context),
           style: GoogleFonts.plusJakartaSans(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -665,7 +679,7 @@ class _ServersScreenState extends State<ServersScreen>{
                             color: Colors.white,
                           ),
                         ),
-                        
+
                         if (isPremium) ...[
                           const SizedBox(width: 6),
                           // Using the crown image instead of an icon
@@ -753,7 +767,7 @@ class _ServersScreenState extends State<ServersScreen>{
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Selected: $serverName',
+          'selected'.tr(context) + ': $serverName',
           style: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -776,7 +790,7 @@ class _ServersScreenState extends State<ServersScreen>{
             const Icon(Icons.star, color: Colors.amber, size: 16),
             const SizedBox(width: 8),
             Text(
-              '$serverName added to favorites',
+              '$serverName ' + 'added_to_favorites'.tr(context),
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -801,7 +815,7 @@ class _ServersScreenState extends State<ServersScreen>{
             const Icon(Icons.star_outline, color: Colors.white, size: 16),
             const SizedBox(width: 8),
             Text(
-              '$serverName removed from favorites',
+              '$serverName ' + 'removed_from_favorites'.tr(context),
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -856,7 +870,7 @@ class _ServersScreenState extends State<ServersScreen>{
 
                 // Title
                 Text(
-                  'Premium Server',
+                  'premium_server'.tr(context),
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -868,7 +882,7 @@ class _ServersScreenState extends State<ServersScreen>{
 
                 // Message
                 Text(
-                  '$serverName is only available for Premium users',
+                  '$serverName ' + 'premium_server_lock_desc'.tr(context),
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
@@ -882,7 +896,7 @@ class _ServersScreenState extends State<ServersScreen>{
 
                 // Premium Benefits
                 Text(
-                  'Upgrade to Premium to unlock:',
+                  'upgrade_unlock'.tr(context),
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -893,11 +907,11 @@ class _ServersScreenState extends State<ServersScreen>{
                 const SizedBox(height: 12),
 
                 // Benefits List
-                _buildBenefitItem('Access to all premium servers'),
+                _buildBenefitItem('all_premium_servers'.tr(context)),
                 const SizedBox(height: 8),
-                _buildBenefitItem('Faster connection speeds'),
+                _buildBenefitItem('faster_speeds'.tr(context)),
                 const SizedBox(height: 8),
-                _buildBenefitItem('No ads & priority support'),
+                _buildBenefitItem('no_ads_support'.tr(context)),
 
                 const SizedBox(height: 24),
 
@@ -921,7 +935,7 @@ class _ServersScreenState extends State<ServersScreen>{
                           ),
                         ),
                         child: Text(
-                          'Cancel',
+                          'cancel'.tr(context),
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -964,7 +978,7 @@ class _ServersScreenState extends State<ServersScreen>{
                             const SizedBox(width: 6),
                             Flexible(
                               child: Text(
-                                'Upgrade',
+                                'upgrade'.tr(context),
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
@@ -1062,7 +1076,7 @@ class _ServersScreenState extends State<ServersScreen>{
 
                 // Title
                 Text(
-                  'Premium Feature',
+                  'premium_feature'.tr(context),
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -1074,7 +1088,7 @@ class _ServersScreenState extends State<ServersScreen>{
 
                 // Message
                 Text(
-                  'Random Server connects to premium servers only.\nUpgrade to Premium to unlock this feature!',
+                  'random_server_premium_desc'.tr(context),
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
@@ -1106,7 +1120,7 @@ class _ServersScreenState extends State<ServersScreen>{
                           ),
                         ),
                         child: Text(
-                          'Cancel',
+                          'cancel'.tr(context),
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -1149,7 +1163,7 @@ class _ServersScreenState extends State<ServersScreen>{
                             const SizedBox(width: 6),
                             Flexible(
                               child: Text(
-                                'Upgrade',
+                                'upgrade'.tr(context),
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,

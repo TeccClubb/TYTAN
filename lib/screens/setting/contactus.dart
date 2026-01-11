@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tytan/Screens/setting/feedback.dart';
 import 'package:tytan/Screens/background/background.dart';
+import 'package:tytan/Defaults/extensions.dart';
 
 class ContactSupport extends StatelessWidget {
   const ContactSupport({Key? key}) : super(key: key);
@@ -12,6 +13,7 @@ class ContactSupport extends StatelessWidget {
       debugPrint('Could not launch $url');
     }
   }
+
   Future<void> _launchEmail() async {
     final Uri emailLaunchUri = Uri(
       scheme: 'mailto',
@@ -22,6 +24,7 @@ class ContactSupport extends StatelessWidget {
       debugPrint('Could not launch email');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,16 +33,16 @@ class ContactSupport extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CenteredHeader(title: "Settings"),
+              CenteredHeader(title: "settings".tr(context)),
               const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.all(20),
                   children: [
-                    const SectionHeader(title: "Support"),
+                    SectionHeader(title: "support".tr(context)),
                     SettingsTile(
                       icon: Icons.help_outline_rounded,
-                      title: "Frequently Asked Questions",
+                      title: "frequently_asked_questions".tr(context),
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const FAQScreen()),
@@ -47,49 +50,53 @@ class ContactSupport extends StatelessWidget {
                     ),
                     SettingsTile(
                       icon: Icons.chat_bubble_outline_rounded,
-                      title: "Send Feedback",
+                      title: "send_feedback".tr(context),
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const FeedbackScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => const FeedbackScreen(),
+                        ),
                       ),
                     ),
                     SettingsTile(
                       icon: Icons.email_outlined,
-                      title: "Email Support",
+                      title: "email_support".tr(context),
                       onTap: _launchEmail,
                     ),
                     const SizedBox(height: 20),
-                    const SectionHeader(title: "Connect"),
+                    SectionHeader(title: "connect".tr(context)),
                     SettingsTile(
                       icon: Icons.public,
-                      title: "Follow on X (Twitter)",
+                      title: "follow_x".tr(context),
                       isExternal: true,
                       onTap: () => _launchUrl("https://twitter.com/yourhandle"),
                     ),
                     SettingsTile(
                       icon: Icons.camera_alt_outlined,
-                      title: "Follow on Instagram",
+                      title: "follow_instagram".tr(context),
                       isExternal: true,
-                      onTap: () => _launchUrl("https://instagram.com/yourhandle"),
+                      onTap: () =>
+                          _launchUrl("https://instagram.com/yourhandle"),
                     ),
                     const SizedBox(height: 20),
-                    const SectionHeader(title: "Legal"),
+                    SectionHeader(title: "legal".tr(context)),
                     SettingsTile(
                       icon: Icons.description_outlined,
-                      title: "Terms of Service",
+                      title: "terms_of_service".tr(context),
                       isExternal: true,
                       onTap: () => _launchUrl("https://yourwebsite.com/terms"),
                     ),
                     SettingsTile(
                       icon: Icons.privacy_tip_outlined,
-                      title: "Privacy Policy",
+                      title: "privacy_policy".tr(context),
                       isExternal: true,
-                      onTap: () => _launchUrl("https://yourwebsite.com/privacy"),
+                      onTap: () =>
+                          _launchUrl("https://yourwebsite.com/privacy"),
                     ),
                     const SizedBox(height: 40),
                     Center(
                       child: Text(
-                        'App Version 1.0.0',
+                        'app_version'.tr(context),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           color: Colors.grey,
@@ -106,6 +113,7 @@ class ContactSupport extends StatelessWidget {
     );
   }
 }
+
 class FAQScreen extends StatelessWidget {
   const FAQScreen({Key? key}) : super(key: key);
   @override
@@ -115,27 +123,27 @@ class FAQScreen extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              const CenteredHeader(title: "FAQ"),
+              CenteredHeader(title: "faq".tr(context)),
               const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.all(20),
-                  children: const [
+                  children: [
                     FAQItem(
-                      question: "How do I change my server location?",
-                      answer: "Go to the home screen and tap the flag icon or the 'Change Location' button.",
+                      question: "faq_q1".tr(context),
+                      answer: "faq_a1".tr(context),
                     ),
                     FAQItem(
-                      question: "Is my connection secure?",
-                      answer: "Yes, we use military-grade encryption to ensure your data is safe.",
+                      question: "faq_q2".tr(context),
+                      answer: "faq_a2".tr(context),
                     ),
                     FAQItem(
-                      question: "Why is my connection slow?",
-                      answer: "Speed can be affected by your distance. Try connecting to a closer server.",
+                      question: "faq_q3".tr(context),
+                      answer: "faq_a3".tr(context),
                     ),
                     FAQItem(
-                      question: "Can I use this on multiple devices?",
-                      answer: "Yes, your subscription covers up to 5 devices simultaneously.",
+                      question: "faq_q4".tr(context),
+                      answer: "faq_a4".tr(context),
                     ),
                   ],
                 ),
@@ -147,6 +155,7 @@ class FAQScreen extends StatelessWidget {
     );
   }
 }
+
 class CenteredHeader extends StatelessWidget {
   final String title;
   const CenteredHeader({Key? key, required this.title}) : super(key: key);
@@ -166,7 +175,11 @@ class CenteredHeader extends StatelessWidget {
                 color: const Color(0xFF2A2A2A),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 18),
+              child: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
             ),
           ),
           Text(
@@ -177,12 +190,16 @@ class CenteredHeader extends StatelessWidget {
               color: Colors.white,
             ),
           ),
-          const SizedBox(width: 40, height: 40), // Balance trick for perfect centering
+          const SizedBox(
+            width: 40,
+            height: 40,
+          ), // Balance trick for perfect centering
         ],
       ),
     );
   }
 }
+
 class SectionHeader extends StatelessWidget {
   final String title;
   const SectionHeader({Key? key, required this.title}) : super(key: key);
@@ -202,6 +219,7 @@ class SectionHeader extends StatelessWidget {
     );
   }
 }
+
 class SettingsTile extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -235,7 +253,9 @@ class SettingsTile extends StatelessWidget {
           ),
         ),
         trailing: Icon(
-          isExternal ? Icons.open_in_new_rounded : Icons.arrow_forward_ios_rounded,
+          isExternal
+              ? Icons.open_in_new_rounded
+              : Icons.arrow_forward_ios_rounded,
           color: Colors.grey,
           size: isExternal ? 18 : 16,
         ),
@@ -243,10 +263,12 @@ class SettingsTile extends StatelessWidget {
     );
   }
 }
+
 class FAQItem extends StatelessWidget {
   final String question;
   final String answer;
-  const FAQItem({Key? key, required this.question, required this.answer}) : super(key: key);
+  const FAQItem({Key? key, required this.question, required this.answer})
+    : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(

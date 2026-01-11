@@ -5,6 +5,7 @@ import 'package:installed_apps/app_info.dart' show AppInfo;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:tytan/Screens/background/background.dart' show AppBackground;
+import 'package:tytan/Defaults/extensions.dart';
 
 class Tunneling extends StatefulWidget {
   const Tunneling({super.key});
@@ -216,7 +217,7 @@ class _TunnelingState extends State<Tunneling> {
 
                     const Spacer(),
                     Text(
-                      'Split Tunneling',
+                      'split_tunneling'.tr(context),
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 24,
                         color: Colors.white,
@@ -253,7 +254,7 @@ class _TunnelingState extends State<Tunneling> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Do not allow selected apps to use VPN',
+                          'split_tunneling_info'.tr(context),
                           style: GoogleFonts.poppins(
                             color: Colors.white,
                             fontSize: 13,

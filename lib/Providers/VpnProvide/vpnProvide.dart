@@ -21,8 +21,10 @@ import 'package:tytan/Defaults/singboxConfigs.dart' show SingboxConfig;
 import 'package:tytan/NetworkServices/networkVmess.dart' show VmessService;
 import 'package:flutter_singbox_vpn/flutter_singbox.dart' show FlutterSingbox;
 import 'package:tytan/NetworkServices/networkSingbox.dart' show NetworkSingbox;
-import 'package:tytan/ReusableWidgets/customSnackBar.dart' show showCustomSnackBar;
-import 'package:tytan/NetworkServices/networkVmessService.dart' show VmessUserConfig;
+import 'package:tytan/ReusableWidgets/customSnackBar.dart'
+    show showCustomSnackBar;
+import 'package:tytan/NetworkServices/networkVmessService.dart'
+    show VmessUserConfig;
 
 enum Protocol { vless, vmess }
 
@@ -1574,38 +1576,36 @@ class VpnProvide with ChangeNotifier {
 
   Future<VmessUserConfig?> registerVmess(String serverIp) async {
     try {
-      final headers = {
-        "Accept": "application/json"
-      };
-   // 2. Ensure username is safe (no spaces)
-    final rawName = user.isNotEmpty ? user.first.name : "guest";
-    final username = "${rawName.toLowerCase().replaceAll(' ', '_')}_${Random().nextInt(1000)}";
+      final headers = {"Accept": "application/json"};
+      // 2. Ensure username is safe (no spaces)
+      final rawName = user.isNotEmpty ? user.first.name : "guest";
+      final username =
+          "${rawName.toLowerCase().replaceAll(' ', '_')}_${Random().nextInt(1000)}";
       log("Username $username");
       final body = {"ip": serverIp, "username": username};
       log("Body vmess: $body");
 
       log("Response vmess: ${UUtils.baseUrl}vpn/register-client");
       final response = await http.post(
-        Uri.parse(
-          "${UUtils.baseUrl}vpn/register-client",
-        ),
+        Uri.parse("${UUtils.baseUrl}vpn/register-client"),
         headers: headers,
-        body: body
+        body: body,
       );
 
       log("Response vmess123: ${response.body}");
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseBody = jsonDecode(response.body);
-        
+
         log("Parsed body: $responseBody");
         log("Status check: ${responseBody['status']}");
-        log("Data check: ${responseBody['data'] != null ? 'data exists' : 'data is null'}");
-        
-        if (responseBody['status'] == true &&
-            responseBody['data'] != null) {
+        log(
+          "Data check: ${responseBody['data'] != null ? 'data exists' : 'data is null'}",
+        );
+
+        if (responseBody['status'] == true && responseBody['data'] != null) {
           final data = responseBody['data'];
-          
+
           // Create VmessUserConfig from the response data
           VmessUserConfig config = VmessUserConfig(
             username: data['username'] ?? '',
@@ -1617,7 +1617,7 @@ class VpnProvide with ChangeNotifier {
             message: data['message'],
             success: data['success'],
           );
-          
+
           log("Created VmessUserConfig: ${config.toString()}");
           return config;
         } else {
@@ -1731,7 +1731,7 @@ class VpnProvide with ChangeNotifier {
         if (vmessConfig != null) {
           // Check if ad blocker is enabled
           bool adBlockerEnabled = await VmessService.isAdblockEnabled();
-          
+
           // Generate config directly using the values from VmessUserConfig
           config = SingboxConfig.getVmessConfig(
             uuid: vmessConfig.uuid,
@@ -1855,7 +1855,9 @@ class VpnProvide with ChangeNotifier {
       // Then clear everything else
       await prefs.clear();
 
-      debugPrint("SharedPreferences cleared. Token: ${prefs.getString('token')}, AppAccountToken: ${prefs.getString('app_account_token')}");
+      debugPrint(
+        "SharedPreferences cleared. Token: ${prefs.getString('token')}, AppAccountToken: ${prefs.getString('app_account_token')}",
+      );
 
       // Reset provider state
       servers = [];
@@ -2013,7 +2015,7 @@ class VpnProvide with ChangeNotifier {
       var body = {
         'email': emailController.text,
         'message': messageController.text,
-        'subject': subjectController.text
+        'subject': subjectController.text,
       };
 
       log('Submitting feedback with email: ${emailController.text}');
@@ -2038,7 +2040,7 @@ class VpnProvide with ChangeNotifier {
           Icons.check,
           'Success',
           'Feedback submitted successfully',
-          Colors.green
+          Colors.green,
         );
       } else {
         log('Error submitting feedback: ${data['message']}');
@@ -2047,7 +2049,7 @@ class VpnProvide with ChangeNotifier {
           Icons.error,
           'Error',
           "As a guest user u can't add feedback",
-          Colors.red
+          Colors.red,
         );
       }
     } catch (error) {

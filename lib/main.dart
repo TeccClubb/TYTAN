@@ -1,4 +1,3 @@
-// ignore_for_file: use_super_parameters
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tytan/Screens/home/home_screen.dart';
@@ -25,28 +24,30 @@ void main() async {
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
-  runApp(const MyApp());
+  final languageProvider = LanguageProvider();
+  await languageProvider.loadLanguageFromPrefs();
+
+  runApp(MyApp(languageProvider: languageProvider));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final LanguageProvider languageProvider;
 
+  const MyApp({Key? key, required this.languageProvider}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    // We move MultiProvider to the top level
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvide()),
         ChangeNotifierProvider(create: (_) => VpnProvide()),
-        ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ChangeNotifierProvider.value(value: languageProvider),
       ],
       // Consumer listens for changes in LanguageProvider
       child: Consumer<LanguageProvider>(
         builder: (context, languageProvider, child) {
           return MaterialApp(
-            title: 'Tytan VPN',
+            title: languageProvider.translate('app_title'),
             debugShowCheckedModeBanner: false,
-
             locale: Locale(languageProvider.currentLanguage.code),
             builder: (context, child) {
               return Directionality(
@@ -56,7 +57,6 @@ class MyApp extends StatelessWidget {
                 child: child!,
               );
             },
-
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
               scaffoldBackgroundColor: Colors.black,
