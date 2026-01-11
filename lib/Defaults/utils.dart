@@ -1,5 +1,5 @@
 class UUtils {
-  static const String baseUrl = "https://tytanvpn.tecclubb.com/api/";
+  static const String baseUrl = "https://panel.drivewiseai.com/api/";
   static const String login = "${baseUrl}login";
   static const String register = "${baseUrl}signup";
   static const String forgotPassword = "${baseUrl}forgot-password";
