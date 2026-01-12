@@ -26,7 +26,6 @@ void main() async {
   );
   final languageProvider = LanguageProvider();
   await languageProvider.loadLanguageFromPrefs();
-
   runApp(MyApp(languageProvider: languageProvider));
 }
 

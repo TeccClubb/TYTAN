@@ -1,4 +1,3 @@
-
 // ignore_for_file: use_super_parameters
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
+import 'package:tytan/Defaults/extensions.dart';
 
 class ProtocolScreen extends StatefulWidget {
   const ProtocolScreen({Key? key}) : super(key: key);
@@ -64,17 +64,15 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
                       // ),
 
                       // SizedBox(height: 16),
-
                       _buildProtocolOption(
                         provider: provider,
                         protocol: Protocol.vmess,
-                        name: provider.getProtocolDisplayName(Protocol.vmess),
-                        description: 'Enjoy reliable security with time-tested, stable, and reliable protection.',
-                        feature: 'Fast Connection',
+                        name: 'vmess_protocol'.tr(context),
+                        description: 'vmess_description'.tr(context),
+                        feature: 'fast_connection'.tr(context),
                         featureColor: Colors.blue,
                         iconColor: const Color(0xFF0A84FF),
                       ),
-                    
                     ],
                   ),
                 ),
@@ -111,7 +109,7 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
           ),
 
           Text(
-            'Protocol',
+            'protocol_screen_title'.tr(context),
             style: GoogleFonts.plusJakartaSans(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -133,7 +131,6 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
     required Color featureColor,
     required Color iconColor,
   }) {
-   
     return GestureDetector(
       onTap: () async {
         // Try to set the protocol
@@ -144,7 +141,7 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Please disconnect VPN before changing protocol',
+                'protocol_change_error'.tr(context),
                 style: GoogleFonts.plusJakartaSans(color: Colors.white),
               ),
               backgroundColor: Colors.red,
@@ -156,7 +153,7 @@ class _ProtocolScreenState extends State<ProtocolScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Protocol changed to $name',
+                '${'protocol_changed_success'.tr(context)} $name',
                 style: GoogleFonts.plusJakartaSans(color: Colors.white),
               ),
               backgroundColor: Colors.green,

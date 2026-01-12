@@ -184,5 +184,11 @@
     "other": "Другое",
     "feedback_success": "Отзыв успешно отправлен",
     "guest_feedback_error": "Как гостевой пользователь, вы не можете оставить отзыв",
-    "feedback_failed": "Не удалось отправить отзыв"
+    "feedback_failed": "Не удалось отправить отзыв",
+    "protocol_screen_title": "Протокол",
+    "vmess_protocol": "VMess",
+    "vmess_description": "Наслаждайтесь надежной безопасностью с проверенной временем, стабильной и надежной защитой.",
+    "fast_connection": "Быстрое соединение",
+    "protocol_change_error": "Пожалуйста, отключите VPN перед сменой протокола",
+    "protocol_changed_success": "Протокол изменен на"
 }

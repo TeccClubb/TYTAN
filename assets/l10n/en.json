@@ -184,5 +184,11 @@
     "other": "Other",
     "feedback_success": "Feedback submitted successfully",
     "guest_feedback_error": "As a guest user you can't add feedback",
-    "feedback_failed": "Failed to submit feedback"
+    "feedback_failed": "Failed to submit feedback",
+    "protocol_screen_title": "Protocol",
+    "vmess_protocol": "VMess",
+    "vmess_description": "Enjoy reliable security with time-tested, stable, and reliable protection.",
+    "fast_connection": "Fast Connection",
+    "protocol_change_error": "Please disconnect VPN before changing protocol",
+    "protocol_changed_success": "Protocol changed to"
 }

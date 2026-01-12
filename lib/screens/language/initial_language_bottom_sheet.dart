@@ -122,7 +122,7 @@ class _LanguageSelectionBottomSheetState
                       return _buildLanguageItem(
                         context,
                         language,
-                        languageProvider.currentLanguage?.code == language.code,
+                        languageProvider.currentLanguage.code == language.code,
                         index,
                         languageProvider.loadingIndex == index,
                       );
