@@ -172,5 +172,17 @@
     "random_server_premium_desc": "Random Server connects to premium servers only.\nUpgrade to Premium to unlock this feature!",
     "onboarding_screen": "Onboarding Screen",
     "search_servers_hint": "Search countries or cities...",
-    "selected_server": "Selected Server"
+    "feedback": "Feedback",
+    "how_rate_experience": "How would you rate your experience ?",
+    "share_about_q": "What would you like to share about?",
+    "tell_us_more": "Tell us more",
+    "feedback_hint": "Tell us what's on your mind...",
+    "respond_time_note": "We usually respond within 24 hours.",
+    "app_design": "App Design",
+    "speed": "Speed",
+    "bugs": "Bugs",
+    "other": "Other",
+    "feedback_success": "Feedback submitted successfully",
+    "guest_feedback_error": "As a guest user you can't add feedback",
+    "feedback_failed": "Failed to submit feedback"
 }

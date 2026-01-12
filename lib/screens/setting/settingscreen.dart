@@ -323,7 +323,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   child: Image.asset(image, color: Colors.white, scale: 4),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 5),
                 Text(
                   title,
                   style: GoogleFonts.plusJakartaSans(

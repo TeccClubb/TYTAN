@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
+import 'package:tytan/Defaults/extensions.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({Key? key}) : super(key: key);
@@ -18,11 +19,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   bool _isSubmitting = false;
 
   final List<String> _feedbackTypes = [
-    'App Design',
-    'Speed',
-    'Connection',
-    'Bugs',
-    'Other',
+    'app_design',
+    'speed',
+    'connection',
+    'bugs',
+    'other',
   ];
 
   @override
@@ -46,11 +47,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(context),
-              const Divider(
-                  color: Color(0xFF2A2A2A),
-                  height: 1,
-                  thickness: 1,
-                ),
+              const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
@@ -63,7 +60,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
                       // Feedback type selection
                       Text(
-                        'What would you like to share about?',
+                        'share_about_q'.tr(context),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -76,7 +73,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
                       // Feedback text field
                       Text(
-                        'Tell us more',
+                        'tell_us_more'.tr(context),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -114,7 +111,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       // Response time note
                       Center(
                         child: Text(
-                          'We usually respond within 24 hours.',
+                          'respond_time_note'.tr(context),
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             color: Colors.grey,
@@ -156,7 +153,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           ),
 
           Text(
-            'Feedback',
+            'feedback'.tr(context),
             style: GoogleFonts.plusJakartaSans(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -181,7 +178,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'How would you rate your experience ?',
+            'how_rate_experience'.tr(context),
             style: GoogleFonts.plusJakartaSans(
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -223,7 +220,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             setState(() {
               _selectedFeedbackType = type;
               // Set the subject in the provider's subject controller
-              context.read<VpnProvide>().subjectController.text = type;
+              context.read<VpnProvide>().subjectController.text = type.tr(
+                context,
+              );
             });
           },
           child: Container(
@@ -231,12 +230,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             decoration: BoxDecoration(
               color: isSelected ? AppColors.primary : const Color(0xFF212121),
               borderRadius: BorderRadius.circular(20),
-              border: isSelected 
+              border: isSelected
                   ? Border.all(color: AppColors.primary, width: 2)
                   : Border.all(color: Colors.transparent, width: 2),
             ),
             child: Text(
-              type,
+              type.tr(context),
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -262,7 +261,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
         maxLines: null,
         style: GoogleFonts.plusJakartaSans(fontSize: 14, color: Colors.white),
         decoration: InputDecoration(
-          hintText: 'Tell us what\'s on your mind...',
+          hintText: 'feedback_hint'.tr(context),
           hintStyle: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             color: Colors.grey,
@@ -278,15 +277,17 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        onPressed: _isSubmitting ? null : () async {
-          setState(() {
-            _isSubmitting = true;
-          });
-          await context.read<VpnProvide>().addFeedback(context);
-          setState(() {
-            _isSubmitting = false;
-          });
-        },
+        onPressed: _isSubmitting
+            ? null
+            : () async {
+                setState(() {
+                  _isSubmitting = true;
+                });
+                await context.read<VpnProvide>().addFeedback(context);
+                setState(() {
+                  _isSubmitting = false;
+                });
+              },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
@@ -305,7 +306,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 ),
               )
             : Text(
-                'Send Feedback',
+                'send_feedback'.tr(context),
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

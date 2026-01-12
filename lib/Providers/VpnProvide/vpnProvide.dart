@@ -25,6 +25,7 @@ import 'package:tytan/ReusableWidgets/customSnackBar.dart'
     show showCustomSnackBar;
 import 'package:tytan/NetworkServices/networkVmessService.dart'
     show VmessUserConfig;
+import 'package:tytan/Defaults/extensions.dart';
 
 enum Protocol { vless, vmess }
 
@@ -1727,10 +1728,10 @@ class VpnProvide with ChangeNotifier {
       };
 
       // Only send email and message - backend doesn't allow subject field
+      // We append the subject to the message instead
       var body = {
         'email': emailController.text,
-        'message': messageController.text,
-        'subject': subjectController.text,
+        'message': '[${subjectController.text}] ${messageController.text}',
       };
 
       log('Submitting feedback with email: ${emailController.text}');
@@ -1754,7 +1755,7 @@ class VpnProvide with ChangeNotifier {
           context,
           Icons.check,
           'Success',
-          'Feedback submitted successfully',
+          TranslationExtension('feedback_success').tr(context),
           Colors.green,
         );
       } else {
@@ -1763,7 +1764,7 @@ class VpnProvide with ChangeNotifier {
           context,
           Icons.error,
           'Error',
-          "As a guest user u can't add feedback",
+          TranslationExtension('guest_feedback_error').tr(context),
           Colors.red,
         );
       }
@@ -1773,7 +1774,7 @@ class VpnProvide with ChangeNotifier {
         context,
         Icons.error,
         'Error',
-        'Failed to submit feedback: $error',
+        TranslationExtension('feedback_failed').tr(context) + ': $error',
         Colors.red,
       );
     }

@@ -32,7 +32,6 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final LanguageProvider languageProvider;
-
   const MyApp({Key? key, required this.languageProvider}) : super(key: key);
   @override
   Widget build(BuildContext context) {

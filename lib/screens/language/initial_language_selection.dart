@@ -26,7 +26,7 @@ class InitialLanguageSelectionScreen extends StatefulWidget {
 class _InitialLanguageSelectionScreenState
     extends State<InitialLanguageSelectionScreen> {
   // Track the selected language code
-  String _selectedLanguageCode = 'en';
+  String _selectedLanguageCode = '';
   bool _isProcessing = false;
 
   @override
@@ -39,6 +39,12 @@ class _InitialLanguageSelectionScreenState
         listen: false,
       );
       languageProvider.fetchLanguages();
+
+      if (mounted) {
+        setState(() {
+          _selectedLanguageCode = languageProvider.currentLanguage.code;
+        });
+      }
     });
   }
 
@@ -58,7 +64,7 @@ class _InitialLanguageSelectionScreenState
                   height: 100,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/IMG_4445 3.png'),
+                      image: AssetImage('assets/Tytan Logo.png'),
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -143,9 +149,7 @@ class _InitialLanguageSelectionScreenState
                           return _buildLanguageItem(
                             context,
                             language,
-                            languageProvider.currentLanguage?.code ==
-                                    language.code ||
-                                _selectedLanguageCode == language.code,
+                            _selectedLanguageCode == language.code,
                             index,
                             languageProvider.loadingIndex == index,
                           );
