@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tytan/Screens/setting/feedback.dart';
+import 'package:tytan/Screens/setting/terms_of_service.dart';
+import 'package:tytan/Screens/setting/privacy_policy.dart';
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Defaults/extensions.dart';
 
@@ -82,6 +84,7 @@ class ContactSupport extends StatelessWidget {
                     SectionHeader(title: "legal".tr(context)),
                     SettingsTile(
                       icon: Icons.description_outlined,
+<<<<<<< HEAD
                       title: "terms_of_service".tr(context),
                       isExternal: true,
                       onTap: () => _launchUrl("https://yourwebsite.com/terms"),
@@ -92,6 +95,25 @@ class ContactSupport extends StatelessWidget {
                       isExternal: true,
                       onTap: () =>
                           _launchUrl("https://yourwebsite.com/privacy"),
+=======
+                      title: "Terms of Service",
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TermsOfServiceScreen(),
+                        ),
+                      ),
+                    ),
+                    SettingsTile(
+                      icon: Icons.privacy_tip_outlined,
+                      title: "Privacy Policy",
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PrivacyPolicyScreen(),
+                        ),
+                      ),
+>>>>>>> c539e3d (uza)
                     ),
                     const SizedBox(height: 40),
                     Center(
@@ -130,6 +152,7 @@ class FAQScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(20),
                   children: [
                     FAQItem(
+<<<<<<< HEAD
                       question: "faq_q1".tr(context),
                       answer: "faq_a1".tr(context),
                     ),
@@ -144,6 +167,26 @@ class FAQScreen extends StatelessWidget {
                     FAQItem(
                       question: "faq_q4".tr(context),
                       answer: "faq_a4".tr(context),
+=======
+                      question: "How do I change my server location?",
+                      answer:
+                          "Go to the home screen and tap the flag icon or the 'Change Location' button.",
+                    ),
+                    FAQItem(
+                      question: "Is my connection secure?",
+                      answer:
+                          "Yes, we use military-grade encryption to ensure your data is safe.",
+                    ),
+                    FAQItem(
+                      question: "Why is my connection slow?",
+                      answer:
+                          "Speed can be affected by your distance. Try connecting to a closer server.",
+                    ),
+                    FAQItem(
+                      question: "Can I use this on multiple devices?",
+                      answer:
+                          "Yes, your subscription covers up to 5 devices simultaneously.",
+>>>>>>> c539e3d (uza)
                     ),
                   ],
                 ),

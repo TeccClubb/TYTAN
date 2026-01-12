@@ -9,7 +9,11 @@ import 'package:tytan/Screens/server/server_screen.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:tytan/Screens/setting/settingscreen.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
+<<<<<<< HEAD
 import 'package:tytan/Defaults/extensions.dart';
+=======
+import 'package:tytan/screens/premium/premium.dart';
+>>>>>>> c539e3d (uza)
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -58,6 +62,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
           },
         );
       case 2:
+        return PremiumScreen(isBack: false);
+      case 3:
         return const SettingsScreen();
       default:
         return HomeScreen(
@@ -89,6 +95,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+<<<<<<< HEAD
                 _buildNavItem(
                   EvaIcons.home,
                   TranslationExtension("home").tr(context),
@@ -104,6 +111,12 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   TranslationExtension("settings").tr(context),
                   2,
                 ),
+=======
+                _buildNavItem(EvaIcons.home, "Home", 0),
+                _buildNavItem(EvaIcons.globe, "Servers", 1),
+                _buildNavItem(Icons.star_rounded, "Premium", 2),
+                _buildNavItem(EvaIcons.settings2, "Settings", 3),
+>>>>>>> c539e3d (uza)
               ],
             ),
           ),
@@ -115,7 +128,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget _buildNavItem(IconData icon, String label, int index) {
     final provider = Provider.of<VpnProvide>(context);
     final bool isSelected = provider.bottomBarIndex.value == index;
-    final Color itemColor = isSelected ? AppColors.primary : Colors.grey;
+    final Color itemColor = isSelected ? (AppColors.primary) : Colors.grey;
 
     return GestureDetector(
       onTap: () {

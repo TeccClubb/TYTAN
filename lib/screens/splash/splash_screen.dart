@@ -200,7 +200,7 @@ class _SplashScreenState extends State<SplashScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Tytan ',
+                            'TYTAN ',
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 39,
                               fontWeight: FontWeight.bold,

@@ -516,9 +516,7 @@ class AccountScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const PremiumScreen(),
-                    ),
+                    MaterialPageRoute(builder: (context) => PremiumScreen()),
                   );
                 },
                 style: ElevatedButton.styleFrom(

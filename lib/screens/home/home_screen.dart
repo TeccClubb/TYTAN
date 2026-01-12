@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tytan/Screens/background/map.dart';
-import 'package:tytan/Screens/premium/premium.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
 import 'package:tytan/Screens/server/server_screen.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:tytan/ReusableWidgets/customSnackBar.dart'
     show showCustomSnackBar;
+<<<<<<< HEAD
 import 'package:tytan/Defaults/extensions.dart';
+=======
+import 'package:tytan/screens/premium/premium.dart';
+>>>>>>> c539e3d (uza)
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onNavigateToServers;
@@ -168,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen>
               // Handle info icon tap
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const PremiumScreen()),
+                MaterialPageRoute(builder: (context) => PremiumScreen()),
               );
             },
             child: Container(
@@ -204,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen>
     return Column(
       children: [
         _buildAppHeader(),
-        SizedBox(height: 70),
+        SizedBox(height: 30),
         // Status Text
         Text(
           'disconnected'.tr(context),
@@ -836,7 +839,7 @@ class _HomeScreenState extends State<HomeScreen>
     return Column(
       children: [
         _buildAppHeader(),
-        SizedBox(height: 50),
+        SizedBox(height: 30),
         // Status Text
         Text(
           'Connected',
@@ -859,14 +862,13 @@ class _HomeScreenState extends State<HomeScreen>
         const SizedBox(height: 40),
 
         // Power Button
-        // Power Button
         GestureDetector(
           onTap: provider.toggleVpn,
           child: Container(
             width: 130,
             height: 130,
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.2),
+              color: const Color(0xFF02F30A).withOpacity(0.2),
               borderRadius: BorderRadius.circular(70),
             ),
             child: Center(
@@ -874,11 +876,11 @@ class _HomeScreenState extends State<HomeScreen>
                 width: 110,
                 height: 110,
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: const Color(0xFF02F30A),
                   borderRadius: BorderRadius.circular(60),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.4),
+                      color: const Color(0xFF02F30A).withOpacity(0.4),
                       blurRadius: 30,
                       spreadRadius: 10,
                     ),

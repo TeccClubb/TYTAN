@@ -6,9 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tytan/DataModel/languageModel.dart';
 import 'package:tytan/Providers/LanguageProvide/languageProvide.dart'
     show LanguageProvider;
+<<<<<<< HEAD
 import 'package:tytan/Defaults/extensions.dart';
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Screens/welcome/welcome.dart';
+=======
+import 'package:tytan/Screens/constant/Appconstant.dart';
+import 'package:tytan/Screens/background/background.dart';
+>>>>>>> c539e3d (uza)
 
 class InitialLanguageSelectionScreen extends StatefulWidget {
   final Function(String languageCode) onLanguageSelected;
@@ -54,6 +59,7 @@ class _InitialLanguageSelectionScreenState
       body: AppBackground(
         child: SafeArea(
           child: Column(
+<<<<<<< HEAD
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 30),
@@ -196,6 +202,229 @@ class _InitialLanguageSelectionScreenState
                   ),
                 ),
               ),
+=======
+            children: [
+              _buildHeader(context),
+              const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
+              Expanded(
+                child: Consumer<LanguageProvider>(
+                  builder: (context, languageProvider, child) {
+                    if (languageProvider.isLoading) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
+                      );
+                    } else if (languageProvider.error != null) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              color: Colors.red,
+                              size: 48,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Failed to load languages',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () =>
+                                  languageProvider.fetchLanguages(),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: Text(
+                                'Retry',
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(20),
+                        itemCount: languageProvider.availableLanguages.length,
+                        itemBuilder: (context, index) {
+                          final language =
+                              languageProvider.availableLanguages[index];
+                          return _buildLanguageItem(
+                            context,
+                            language,
+                            languageProvider.currentLanguage?.code ==
+                                    language.code ||
+                                _selectedLanguageCode == language.code,
+                            index,
+                            languageProvider.loadingIndex == index,
+                          );
+                        },
+                      );
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2A2A),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
+          ),
+          Text(
+            'Language',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLanguageItem(
+    BuildContext context,
+    Language language,
+    bool isSelected,
+    int index,
+    bool isLoading,
+  ) {
+    final languageProvider = Provider.of<LanguageProvider>(
+      context,
+      listen: false,
+    );
+
+    // For English, use GB or US flag if en flag doesn't exist
+    String flagCode = language.code;
+    if (language.code == 'en') {
+      flagCode = 'gb'; // Use GB flag for English
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1A1A),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(
+          color: isSelected ? AppColors.primary : const Color(0xFF2A2A2A),
+          width: isSelected ? 2 : 1,
+        ),
+        boxShadow: isSelected
+            ? [
+                BoxShadow(
+                  color: AppColors.primary.withOpacity(0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
+      ),
+      child: InkWell(
+        onTap: isLoading
+            ? null
+            : () async {
+                // Change language
+                final success = await languageProvider.changeLanguage(
+                  language.code,
+                  loadingIndex: index,
+                );
+
+                if (success) {
+                  // Update the selected language code
+                  setState(() {
+                    _selectedLanguageCode = language.code;
+                  });
+                }
+              },
+        borderRadius: BorderRadius.circular(15),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              // Flag Icon
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFF2A2A2A), width: 2),
+                  image: DecorationImage(
+                    image: AssetImage('assets/flags/$flagCode.png'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+
+              // Language Name
+              Expanded(
+                child: Text(
+                  language.name,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  ),
+                ),
+              ),
+
+              // Loading or Selected Indicator
+              if (isLoading)
+                SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    color: AppColors.primary,
+                    strokeWidth: 2,
+                  ),
+                )
+              else if (isSelected)
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.check, color: Colors.white, size: 16),
+                ),
+>>>>>>> c539e3d (uza)
             ],
           ),
         ),
@@ -221,6 +450,7 @@ class _InitialLanguageSelectionScreenState
       widget.onLanguageSelected(_selectedLanguageCode);
 
       if (mounted) {
+<<<<<<< HEAD
         final prefs = await SharedPreferences.getInstance();
         final bool onboardingCompleted =
             prefs.getBool('onboarding_completed') ?? false;
@@ -356,4 +586,16 @@ class _InitialLanguageSelectionScreenState
       ),
     );
   }
+=======
+        // We only need minimal initialization before onboarding
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('onboarding_completed', false);
+      }
+    } catch (e) {
+      setState(() {
+        _isProcessing = false;
+      });
+    }
+  }
+>>>>>>> c539e3d (uza)
 }

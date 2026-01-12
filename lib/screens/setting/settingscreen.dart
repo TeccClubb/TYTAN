@@ -191,7 +191,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const PremiumScreen(),
+                                  builder: (context) => PremiumScreen(),
                                 ),
                               ); // Navigate to subscription details
                             },
