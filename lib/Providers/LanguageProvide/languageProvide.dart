@@ -1,17 +1,15 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:get/get.dart';
+import 'package:tytan/Defaults/utils.dart' show UUtils;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tytan/DataModel/languageModel.dart' show Language;
-import 'package:tytan/Defaults/utils.dart' show UUtils;
 
 class LanguageProvider extends ChangeNotifier {
-  // TODO: Replace with the actual API base URL for your application
-  final String _baseUrl =
-      UUtils.baseUrl; // Update this with your actual API URL
+  final String _baseUrl = UUtils.baseUrl;
 
   List<Language> _availableLanguages = [
     Language(name: 'English', code: 'en', isRtl: false, isDefault: true),

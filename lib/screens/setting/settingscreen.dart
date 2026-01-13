@@ -253,7 +253,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       VpnStatusConnectionStatus.connected ||
                                   provider.vpnConnectionStatus ==
                                       VpnStatusConnectionStatus.connecting) {
-                                await provider.toggleVpn();
+                                await provider.toggleVpn(context);
                                 // Wait for disconnection to complete
                                 await Future.delayed(
                                   const Duration(seconds: 2),
@@ -267,6 +267,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ],
                       ),
+                      const SizedBox(height: 15),
 
                       const SizedBox(height: 20),
                     ],

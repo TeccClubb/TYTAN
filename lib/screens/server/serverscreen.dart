@@ -3,15 +3,12 @@ import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tytan/Screens/premium/premium.dart';
 import 'package:tytan/DataModel/serverDataModel.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
-<<<<<<< HEAD
 import 'package:tytan/Defaults/extensions.dart';
-=======
-import 'package:tytan/screens/premium/premium.dart';
->>>>>>> c539e3d (uza)
 
 class ServersScreen extends StatefulWidget {
   final VoidCallback? onServerSelected;
@@ -30,7 +27,9 @@ class _ServersScreenState extends State<ServersScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<VpnProvide>().loadFavoriteServers();
+      final provider = context.read<VpnProvide>();
+      provider.loadFavoriteServers();
+      provider.calculateAllServerPings();
     });
   }
 
@@ -107,6 +106,7 @@ class _ServersScreenState extends State<ServersScreen> {
   Widget _buildRegionFilter() {
     final regions = [
       'all'.tr(context),
+      'smartconnect'.tr(context),
       'free'.tr(context),
       'premium'.tr(context),
       'favourites'.tr(context),
@@ -116,6 +116,7 @@ class _ServersScreenState extends State<ServersScreen> {
     // Let's use internal keys for logic and translate for display.
     final regionMap = {
       'all'.tr(context): 'All',
+      'smartconnect'.tr(context): 'Smart Connect',
       'free'.tr(context): 'Free',
       'premium'.tr(context): 'Premium',
       'favourites'.tr(context): 'Favourites',
@@ -490,7 +491,6 @@ class _ServersScreenState extends State<ServersScreen> {
   // }
 
   Widget _buildServerList(VpnProvide provider) {
-    // Apply region filter before showing
     final filteredServers = provider.filterServers.where((server) {
       if (_selectedRegion == 'All') return true;
       if (_selectedRegion == 'Free') return server.type == 'free';
@@ -500,6 +500,12 @@ class _ServersScreenState extends State<ServersScreen> {
       }
       return true;
     }).toList();
+
+    if (_selectedRegion == 'Smart Connect') {
+      filteredServers.sort(
+        (a, b) => (a.pingValue ?? 9999).compareTo(b.pingValue ?? 9999),
+      );
+    }
 
     return Expanded(
       child: Padding(
@@ -712,6 +718,34 @@ class _ServersScreenState extends State<ServersScreen> {
             ),
             Row(
               children: [
+                if (server.ping != null)
+                  Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: (server.pingValue ?? 1000) < 150
+                          ? Colors.green.withOpacity(0.1)
+                          : (server.pingValue ?? 1000) < 300
+                          ? Colors.orange.withOpacity(0.1)
+                          : Colors.red.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      server.ping!,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: (server.pingValue ?? 1000) < 150
+                            ? Colors.green
+                            : (server.pingValue ?? 1000) < 300
+                            ? Colors.orange
+                            : Colors.red,
+                      ),
+                    ),
+                  ),
                 // Favorite Star
                 GestureDetector(
                   onTap: () async {

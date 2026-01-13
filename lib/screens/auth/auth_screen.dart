@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';
@@ -7,6 +8,8 @@ import 'package:tytan/Screens/background/background.dart' show AppBackground;
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
 import 'package:tytan/Defaults/extensions.dart';
+import 'package:tytan/Screens/privacy/privacy.dart';
+import 'package:tytan/Screens/terms/terms.dart';
 
 class AuthScreen extends StatefulWidget {
   final int initialTabIndex;
@@ -516,6 +519,13 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                     color: AppColors.primary,
                     fontWeight: FontWeight.w600,
                   ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Terms()),
+                      );
+                    },
                 ),
                 TextSpan(
                   text: ' and ',
@@ -531,6 +541,15 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                     color: AppColors.primary,
                     fontWeight: FontWeight.w600,
                   ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PrivacyPolicyScreen(),
+                        ),
+                      );
+                    },
                 ),
               ],
             ),

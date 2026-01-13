@@ -7,7 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:tytan/Defaults/utils.dart';
-import 'dart:io' show Platform, InternetAddress;
+import 'package:tytan/Defaults/extensions.dart';
+import 'dart:io' show Platform, InternetAddress, Socket;
 import 'package:tytan/DataModel/userModel.dart';
 import '../../NetworkServices/networkVless.dart';
 import 'package:tytan/DataModel/plansModel.dart';
@@ -25,7 +26,6 @@ import 'package:tytan/ReusableWidgets/customSnackBar.dart'
     show showCustomSnackBar;
 import 'package:tytan/NetworkServices/networkVmessService.dart'
     show VmessUserConfig;
-import 'package:tytan/Defaults/extensions.dart';
 
 enum Protocol { vless, vmess }
 
@@ -61,6 +61,12 @@ class VpnProvide with ChangeNotifier {
   var downloadSpeed = "0.0";
   var uploadSpeed = "0.0";
   var pingSpeed = "0.0";
+
+  // Data usage tracking
+  double totalUsageBytes = 0.0;
+  static const double dataLimit5GB = 5.0 * 1024 * 1024 * 1024;
+  static const String totalUsagePrefsKey = 'total_data_usage_bytes';
+  bool get isDataLimitReached => !isPremium && totalUsageBytes >= dataLimit5GB;
 
   String? _lastStatusReceived;
   DateTime? _lastStatusTime;
@@ -102,6 +108,7 @@ class VpnProvide with ChangeNotifier {
   }
 
   init() {
+    loadTotalUsage(); // Added: Load usage on init
     _singbox.onTrafficUpdate.listen(
       (event) {
         log("Traffic update received: $event");
@@ -110,19 +117,19 @@ class VpnProvide with ChangeNotifier {
             event['formattedDownlinkSpeed']?.toString() ?? "0 B/s";
         String upSpeed = event['formattedUplinkSpeed']?.toString() ?? "0 B/s";
 
-        // Ignore invalid speeds (containing negative values)
-        // if (downSpeed.contains('-') || upSpeed.contains('-')) {
-        //   return;
-        // }
-        // if (downSpeed.isEmpty) {
-        //   downSpeed = "0 kB/s";
-        // }
-        // if (upSpeed.isEmpty) {
-        //   upSpeed = "0 kB/s";
-        // }
-
+        // Update speeds for UI
         downloadSpeed = downSpeed;
         uploadSpeed = upSpeed;
+
+        // Track data usage
+        // Expecting uplinkTotal and downlinkTotal in bytes as per user request
+        final double currentUpTotal =
+            double.tryParse(event['uplinkTotal']?.toString() ?? "0") ?? 0.0;
+        final double currentDownTotal =
+            double.tryParse(event['downlinkTotal']?.toString() ?? "0") ?? 0.0;
+
+        _handleDataUsageUpdate(currentUpTotal, currentDownTotal);
+
         notifyListeners();
       },
       onError: (error) {
@@ -742,10 +749,25 @@ class VpnProvide with ChangeNotifier {
 
     // If we were connected before, reconnect to the new server
     if (wasConnected) {
+      // Check data limit before reconnecting
+      if (isDataLimitReached) {
+        log("Data limit reached during server change. Stopping.");
+        if (context.mounted) {
+          showCustomSnackBar(
+            context,
+            Icons.data_usage_rounded,
+            'Data Limit Reached',
+            'You have used your 5GB free limit. Upgrade to Premium for unlimited data!',
+            Colors.red,
+          );
+        }
+        await disconnectVmessVlessWireGuard();
+        return;
+      }
       log("Connecting to new server at index: $value");
-      await toggleVpn();
+      await toggleVpn(context);
     } else {
-      await toggleVpn();
+      await toggleVpn(context);
     }
   }
 
@@ -1287,6 +1309,53 @@ class VpnProvide with ChangeNotifier {
     } finally {
       isloading = false;
       notifyListeners();
+      // Calculate pings after fetching servers
+      calculateAllServerPings();
+    }
+  }
+
+  Future<void> calculateAllServerPings() async {
+    for (var server in servers) {
+      int bestPing = 9999;
+      for (var sub in server.subServers) {
+        if (sub.vpsServer != null) {
+          final pingResult = await _pingServer(
+            sub.vpsServer!.ipAddress,
+            sub.vpsServer!.port,
+          );
+          sub.vpsServer!.pingValue = pingResult;
+          sub.vpsServer!.ping = "${pingResult}ms";
+          if (pingResult < bestPing) {
+            bestPing = pingResult;
+          }
+        }
+      }
+      if (bestPing != 9999) {
+        server.pingValue = bestPing;
+        server.ping = "${bestPing}ms";
+      } else {
+        server.ping = "N/A";
+        server.pingValue = 10000;
+      }
+    }
+    filterSrvList();
+    notifyListeners();
+  }
+
+  Future<int> _pingServer(String host, int port) async {
+    final sw = Stopwatch()..start();
+    try {
+      final socket = await Socket.connect(
+        host,
+        port,
+        timeout: const Duration(seconds: 2),
+      );
+      await socket.close();
+      sw.stop();
+      return sw.elapsedMilliseconds;
+    } catch (e) {
+      log("Ping error for $host: $e");
+      return 10000; // Return high value for failed pings
     }
   }
 
@@ -1354,7 +1423,53 @@ class VpnProvide with ChangeNotifier {
     }
   }
 
-  toggleVpn() async {
+  double _lastUplinkTotal = 0.0;
+  double _lastDownlinkTotal = 0.0;
+
+  /// Load total usage from storage
+  Future<void> loadTotalUsage() async {
+    final prefs = await SharedPreferences.getInstance();
+    totalUsageBytes = prefs.getDouble(totalUsagePrefsKey) ?? 0.0;
+    log(
+      "Loaded total usage: ${(totalUsageBytes / (1024 * 1024)).toStringAsFixed(2)} MB",
+    );
+    notifyListeners();
+  }
+
+  /// Handle cumulative data usage updates
+  void _handleDataUsageUpdate(double uplinkTotal, double downlinkTotal) async {
+    // If it's a new connection or reset, initialize last totals
+    // Usually totals from native side reset on connection, so if they are smaller than last seen, we treat as new connection
+    if (uplinkTotal < _lastUplinkTotal || downlinkTotal < _lastDownlinkTotal) {
+      _lastUplinkTotal = 0.0;
+      _lastDownlinkTotal = 0.0;
+    }
+
+    // Calculate the delta (what was transferred since the last update)
+    double deltaUp = uplinkTotal - _lastUplinkTotal;
+    double deltaDown = downlinkTotal - _lastDownlinkTotal;
+
+    if (deltaUp < 0) deltaUp = 0;
+    if (deltaDown < 0) deltaDown = 0;
+
+    totalUsageBytes += (deltaUp + deltaDown);
+    _lastUplinkTotal = uplinkTotal;
+    _lastDownlinkTotal = downlinkTotal;
+
+    // Check if limit reached
+    if (isDataLimitReached &&
+        vpnConnectionStatus == VpnStatusConnectionStatus.connected) {
+      log("Data limit (5GB) reached! Disconnecting...");
+      await disconnectVmessVlessWireGuard();
+    }
+
+    // Save periodically (e.g., every 1MB or so) to minimize storage writes
+    // or just save every time for simplicity in this implementation
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble(totalUsagePrefsKey, totalUsageBytes);
+  }
+
+  toggleVpn([BuildContext? context]) async {
     // Prevent rapid toggle calls while connecting or disconnecting
     if (isConnecting) {
       log('toggleVpn called but already connecting, ignoring');
@@ -1376,6 +1491,21 @@ class VpnProvide with ChangeNotifier {
       log(
         'User is not premium; cannot connect to premium server: ${selServer.name}',
       );
+      return;
+    }
+
+    // Check data limit
+    if (isDataLimitReached) {
+      log('Data limit reached. Cannot connect.');
+      if (context != null && context.mounted) {
+        showCustomSnackBar(
+          context,
+          Icons.data_usage_rounded,
+          'Data Limit Reached',
+          'You have used your 5GB free limit. Upgrade to Premium for unlimited data!',
+          Colors.red,
+        );
+      }
       return;
     }
 

@@ -1,20 +1,17 @@
-// ignore_for_file: deprecated_member_use, use_super_parameters
+// ignore_for_file: deprecated_member_use, use_super_parameters, unnecessary_string_interpolations
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tytan/Screens/background/map.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
-import 'package:tytan/Screens/server/server_screen.dart';
+import 'package:tytan/Screens/server/serverscreen.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:tytan/ReusableWidgets/customSnackBar.dart'
     show showCustomSnackBar;
-<<<<<<< HEAD
 import 'package:tytan/Defaults/extensions.dart';
-=======
 import 'package:tytan/screens/premium/premium.dart';
->>>>>>> c539e3d (uza)
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onNavigateToServers;
@@ -151,7 +148,6 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                     ],
                   ),
-                  SizedBox(height: 4),
                   Text(
                     'secure_and_quick'.tr(context),
                     style: GoogleFonts.plusJakartaSans(
@@ -262,7 +258,7 @@ class _HomeScreenState extends State<HomeScreen>
               return;
             }
 
-            await provider.toggleVpn();
+            await provider.toggleVpn(context);
           },
           child: Container(
             width: 130,
@@ -397,24 +393,56 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Text(
-                          provider.servers.isNotEmpty &&
-                                  provider.selectedServerIndex >= 0 &&
-                                  provider.selectedServerIndex <
-                                      provider.servers.length
-                              ? provider
-                                    .servers[provider.selectedServerIndex]
-                                    .name
-                              : 'No server selected',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              provider.servers.isNotEmpty &&
+                                      provider.selectedServerIndex >= 0 &&
+                                      provider.selectedServerIndex <
+                                          provider.servers.length
+                                  ? provider
+                                        .servers[provider.selectedServerIndex]
+                                        .name
+                                  : 'No server selected',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
+                  if (selectedServer?.ping != null)
+                    Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: (selectedServer!.pingValue ?? 1000) < 150
+                            ? Colors.green.withOpacity(0.1)
+                            : (selectedServer.pingValue ?? 1000) < 300
+                            ? Colors.orange.withOpacity(0.1)
+                            : Colors.red.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        selectedServer.ping!,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: (selectedServer.pingValue ?? 1000) < 150
+                              ? Colors.green
+                              : (selectedServer.pingValue ?? 1000) < 300
+                              ? Colors.orange
+                              : Colors.red,
+                        ),
+                      ),
+                    ),
                   const Icon(
                     Icons.keyboard_arrow_right,
                     color: AppColors.textGray,
@@ -664,7 +692,7 @@ class _HomeScreenState extends State<HomeScreen>
             return Column(
               children: [
                 Text(
-                  isDisconnecting ? 'Disconnecting' : 'Connecting',
+                  isDisconnecting ? 'Disconnecting' : "connecting".tr(context),
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
@@ -802,7 +830,7 @@ class _HomeScreenState extends State<HomeScreen>
               Text(
                 isDisconnecting
                     ? 'Securing your data...'
-                    : 'Establishing secure tunnel...',
+                    : "establishing_secure_tunnel".tr(context),
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
@@ -842,7 +870,7 @@ class _HomeScreenState extends State<HomeScreen>
         SizedBox(height: 30),
         // Status Text
         Text(
-          'Connected',
+          "connected".tr(context),
           style: GoogleFonts.plusJakartaSans(
             fontSize: 32,
             fontWeight: FontWeight.bold,
@@ -902,7 +930,7 @@ class _HomeScreenState extends State<HomeScreen>
 
         // Connection Status Message
         Text(
-          'Your connection is protected',
+          "connection_protected".tr(context),
           style: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: FontWeight.w400,
@@ -930,7 +958,7 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        'DOWNLOAD',
+                        "download".tr(context),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -970,7 +998,7 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        'UPLOAD',
+                        "upload".tr(context),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -989,6 +1017,60 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                   ),
                 ],
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 25),
+
+        // Data Usage Progress (Only for free users)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 50),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'data_usage'.tr(context),
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textGray.withOpacity(0.7),
+                    ),
+                  ),
+                  Text(
+                    provider.isPremium
+                        ? 'Unlimited'
+                        : "${(provider.totalUsageBytes / (1024 * 1024 * 1024)).toStringAsFixed(2)}GB / 5.00GB",
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white.withOpacity(0.9),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: LinearProgressIndicator(
+                  value: provider.isPremium
+                      ? 1.0
+                      : (provider.totalUsageBytes / VpnProvide.dataLimit5GB)
+                            .clamp(0.0, 1.0),
+                  backgroundColor: Colors.white.withOpacity(0.05),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    provider.isPremium
+                        ? AppColors.primary
+                        : (provider.totalUsageBytes / VpnProvide.dataLimit5GB >
+                              0.9)
+                        ? Colors.redAccent
+                        : AppColors.primary,
+                  ),
+                  minHeight: 7,
+                ),
               ),
             ],
           ),
@@ -1123,6 +1205,34 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                   Row(
                     children: [
+                      if (selectedServer?.ping != null)
+                        Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: (selectedServer!.pingValue ?? 1000) < 150
+                                ? Colors.green.withOpacity(0.1)
+                                : (selectedServer.pingValue ?? 1000) < 300
+                                ? Colors.orange.withOpacity(0.1)
+                                : Colors.red.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            selectedServer.ping!,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: (selectedServer.pingValue ?? 1000) < 150
+                                  ? Colors.green
+                                  : (selectedServer.pingValue ?? 1000) < 300
+                                  ? Colors.orange
+                                  : Colors.red,
+                            ),
+                          ),
+                        ),
                       // Signal Strength (based on health_score if available)
                       Column(
                         children: [

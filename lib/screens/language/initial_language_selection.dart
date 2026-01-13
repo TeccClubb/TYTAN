@@ -1,19 +1,14 @@
-import 'dart:developer' show log;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tytan/DataModel/languageModel.dart';
-import 'package:tytan/Providers/LanguageProvide/languageProvide.dart'
-    show LanguageProvider;
-<<<<<<< HEAD
 import 'package:tytan/Defaults/extensions.dart';
-import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Screens/welcome/welcome.dart';
-=======
+import 'package:tytan/DataModel/languageModel.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
 import 'package:tytan/Screens/background/background.dart';
->>>>>>> c539e3d (uza)
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tytan/Providers/LanguageProvide/languageProvide.dart'
+    show LanguageProvider;
 
 class InitialLanguageSelectionScreen extends StatefulWidget {
   final Function(String languageCode) onLanguageSelected;
@@ -59,7 +54,6 @@ class _InitialLanguageSelectionScreenState
       body: AppBackground(
         child: SafeArea(
           child: Column(
-<<<<<<< HEAD
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 30),
@@ -200,80 +194,6 @@ class _InitialLanguageSelectionScreenState
                             ),
                           ),
                   ),
-                ),
-              ),
-=======
-            children: [
-              _buildHeader(context),
-              const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
-              Expanded(
-                child: Consumer<LanguageProvider>(
-                  builder: (context, languageProvider, child) {
-                    if (languageProvider.isLoading) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primary,
-                        ),
-                      );
-                    } else if (languageProvider.error != null) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.error_outline,
-                              color: Colors.red,
-                              size: 48,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Failed to load languages',
-                              style: GoogleFonts.plusJakartaSans(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () =>
-                                  languageProvider.fetchLanguages(),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                              child: Text(
-                                'Retry',
-                                style: GoogleFonts.plusJakartaSans(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      return ListView.builder(
-                        padding: const EdgeInsets.all(20),
-                        itemCount: languageProvider.availableLanguages.length,
-                        itemBuilder: (context, index) {
-                          final language =
-                              languageProvider.availableLanguages[index];
-                          return _buildLanguageItem(
-                            context,
-                            language,
-                            languageProvider.currentLanguage?.code ==
-                                    language.code ||
-                                _selectedLanguageCode == language.code,
-                            index,
-                            languageProvider.loadingIndex == index,
-                          );
-                        },
-                      );
-                    }
-                  },
                 ),
               ),
             ],
@@ -424,7 +344,6 @@ class _InitialLanguageSelectionScreenState
                   ),
                   child: const Icon(Icons.check, color: Colors.white, size: 16),
                 ),
->>>>>>> c539e3d (uza)
             ],
           ),
         ),
@@ -446,11 +365,9 @@ class _InitialLanguageSelectionScreenState
       await prefs.setBool('language_selected', true);
 
       // Call callback to proceed to next screen
-      log('Language selected: $_selectedLanguageCode');
       widget.onLanguageSelected(_selectedLanguageCode);
 
       if (mounted) {
-<<<<<<< HEAD
         final prefs = await SharedPreferences.getInstance();
         final bool onboardingCompleted =
             prefs.getBool('onboarding_completed') ?? false;
@@ -471,7 +388,7 @@ class _InitialLanguageSelectionScreenState
         }
       }
     } catch (e) {
-      log('Error in _continueToNextScreen: $e');
+      // log('Error in _continueToNextScreen: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -489,113 +406,111 @@ class _InitialLanguageSelectionScreenState
     }
   }
 
-  Widget _buildLanguageItem(
-    BuildContext context,
-    Language language,
-    bool isSelected,
-    int index,
-    bool isLoading,
-  ) {
-    final languageProvider = Provider.of<LanguageProvider>(
-      context,
-      listen: false,
-    );
+  // Widget _buildLanguageItem(
+  //   BuildContext context,
+  //   Language language,
+  //   bool isSelected,
+  //   int index,
+  //   bool isLoading,
+  // ) {
+  //   final languageProvider = Provider.of<LanguageProvider>(
+  //     context,
+  //     listen: false,
+  //   );
 
-    // For English, use GB or US flag if en flag doesn't exist
-    String flagCode = language.code;
-    if (language.code == 'en') {
-      flagCode = 'gb'; // Use GB flag for English
-    }
+  //   // For English, use GB or US flag if en flag doesn't exist
+  //   String flagCode = language.code;
+  //   if (language.code == 'en') {
+  //     flagCode = 'gb'; // Use GB flag for English
+  //   }
 
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: const Color(0xFF3A3A3C),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
-          leading: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: AssetImage('assets/flags/$flagCode.png'),
-                fit: BoxFit.cover,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-          ),
-          title: Text(
-            language.name,
-            style: GoogleFonts.poppins(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
-          trailing: isLoading
-              ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(
-                    color: Colors.deepOrange,
-                    strokeWidth: 2,
-                  ),
-                )
-              : isSelected
-              ? const Icon(Icons.check_circle, color: Colors.deepOrange)
-              : null,
-          onTap: () async {
-            // Change language
-            final success = await languageProvider.changeLanguage(
-              language.code,
-              loadingIndex: index,
-            );
+  //   return Container(
+  //     margin: const EdgeInsets.symmetric(vertical: 8),
+  //     decoration: BoxDecoration(
+  //       color: const Color(0xFF3A3A3C),
+  //       borderRadius: BorderRadius.circular(12),
+  //     ),
+  //     child: ClipRRect(
+  //       borderRadius: BorderRadius.circular(12),
+  //       child: ListTile(
+  //         contentPadding: const EdgeInsets.symmetric(
+  //           horizontal: 16,
+  //           vertical: 12,
+  //         ),
+  //         leading: Container(
+  //           width: 40,
+  //           height: 40,
+  //           decoration: BoxDecoration(
+  //             shape: BoxShape.circle,
+  //             image: DecorationImage(
+  //               image: AssetImage('assets/flags/$flagCode.png'),
+  //               fit: BoxFit.cover,
+  //             ),
+  //             boxShadow: [
+  //               BoxShadow(
+  //                 color: Colors.black.withOpacity(0.2),
+  //                 blurRadius: 4,
+  //                 offset: const Offset(0, 2),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         title: Text(
+  //           language.name,
+  //           style: GoogleFonts.poppins(
+  //             color: Colors.white,
+  //             fontSize: 16,
+  //             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+  //           ),
+  //         ),
+  //         trailing: isLoading
+  //             ? const SizedBox(
+  //                 height: 20,
+  //                 width: 20,
+  //                 child: CircularProgressIndicator(
+  //                   color: Colors.deepOrange,
+  //                   strokeWidth: 2,
+  //                 ),
+  //               )
+  //             : isSelected
+  //             ? const Icon(Icons.check_circle, color: Colors.deepOrange)
+  //             : null,
+  //         onTap: () async {
+  //           // Change language
+  //           final success = await languageProvider.changeLanguage(
+  //             language.code,
+  //             loadingIndex: index,
+  //           );
 
-            if (success) {
-              // Update the selected language code
-              setState(() {
-                _selectedLanguageCode = language.code;
-              });
-            } else {
-              // ScaffoldMessenger.of(context).showSnackBar(
-              //   SnackBar(
-              //     content: Text(
-              //       TranslateString('Failed to change language').tr(context) +
-              //           ': ${languageProvider.error}',
-              //     ),
-              //     backgroundColor: Colors.red,
-              //   ),
-              // );
-            }
-          },
-        ),
-      ),
-    );
-  }
-=======
-        // We only need minimal initialization before onboarding
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setBool('onboarding_completed', false);
-      }
-    } catch (e) {
-      setState(() {
-        _isProcessing = false;
-      });
-    }
-  }
->>>>>>> c539e3d (uza)
+  //           if (success) {
+  //             // Update the selected language code
+  //             setState(() {
+  //               _selectedLanguageCode = language.code;
+  //             });
+  //           } else {
+  //             // ScaffoldMessenger.of(context).showSnackBar(
+  //             //   SnackBar(
+  //             //     content: Text(
+  //             //       TranslateString('Failed to change language').tr(context) +
+  //             //           ': ${languageProvider.error}',
+  //             //     ),
+  //             //     backgroundColor: Colors.red,
+  //             //   ),
+  //             // );
+  //           }
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
+  //       // We only need minimal initialization before onboarding
+  //       SharedPreferences prefs = await SharedPreferences.getInstance();
+  //       prefs.setBool('onboarding_completed', false);
+  //     }
+  //   } catch (e) {
+  //     setState(() {
+  //       _isProcessing = false;
+  //     });
+  //   }
+  // }
 }

@@ -1,7 +1,8 @@
+// ignore_for_file: use_super_parameters
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tytan/Screens/home/home_screen.dart';
-import 'package:tytan/Screens/splash/splash_screen.dart';
+import 'package:tytan/Screens/home/homescreen.dart';
+import 'package:tytan/Screens/splash/splashscreen.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';

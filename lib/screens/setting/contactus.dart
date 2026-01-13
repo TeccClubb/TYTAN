@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tytan/Screens/setting/feedback.dart';
-import 'package:tytan/Screens/setting/terms_of_service.dart';
-import 'package:tytan/Screens/setting/privacy_policy.dart';
+import 'package:tytan/Screens/privacy/privacy.dart';
+import 'package:tytan/Screens/terms/terms.dart';
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Defaults/extensions.dart';
 
@@ -35,7 +35,7 @@ class ContactSupport extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CenteredHeader(title: "settings".tr(context)),
+              CenteredHeader(title: "support".tr(context)),
               const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
               Expanded(
                 child: ListView(
@@ -84,36 +84,21 @@ class ContactSupport extends StatelessWidget {
                     SectionHeader(title: "legal".tr(context)),
                     SettingsTile(
                       icon: Icons.description_outlined,
-<<<<<<< HEAD
                       title: "terms_of_service".tr(context),
-                      isExternal: true,
-                      onTap: () => _launchUrl("https://yourwebsite.com/terms"),
-                    ),
-                    SettingsTile(
-                      icon: Icons.privacy_tip_outlined,
-                      title: "privacy_policy".tr(context),
-                      isExternal: true,
-                      onTap: () =>
-                          _launchUrl("https://yourwebsite.com/privacy"),
-=======
-                      title: "Terms of Service",
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => const TermsOfServiceScreen(),
-                        ),
+                        MaterialPageRoute(builder: (_) => const Terms()),
                       ),
                     ),
                     SettingsTile(
                       icon: Icons.privacy_tip_outlined,
-                      title: "Privacy Policy",
+                      title: "privacy_policy".tr(context),
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (_) => const PrivacyPolicyScreen(),
                         ),
                       ),
->>>>>>> c539e3d (uza)
                     ),
                     const SizedBox(height: 40),
                     Center(
@@ -152,7 +137,6 @@ class FAQScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(20),
                   children: [
                     FAQItem(
-<<<<<<< HEAD
                       question: "faq_q1".tr(context),
                       answer: "faq_a1".tr(context),
                     ),
@@ -167,10 +151,6 @@ class FAQScreen extends StatelessWidget {
                     FAQItem(
                       question: "faq_q4".tr(context),
                       answer: "faq_a4".tr(context),
-=======
-                      question: "How do I change my server location?",
-                      answer:
-                          "Go to the home screen and tap the flag icon or the 'Change Location' button.",
                     ),
                     FAQItem(
                       question: "Is my connection secure?",
@@ -186,7 +166,6 @@ class FAQScreen extends StatelessWidget {
                       question: "Can I use this on multiple devices?",
                       answer:
                           "Yes, your subscription covers up to 5 devices simultaneously.",
->>>>>>> c539e3d (uza)
                     ),
                   ],
                 ),

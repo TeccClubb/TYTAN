@@ -3,17 +3,13 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tytan/Screens/home/home_screen.dart';
+import 'package:tytan/Screens/home/homescreen.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
-import 'package:tytan/Screens/server/server_screen.dart';
+import 'package:tytan/Screens/server/serverscreen.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:tytan/Screens/setting/settingscreen.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
-<<<<<<< HEAD
 import 'package:tytan/Defaults/extensions.dart';
-=======
-import 'package:tytan/screens/premium/premium.dart';
->>>>>>> c539e3d (uza)
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -62,8 +58,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
           },
         );
       case 2:
-        return PremiumScreen(isBack: false);
-      case 3:
         return const SettingsScreen();
       default:
         return HomeScreen(
@@ -95,7 +89,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-<<<<<<< HEAD
                 _buildNavItem(
                   EvaIcons.home,
                   TranslationExtension("home").tr(context),
@@ -111,12 +104,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   TranslationExtension("settings").tr(context),
                   2,
                 ),
-=======
-                _buildNavItem(EvaIcons.home, "Home", 0),
-                _buildNavItem(EvaIcons.globe, "Servers", 1),
-                _buildNavItem(Icons.star_rounded, "Premium", 2),
-                _buildNavItem(EvaIcons.settings2, "Settings", 3),
->>>>>>> c539e3d (uza)
               ],
             ),
           ),
