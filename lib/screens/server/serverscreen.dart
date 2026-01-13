@@ -652,69 +652,80 @@ class _ServersScreenState extends State<ServersScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                // Flag Icon - Use image if available, otherwise show a placeholder
-                SizedBox(
-                  width: 40,
-                  height: 40,
-                  child: Center(
-                    child: (server.image ?? '').isNotEmpty
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: Image.network(
-                              server.image!,
-                              fit: BoxFit.cover,
-                              width: 30,
-                              height: 30,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.flag, color: Colors.white),
-                            ),
-                          )
-                        : const Icon(Icons.flag, color: Colors.white),
+            Expanded(
+              child: Row(
+                children: [
+                  // Flag Icon - Use image if available, otherwise show a placeholder
+                  SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Center(
+                      child: (server.image ?? '').isNotEmpty
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: Image.network(
+                                server.image!,
+                                fit: BoxFit.cover,
+                                width: 30,
+                                height: 30,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(Icons.flag, color: Colors.white),
+                              ),
+                            )
+                          : const Icon(Icons.flag, color: Colors.white),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          server.name,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                server.name,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
 
-                        if (isPremium) ...[
-                          const SizedBox(width: 6),
-                          // Using the crown image instead of an icon
-                          Image.asset(
-                            'assets/Vector (4).png',
-                            width: 14,
-                            height: 14,
-                            color: Colors.amber,
+                            if (isPremium) ...[
+                              const SizedBox(width: 6),
+                              // Using the crown image instead of an icon
+                              Image.asset(
+                                'assets/Vector (4).png',
+                                width: 14,
+                                height: 14,
+                                color: Colors.amber,
+                              ),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          server.subServers != null &&
+                                  server.subServers.isNotEmpty
+                              ? server.subServers[0].name
+                              : '',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey,
                           ),
-                        ],
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      server.subServers != null && server.subServers.isNotEmpty
-                          ? server.subServers[0].name
-                          : '',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
             Row(
               children: [
