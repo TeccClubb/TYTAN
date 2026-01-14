@@ -867,7 +867,7 @@ class _HomeScreenState extends State<HomeScreen>
     return Column(
       children: [
         _buildAppHeader(),
-        SizedBox(height: 30),
+        SizedBox(height: 15),
         // Status Text
         Text(
           "connected".tr(context),
@@ -1022,9 +1022,8 @@ class _HomeScreenState extends State<HomeScreen>
           ),
         ),
 
-        const SizedBox(height: 25),
-
         // Data Usage Progress (Only for free users)
+        SizedBox(height: 12),
         provider.isPremium
             ? SizedBox.shrink()
             : Padding(
@@ -1054,7 +1053,7 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: LinearProgressIndicator(
