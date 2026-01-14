@@ -1025,56 +1025,60 @@ class _HomeScreenState extends State<HomeScreen>
         const SizedBox(height: 25),
 
         // Data Usage Progress (Only for free users)
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 50),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'data_usage'.tr(context),
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textGray.withOpacity(0.7),
+        provider.isPremium
+            ? SizedBox.shrink()
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 50),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'data_usage'.tr(context),
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textGray.withOpacity(0.7),
+                          ),
+                        ),
+                        Text(
+                          provider.isPremium
+                              ? 'Unlimited'
+                              : "${(provider.totalUsageBytes / (1024 * 1024 * 1024)).toStringAsFixed(2)}GB / 5.00GB",
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white.withOpacity(0.9),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Text(
-                    provider.isPremium
-                        ? 'Unlimited'
-                        : "${(provider.totalUsageBytes / (1024 * 1024 * 1024)).toStringAsFixed(2)}GB / 5.00GB",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white.withOpacity(0.9),
+                    const SizedBox(height: 8),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: LinearProgressIndicator(
+                        value: provider.isPremium
+                            ? 1.0
+                            : (provider.totalUsageBytes /
+                                      VpnProvide.dataLimit5GB)
+                                  .clamp(0.0, 1.0),
+                        backgroundColor: Colors.white.withOpacity(0.05),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          provider.isPremium
+                              ? AppColors.primary
+                              : (provider.totalUsageBytes /
+                                        VpnProvide.dataLimit5GB >
+                                    0.9)
+                              ? Colors.redAccent
+                              : AppColors.primary,
+                        ),
+                        minHeight: 7,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: LinearProgressIndicator(
-                  value: provider.isPremium
-                      ? 1.0
-                      : (provider.totalUsageBytes / VpnProvide.dataLimit5GB)
-                            .clamp(0.0, 1.0),
-                  backgroundColor: Colors.white.withOpacity(0.05),
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    provider.isPremium
-                        ? AppColors.primary
-                        : (provider.totalUsageBytes / VpnProvide.dataLimit5GB >
-                              0.9)
-                        ? Colors.redAccent
-                        : AppColors.primary,
-                  ),
-                  minHeight: 7,
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
 
         const Spacer(flex: 1),
 

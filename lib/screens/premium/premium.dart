@@ -301,12 +301,12 @@ class _PremiumScreenState extends State<PremiumScreen>
     return Consumer<VpnProvide>(
       builder: (context, provider, child) {
         if (provider.plans.isEmpty)
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator());
         return Column(
           children: [
             ...provider.plans.map((plan) => _buildPlanCard(plan)),
             const SizedBox(height: 30),
-            _buildActionButton("start_premium_trial".tr(context), () {}),
+            _buildActionButton("start_premium".tr(context), () {}),
             const SizedBox(height: 20),
           ],
         );
