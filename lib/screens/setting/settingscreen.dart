@@ -243,7 +243,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               ? _buildNavigationSetting(
                                   title: 'Sign in'.tr(context),
                                   subtitle:
-                                      'Unlock all features with a secure account'
+                                      'unlock_all_features_with_a_secure_account'
                                           .tr(context),
                                   icon: Icons.login,
                                   iconColor: AppColors.primary,
