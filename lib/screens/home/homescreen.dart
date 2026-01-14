@@ -1079,8 +1079,7 @@ class _HomeScreenState extends State<HomeScreen>
                   ],
                 ),
               ),
-        SizedBox(height: 25),
-        Spacer(flex: 1),
+        SizedBox(height: MediaQuery.of(context).size.height * 0.04),
         // Current Server Status
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -1292,7 +1291,6 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
         ),
-        const SizedBox(height: 20),
       ],
     );
   }
