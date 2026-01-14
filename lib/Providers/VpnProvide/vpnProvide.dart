@@ -6,16 +6,18 @@ import 'dart:developer' show log;
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart' show Provider;
 import 'package:tytan/Defaults/utils.dart';
 import 'package:tytan/Defaults/extensions.dart';
-import 'dart:io' show Platform, InternetAddress, Socket;
 import 'package:tytan/DataModel/userModel.dart';
+import 'package:tytan/Providers/AuthProvide/authProvide.dart' show AuthProvide;
 import '../../NetworkServices/networkVless.dart';
 import 'package:tytan/DataModel/plansModel.dart';
 import 'dart:convert' show jsonDecode, jsonEncode;
 import 'package:tytan/Screens/welcome/welcome.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:tytan/DataModel/serverDataModel.dart';
+import 'dart:io' show Platform, InternetAddress, Socket;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
 import 'package:tytan/Defaults/singboxConfigs.dart' show SingboxConfig;
@@ -1694,12 +1696,15 @@ class VpnProvide with ChangeNotifier {
       await prefs.remove('token');
       await prefs.remove('app_account_token');
       await prefs.remove('isLoggedIn');
+      await prefs.remove('isGuest');
       await prefs.remove('user');
       await prefs.remove('email');
       await prefs.remove('password');
       await prefs.remove('name');
       // Then clear everything else
       await prefs.clear();
+      var authProvide = Provider.of<AuthProvide>(context, listen: false);
+      authProvide.setGuest(false);
 
       debugPrint(
         "SharedPreferences cleared. Token: ${prefs.getString('token')}, AppAccountToken: ${prefs.getString('app_account_token')}",

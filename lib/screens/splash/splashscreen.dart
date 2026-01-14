@@ -90,9 +90,12 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateToNextScreen() async {
+    var authProvide = Provider.of<AuthProvide>(context, listen: false);
     final prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('token');
     final String? appAccountToken = prefs.getString('app_account_token');
+    final bool isGuest = prefs.getBool("isGuest") ?? false;
+    authProvide.setGuest(isGuest);
 
     final bool isLoggedIn =
         token != null && token.isNotEmpty ||

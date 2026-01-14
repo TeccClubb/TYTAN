@@ -15,6 +15,7 @@ import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/Screens/setting/contactus.dart' show ContactSupport;
 import 'package:tytan/Providers/AuthProvide/authProvide.dart' show AuthProvide;
 import 'package:tytan/Defaults/extensions.dart';
+import 'package:tytan/Screens/welcome/welcome.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -28,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     var provider = context.watch<VpnProvide>();
     var authProvide = context.watch<AuthProvide>();
+    print("IsGuest ${authProvide.isGuest}");
     return Scaffold(
       body: AppBackground(
         child: SafeArea(
@@ -237,34 +239,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
 
                           SizedBox(height: 15),
-                          _buildNavigationSetting(
-                            title: 'sign_out'.tr(context),
-                            subtitle: 'logout_desc'.tr(context),
-                            icon: Icons.logout,
-                            iconColor: Colors.red.shade300,
-                            onTap: () async {
-                              var provider = Provider.of<VpnProvide>(
-                                context,
-                                listen: false,
-                              );
+                          authProvide.isGuest
+                              ? _buildNavigationSetting(
+                                  title: 'Sign in'.tr(context),
+                                  subtitle:
+                                      'Unlock all features with a secure account'
+                                          .tr(context),
+                                  icon: Icons.login,
+                                  iconColor: AppColors.primary,
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => const WelcomeScreen(),
+                                      ),
+                                    );
+                                  },
+                                  isLastItem: true,
+                                )
+                              : _buildNavigationSetting(
+                                  title: 'sign_out'.tr(context),
+                                  subtitle: 'logout_desc'.tr(context),
+                                  icon: Icons.logout,
+                                  iconColor: Colors.red.shade300,
+                                  onTap: () async {
+                                    final vpnProvider = Provider.of<VpnProvide>(
+                                      context,
+                                      listen: false,
+                                    );
 
-                              // Disconnect VPN if connected
-                              if (provider.vpnConnectionStatus ==
-                                      VpnStatusConnectionStatus.connected ||
-                                  provider.vpnConnectionStatus ==
-                                      VpnStatusConnectionStatus.connecting) {
-                                await provider.toggleVpn(context);
-                                // Wait for disconnection to complete
-                                await Future.delayed(
-                                  const Duration(seconds: 2),
-                                );
-                              }
+                                    // Disconnect VPN if connected
+                                    if (vpnProvider.vpnConnectionStatus ==
+                                            VpnStatusConnectionStatus
+                                                .connected ||
+                                        vpnProvider.vpnConnectionStatus ==
+                                            VpnStatusConnectionStatus
+                                                .connecting) {
+                                      await vpnProvider.toggleVpn(context);
+                                      await Future.delayed(
+                                        const Duration(seconds: 2),
+                                      );
+                                    }
 
-                              // Perform logout - this will clear data and navigate to WelcomeScreen
-                              await provider.logout(context);
-                            },
-                            isLastItem: true,
-                          ),
+                                    // Logout
+                                    await vpnProvider.logout(context);
+                                  },
+                                  isLastItem: true,
+                                ),
                         ],
                       ),
                       const SizedBox(height: 15),
