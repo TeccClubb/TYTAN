@@ -1079,9 +1079,8 @@ class _HomeScreenState extends State<HomeScreen>
                   ],
                 ),
               ),
-
-        const Spacer(flex: 1),
-
+        SizedBox(height: 25),
+        Spacer(flex: 1),
         // Current Server Status
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -1238,51 +1237,50 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                         ),
                       // Signal Strength (based on health_score if available)
-                      Column(
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Container(
-                                width: 3,
-                                height: 7,
-                                decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  borderRadius: BorderRadius.circular(2),
-                                ),
-                              ),
-                              const SizedBox(width: 2),
-                              Container(
-                                width: 3,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  borderRadius: BorderRadius.circular(2),
-                                ),
-                              ),
-                              const SizedBox(width: 2),
-                              Container(
-                                width: 3,
-                                height: 13,
-                                decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  borderRadius: BorderRadius.circular(2),
-                                ),
-                              ),
-                              const SizedBox(width: 2),
-                              Container(
-                                width: 3,
-                                height: 16,
-                                decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  borderRadius: BorderRadius.circular(2),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 12),
+                      // Column(
+                      //   children: [
+                      //     Row(
+                      //       crossAxisAlignment: CrossAxisAlignment.end,
+                      //       children: [
+                      //         Container(
+                      //           width: 3,
+                      //           height: 7,
+                      //           decoration: BoxDecoration(
+                      //             color: Colors.green,
+                      //             borderRadius: BorderRadius.circular(2),
+                      //           ),
+                      //         ),
+                      //         const SizedBox(width: 2),
+                      //         Container(
+                      //           width: 3,
+                      //           height: 10,
+                      //           decoration: BoxDecoration(
+                      //             color: Colors.green,
+                      //             borderRadius: BorderRadius.circular(2),
+                      //           ),
+                      //         ),
+                      //         const SizedBox(width: 2),
+                      //         Container(
+                      //           width: 3,
+                      //           height: 13,
+                      //           decoration: BoxDecoration(
+                      //             color: Colors.green,
+                      //             borderRadius: BorderRadius.circular(2),
+                      //           ),
+                      //         ),
+                      //         const SizedBox(width: 2),
+                      //         Container(
+                      //           width: 3,
+                      //           height: 16,
+                      //           decoration: BoxDecoration(
+                      //             color: Colors.green,
+                      //             borderRadius: BorderRadius.circular(2),
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ],
+                      // ),
                       const Icon(
                         Icons.keyboard_arrow_right,
                         color: AppColors.textGray,

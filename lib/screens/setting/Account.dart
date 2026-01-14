@@ -80,7 +80,7 @@ class AccountScreen extends StatelessWidget {
                                   _showDeleteDialog(context);
                                 },
                                 child: Text(
-                                  'Delete Account',
+                                  'delete_account'.tr(context),
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
@@ -127,7 +127,7 @@ class AccountScreen extends StatelessWidget {
           ),
 
           Text(
-            'My Account',
+            'my_account'.tr(context),
             style: GoogleFonts.plusJakartaSans(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -174,7 +174,7 @@ class AccountScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Personal Details',
+                      'personal_details'.tr(context),
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -208,7 +208,7 @@ class AccountScreen extends StatelessWidget {
                                 ? '${provider.user.first.name}'
                                 : authProvider.guestUser != null
                                 ? '${authProvider.guestUser?.name}'
-                                : 'loading...',
+                                : 'loading...'.tr(context),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.plusJakartaSans(
@@ -218,7 +218,7 @@ class AccountScreen extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'Username',
+                            'username'.tr(context),
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
                               color: Colors.grey,
@@ -263,7 +263,7 @@ class AccountScreen extends StatelessWidget {
                                 ? '${provider.user.first.email}'
                                 : authProvider.guestUser != null
                                 ? '${authProvider.guestUser?.email}'
-                                : 'loading...',
+                                : 'loading...'.tr(context),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.plusJakartaSans(
@@ -273,7 +273,7 @@ class AccountScreen extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'Email address',
+                            'email_address'.tr(context),
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
                               color: Colors.grey,
@@ -321,7 +321,7 @@ class AccountScreen extends StatelessWidget {
                                             .toLocal()
                                             .toString()
                                             .split(' ')[0]
-                                      : 'Loading...',
+                                      : 'loading...'.tr(context),
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
@@ -329,7 +329,7 @@ class AccountScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  'Member since',
+                                  'member_since'.tr(context),
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 12,
                                     color: Colors.grey,
@@ -376,7 +376,7 @@ class AccountScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Subscription',
+                  'subscription'.tr(context),
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -404,7 +404,7 @@ class AccountScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Premium Plan',
+                        'premium_plan'.tr(context),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -413,7 +413,7 @@ class AccountScreen extends StatelessWidget {
                       ),
                       RichText(
                         text: TextSpan(
-                          text: 'Active',
+                          text: 'active'.tr(context),
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -425,7 +425,7 @@ class AccountScreen extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    'Unlimited devices & locations',
+                    'unlimited_devices'.tr(context),
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       color: Colors.grey,
@@ -436,14 +436,14 @@ class AccountScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Status:',
+                        'status'.tr(context),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 14,
                           color: Colors.grey,
                         ),
                       ),
                       Text(
-                        'Premium Member',
+                        'premium_member'.tr(context),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -471,7 +471,7 @@ class AccountScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Free Plan',
+                        'free_plan'.tr(context),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -486,7 +486,7 @@ class AccountScreen extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    'Limited access to servers',
+                    'limited_access'.tr(context),
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       color: Colors.grey,
@@ -494,7 +494,7 @@ class AccountScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Upgrade to premium for unlimited access!',
+                    'upgrade_for_unlimited'.tr(context),
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -528,8 +528,8 @@ class AccountScreen extends StatelessWidget {
                 ),
                 child: Text(
                   provider.isPremium
-                      ? 'Manage Subscription'
-                      : 'Upgrade to Premium',
+                      ? 'manage_subscription'.tr(context)
+                      : 'upgrade_to_premium'.tr(context),
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -556,7 +556,7 @@ Future<void> _showDeleteDialog(BuildContext context) async {
         backgroundColor: const Color(0xFF1E1E1E),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Delete Account?',
+          'delete_account_q'.tr(context),
           style: GoogleFonts.plusJakartaSans(
             fontWeight: FontWeight.bold,
             color: AppColors.primary,
@@ -567,7 +567,7 @@ Future<void> _showDeleteDialog(BuildContext context) async {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'This action is permanent. Please enter your password to confirm.',
+              'delete_confirm_desc'.tr(context),
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 color: Colors.grey[300],
@@ -579,7 +579,7 @@ Future<void> _showDeleteDialog(BuildContext context) async {
               obscureText: true,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'Enter password',
+                hintText: 'enter_password_hint'.tr(context),
                 hintStyle: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   color: Colors.grey[500],
@@ -605,7 +605,7 @@ Future<void> _showDeleteDialog(BuildContext context) async {
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'Cancel',
+              'cancel'.tr(context),
               style: GoogleFonts.plusJakartaSans(color: Colors.grey[400]),
             ),
           ),
@@ -634,7 +634,7 @@ Future<void> _showDeleteDialog(BuildContext context) async {
                     ),
                   )
                 : Text(
-                    'Confirm Delete',
+                    'confirm_delete'.tr(context),
                     style: GoogleFonts.plusJakartaSans(
                       fontWeight: FontWeight.w600,
                     ),

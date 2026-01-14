@@ -10,7 +10,6 @@ import 'package:provider/provider.dart' show Provider;
 import 'package:tytan/Defaults/utils.dart';
 import 'package:tytan/Defaults/extensions.dart';
 import 'package:tytan/DataModel/userModel.dart';
-import 'package:tytan/Providers/AuthProvide/authProvide.dart' show AuthProvide;
 import '../../NetworkServices/networkVless.dart';
 import 'package:tytan/DataModel/plansModel.dart';
 import 'dart:convert' show jsonDecode, jsonEncode;
@@ -24,6 +23,7 @@ import 'package:tytan/Defaults/singboxConfigs.dart' show SingboxConfig;
 import 'package:tytan/NetworkServices/networkVmess.dart' show VmessService;
 import 'package:flutter_singbox_vpn/flutter_singbox.dart' show FlutterSingbox;
 import 'package:tytan/NetworkServices/networkSingbox.dart' show NetworkSingbox;
+import 'package:tytan/Providers/AuthProvide/authProvide.dart' show AuthProvide;
 import 'package:tytan/ReusableWidgets/customSnackBar.dart'
     show showCustomSnackBar;
 import 'package:tytan/NetworkServices/networkVmessService.dart'
@@ -1028,7 +1028,7 @@ class VpnProvide with ChangeNotifier {
   String getProtocolDisplayName(Protocol protocol) {
     switch (protocol) {
       case Protocol.vmess:
-        return 'Turbo Mode';
+        return 'VMess';
       default:
         return 'Turbo Mode';
       // case Protocol.vless:
@@ -1125,7 +1125,12 @@ class VpnProvide with ChangeNotifier {
 
   // Filter by search query only
   void filterSrvList() {
-    List<Server> results = List.from(servers);
+    // Filter out servers with N/A ping or inactive status first
+    List<Server> results = servers.where((s) {
+      final isNA =
+          (s.ping?.toUpperCase() == 'N/A') || (s.name.toUpperCase() == 'N/A');
+      return !isNA && s.status == true;
+    }).toList();
 
     syncFavoriteServersWithAvailableServers();
 
