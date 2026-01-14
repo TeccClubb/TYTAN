@@ -80,13 +80,13 @@ flutter_launcher_icons:
 
 flutter_native_splash:
   color: "#000000"
-  image: assets/Tytan Logo.png
+  image: "assets/tytan_logo.png"
   color_dark: "#000000"
-  image_dark: assets/Tytan Logo.png
+  image_dark: "assets/tytan_logo.png"
   android_12:
-    image: assets/Tytan Logo.png
+    image: "assets/tytan_logo.png"
     color: "#000000"
-    image_dark: assets/Tytan Logo.png
+    image_dark: "assets/tytan_logo.png"
     color_dark: "#000000"
   android: true
   ios: true
