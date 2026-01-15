@@ -106,7 +106,9 @@ class _PremiumScreenState extends State<PremiumScreen>
             children: [
               _buildHeader(
                 context,
-                _showPlanSelection ? 'Choose Your Plan' : 'Premium Access',
+                _showPlanSelection
+                    ? 'choose_plan'.tr(context)
+                    : 'premium_access'.tr(context),
               ),
               const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
               Expanded(
@@ -150,7 +152,9 @@ class _PremiumScreenState extends State<PremiumScreen>
         border: Border(top: BorderSide(color: Color(0xFF2A2A2A), width: 1)),
       ),
       child: _buildActionButton(
-        _showPlanSelection ? "Start Premium Trial" : "Upgrade to Premium",
+        _showPlanSelection
+            ? "start_premium_trial".tr(context)
+            : "upgrade_to_premium".tr(context),
         _showPlanSelection ? () {} : _toggleView,
       ),
     );
@@ -216,7 +220,7 @@ class _PremiumScreenState extends State<PremiumScreen>
           child: Column(
             children: [
               Text(
-                '🚀 Unlock Premium Power',
+                'unlock_premium_power'.tr(context),
                 textAlign: TextAlign.center,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 28,
@@ -226,7 +230,7 @@ class _PremiumScreenState extends State<PremiumScreen>
               ),
               const SizedBox(height: 12),
               Text(
-                'Experience unlimited VPN with premium features',
+                'experience_unlimited_vpn'.tr(context),
                 textAlign: TextAlign.center,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
@@ -262,7 +266,7 @@ class _PremiumScreenState extends State<PremiumScreen>
           child: Column(
             children: [
               Text(
-                'Feature Comparison',
+                'feature_comparison'.tr(context),
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -294,14 +298,14 @@ class _PremiumScreenState extends State<PremiumScreen>
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildStatItem('5GB', 'Free Monthly'),
-                  _buildStatItem('∞', 'Premium Traffic'),
-                  _buildStatItem('50+', 'Global Servers'),
+                  _buildStatItem('5GB', 'free_monthly'.tr(context)),
+                  _buildStatItem('∞', 'premium_traffic'.tr(context)),
+                  _buildStatItem('50+', 'global_servers'.tr(context)),
                 ],
               ),
               const SizedBox(height: 20),
               Text(
-                "Join thousands of users who upgraded to Premium for unlimited access and premium security features.",
+                'join_premium_users'.tr(context),
                 textAlign: TextAlign.center,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
@@ -322,7 +326,7 @@ class _PremiumScreenState extends State<PremiumScreen>
     return Column(
       children: [
         Text(
-          'Premium Features',
+          'premium_features'.tr(context),
           style: GoogleFonts.plusJakartaSans(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -333,9 +337,9 @@ class _PremiumScreenState extends State<PremiumScreen>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildFeatureItem(Icons.lock, 'Secure Encryption'),
-            _buildFeatureItem(Icons.public, 'Global Servers'),
-            _buildFeatureItem(Icons.speed, 'No Speed Limits'),
+            _buildFeatureItem(Icons.lock, 'secure_encryption'.tr(context)),
+            _buildFeatureItem(Icons.public, 'global_servers'.tr(context)),
+            _buildFeatureItem(Icons.speed, 'no_speed_limits'.tr(context)),
           ],
         ),
       ],
@@ -393,7 +397,7 @@ class _PremiumScreenState extends State<PremiumScreen>
                 CircularProgressIndicator(color: AppColors.primary),
                 const SizedBox(height: 16),
                 Text(
-                  'Loading premium plans...',
+                  'loading_premium_plans'.tr(context),
                   style: GoogleFonts.plusJakartaSans(
                     color: Colors.grey,
                     fontSize: 16,
@@ -428,7 +432,7 @@ class _PremiumScreenState extends State<PremiumScreen>
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Limited Time: Save up to 70% on annual plans!',
+                      'limited_time_offer'.tr(context),
                       style: GoogleFonts.plusJakartaSans(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -566,7 +570,7 @@ class _PremiumScreenState extends State<PremiumScreen>
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'BEST DEAL',
+                          'best_deal'.tr(context),
                           style: GoogleFonts.plusJakartaSans(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -708,7 +712,7 @@ class _PremiumScreenState extends State<PremiumScreen>
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              'SAVE ${savings.toInt()}%',
+                              '${'save'.tr(context)} ${savings.toInt()}%',
                               style: GoogleFonts.plusJakartaSans(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -747,7 +751,7 @@ class _PremiumScreenState extends State<PremiumScreen>
       child: Column(
         children: [
           Text(
-            '✨ What You Get',
+            'what_you_get'.tr(context),
             style: GoogleFonts.plusJakartaSans(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -760,19 +764,19 @@ class _PremiumScreenState extends State<PremiumScreen>
               Expanded(
                 child: _buildBenefitItem(
                   Icons.all_inclusive_rounded,
-                  'Unlimited\nBandwidth',
+                  'unlimited_bandwidth'.tr(context),
                 ),
               ),
               Expanded(
                 child: _buildBenefitItem(
                   Icons.public_rounded,
-                  '50+ Global\nServers',
+                  'global_servers_50'.tr(context),
                 ),
               ),
               Expanded(
                 child: _buildBenefitItem(
                   Icons.security_rounded,
-                  'Military-Grade\nEncryption',
+                  'military_grade_encryption'.tr(context),
                 ),
               ),
             ],
@@ -783,19 +787,19 @@ class _PremiumScreenState extends State<PremiumScreen>
               Expanded(
                 child: _buildBenefitItem(
                   Icons.support_agent_rounded,
-                  '24/7 Priority\nSupport',
+                  'priority_support_24_7'.tr(context),
                 ),
               ),
               Expanded(
                 child: _buildBenefitItem(
                   Icons.block_rounded,
-                  'Ad & Tracker\nBlocking',
+                  'ad_tracker_blocking'.tr(context),
                 ),
               ),
               Expanded(
                 child: _buildBenefitItem(
                   Icons.speed_rounded,
-                  'No Speed\nLimits',
+                  'no_speed_limits_benefit'.tr(context),
                 ),
               ),
             ],
@@ -838,7 +842,7 @@ class _PremiumScreenState extends State<PremiumScreen>
         Expanded(
           flex: 1,
           child: Text(
-            "Free",
+            'free'.tr(context),
             textAlign: TextAlign.center,
             style: GoogleFonts.plusJakartaSans(
               color: Colors.grey,
@@ -849,7 +853,7 @@ class _PremiumScreenState extends State<PremiumScreen>
         Expanded(
           flex: 1,
           child: Text(
-            "Premium",
+            'premium'.tr(context),
             textAlign: TextAlign.center,
             style: GoogleFonts.plusJakartaSans(
               color: AppColors.primary,

@@ -10,23 +10,38 @@ import 'package:provider/provider.dart'
     show MultiProvider, ChangeNotifierProvider, Consumer;
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.white,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.dark,
-      systemNavigationBarColor: Colors.white,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ),
-  );
-  final languageProvider = LanguageProvider();
-  await languageProvider.loadLanguageFromPrefs();
-  runApp(MyApp(languageProvider: languageProvider));
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    debugPrint('WidgetsFlutterBinding initialized');
+
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
+    );
+
+    print('Initializing LanguageProvider...');
+    final languageProvider = LanguageProvider();
+    print('Loading language from prefs...');
+    await languageProvider.loadLanguageFromPrefs();
+    print('Language loaded successfully');
+
+    runApp(MyApp(languageProvider: languageProvider));
+  } catch (e, stackTrace) {
+    print('CRITICAL ERROR DURING MAIN INITIALIZATION: $e');
+    print(stackTrace);
+    // Even if language fails, try to run the app
+    runApp(MyApp(languageProvider: LanguageProvider()));
+  }
 }
 
 class MyApp extends StatelessWidget {

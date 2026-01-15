@@ -19,16 +19,19 @@ class Language {
     Map<String, String>? translationsMap;
 
     if (json['translations'] != null) {
-      // Parse the translations JSON string into a Map
-      final translationData = jsonDecode(json['translations'] as String);
-      translationsMap = Map<String, String>.from(translationData as Map);
+      if (json['translations'] is String) {
+        final translationData = jsonDecode(json['translations'] as String);
+        translationsMap = Map<String, String>.from(translationData as Map);
+      } else if (json['translations'] is Map) {
+        translationsMap = Map<String, String>.from(json['translations'] as Map);
+      }
     }
 
     return Language(
-      name: json['name'] as String,
-      code: json['code'] as String,
-      isRtl: json['is_rtl'] as bool,
-      isDefault: json['default'] as bool,
+      name: (json['name'] ?? '') as String,
+      code: (json['code'] ?? '') as String,
+      isRtl: (json['is_rtl'] ?? false) as bool,
+      isDefault: (json['default'] ?? false) as bool,
       translations: translationsMap,
     );
   }

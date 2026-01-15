@@ -2,10 +2,7 @@ class ServersResponse {
   final bool status;
   final List<Server> servers;
 
-  ServersResponse({
-    required this.status,
-    required this.servers,
-  });
+  ServersResponse({required this.status, required this.servers});
 
   factory ServersResponse.fromJson(Map<String, dynamic> json) {
     return ServersResponse(
@@ -26,6 +23,8 @@ class Server {
   final bool status;
   final String createdAt;
   final List<SubServer> subServers;
+  String? ping;
+  int? pingValue;
 
   Server({
     required this.id,
@@ -36,6 +35,8 @@ class Server {
     required this.status,
     required this.createdAt,
     required this.subServers,
+    this.ping,
+    this.pingValue,
   });
 
   factory Server.fromJson(Map<String, dynamic> json) {
@@ -113,6 +114,8 @@ class VpsServer {
   final int port;
   final bool status;
   final String createdAt;
+  String? ping;
+  int? pingValue;
 
   VpsServer({
     required this.id,
@@ -122,6 +125,8 @@ class VpsServer {
     required this.port,
     required this.status,
     required this.createdAt,
+    this.ping,
+    this.pingValue,
   });
 
   factory VpsServer.fromJson(Map<String, dynamic> json) {

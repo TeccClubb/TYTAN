@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tytan/Providers/LanguageProvide/languageProvide.dart';
 import 'package:tytan/Screens/welcome/welcome.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
 import 'package:tytan/Screens/background/background.dart';
@@ -68,6 +69,7 @@ class _SplashScreenState extends State<SplashScreen>
     // Start animations
     _logoController.forward();
     Future.delayed(const Duration(milliseconds: 500), () {
+      context.read<LanguageProvider>().loadLanguageFromPrefs();
       _loadingController.forward();
     });
 

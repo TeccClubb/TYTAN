@@ -33,6 +33,11 @@ class AuthProvide with ChangeNotifier {
   bool _isGuest = false;
   bool get isGuest => _isGuest;
 
+  setGuest(bool value) {
+    _isGuest = value;
+    notifyListeners();
+  }
+
   Future<void> login(BuildContext context) async {
     try {
       isloading = true;
@@ -61,6 +66,10 @@ class AuthProvide with ChangeNotifier {
         await prefs.setString("name", data['user']['slug']);
 
         var provider = Provider.of<VpnProvide>(context, listen: false);
+        _isGuest = false;
+        await prefs.setBool('isGuest', false);
+        provider.bottomBarIndex.value = 0;
+
         await provider.getServersPlease(true);
         await provider.getUser();
         await provider.getPremium(context);
@@ -102,6 +111,7 @@ class AuthProvide with ChangeNotifier {
   //make me a signup function
   Future<void> signup(BuildContext context) async {
     try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
       isloading = true;
       notifyListeners();
       var headers = {'Accept': 'application/json'};
@@ -125,6 +135,8 @@ class AuthProvide with ChangeNotifier {
         mailController.clear();
         passwordController.clear();
         usernameController.clear();
+        _isGuest = false;
+        await preferences.setBool('isGuest', false);
 
         Navigator.of(
           context,
@@ -382,6 +394,8 @@ class AuthProvide with ChangeNotifier {
         await provider.getServersPlease(true);
         await provider.getUser();
         await provider.getPremium(context);
+        _isGuest = false;
+        await prefs.setBool('isGuest', false);
 
         // Auto-select fastest free server for new free users
         if (!provider.isPremium && provider.servers.isNotEmpty) {
@@ -512,7 +526,6 @@ class AuthProvide with ChangeNotifier {
     try {
       log("Guest login started");
       _isLoading = true;
-      _isGuest = true;
       notifyListeners();
       var headers = {
         'Accept': 'application/json',
@@ -540,6 +553,7 @@ class AuthProvide with ChangeNotifier {
         "Guest login response is ${response.statusCode} that ${response.body}",
       );
       if (response.statusCode == 201) {
+        _isGuest = true;
         log(
           "Guest login successful with email: $email and password: $password",
         );
@@ -549,6 +563,7 @@ class AuthProvide with ChangeNotifier {
         prefs.setString("email", email);
         prefs.setString("password", password);
         prefs.setString("name", email);
+        prefs.setBool("isGuest", true);
 
         prefs.setString("app_account_token", data['user']['app_account_token']);
         var vpnProvider = Provider.of<VpnProvide>(context, listen: false);
@@ -559,7 +574,6 @@ class AuthProvide with ChangeNotifier {
           await vpnProvider.selectFastestServerByHealth(freeOnly: true);
         }
         _isLoading = false;
-        _isGuest = false;
         notifyListeners();
 
         Navigator.pushReplacement(
