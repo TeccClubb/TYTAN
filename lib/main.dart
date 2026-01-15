@@ -7,8 +7,7 @@ import 'package:tytan/Screens/constant/Appconstant.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/Providers/AuthProvide/authProvide.dart';
 import 'package:tytan/Providers/LanguageProvide/languageProvide.dart';
-import 'package:provider/provider.dart'
-    show MultiProvider, ChangeNotifierProvider, Consumer;
+import 'package:provider/provider.dart' show MultiProvider, ChangeNotifierProvider, Consumer;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
