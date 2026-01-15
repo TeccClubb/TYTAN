@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tytan/Defaults/extensions.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
-<<<<<<< HEAD
-import 'package:tytan/Defaults/extensions.dart';
-=======
->>>>>>> c539e3d (uza)
 
 class PremiumScreen extends StatefulWidget {
   final bool isBack;
@@ -25,90 +22,50 @@ class _PremiumScreenState extends State<PremiumScreen>
   // The Data for your Comparison Table
   final List<Map<String, dynamic>> _comparisonData = [
     {
-<<<<<<< HEAD
-      "feature": "stable_connection",
-      "desc": "no_drops_desc",
-=======
       "feature": "Stable connection",
       "desc": "(No drops during use)",
->>>>>>> c539e3d (uza)
       "free": true,
       "premium": true,
     },
     {
-<<<<<<< HEAD
-      "feature": "no_speed_limits",
-      "desc": "max_speed_desc",
-=======
       "feature": "No speed limits",
       "desc": "(Maximum network speed)",
->>>>>>> c539e3d (uza)
       "free": false,
       "premium": true,
     },
     {
-<<<<<<< HEAD
-      "feature": "global_servers",
-      "desc": "access_all_countries_desc",
-=======
       "feature": "Global servers",
       "desc": "(Access all countries)",
->>>>>>> c539e3d (uza)
       "free": false,
       "premium": true,
     },
     {
-<<<<<<< HEAD
-      "feature": "secure_encryption",
-      "desc": "data_protected_desc",
-=======
       "feature": "Secure encryption",
       "desc": "(Data is protected)",
->>>>>>> c539e3d (uza)
       "free": true,
       "premium": true,
     },
     {
-<<<<<<< HEAD
-      "feature": "kill_switch",
-      "desc": "internet_block_desc",
-=======
       "feature": "Kill Switch",
       "desc": "(Internet block on drop)",
->>>>>>> c539e3d (uza)
       "free": false,
       "premium": true,
     },
     {
-<<<<<<< HEAD
-      "feature": "dns_leak_protection",
-      "desc": "isp_leak_desc",
-=======
       "feature": "DNS leak protection",
       "desc": "(ISP cannot see requests)",
->>>>>>> c539e3d (uza)
       "free": false,
       "premium": true,
     },
     {
-<<<<<<< HEAD
-      "feature": "app_level_control",
-      "desc": "choose_apps_desc",
-=======
       "feature": "App-level control",
       "desc": "(Choose apps for VPN)",
->>>>>>> c539e3d (uza)
       "free": false,
       "premium": true,
     },
     {
-<<<<<<< HEAD
-      "feature": "ad_tracker_block",
-      "desc": "less_ads_desc",
-=======
       "feature": "Ad & tracker block",
       "desc": "(Less ads & traffic)",
->>>>>>> c539e3d (uza)
       "free": false,
       "premium": true,
     },
@@ -149,13 +106,7 @@ class _PremiumScreenState extends State<PremiumScreen>
             children: [
               _buildHeader(
                 context,
-<<<<<<< HEAD
-                _showPlanSelection
-                    ? 'choose_plan'.tr(context)
-                    : 'premium_access'.tr(context),
-=======
                 _showPlanSelection ? 'Choose Your Plan' : 'Premium Access',
->>>>>>> c539e3d (uza)
               ),
               const Divider(color: Color(0xFF2A2A2A), height: 1, thickness: 1),
               Expanded(
@@ -164,21 +115,15 @@ class _PremiumScreenState extends State<PremiumScreen>
                   child: Column(
                     children: [
                       const SizedBox(height: 20),
-<<<<<<< HEAD
-=======
                       _buildLogo(),
                       const SizedBox(height: 30),
->>>>>>> c539e3d (uza)
                       if (!_showPlanSelection)
                         _buildComparisonView()
                       else
                         _buildPlanSelectionView(),
-<<<<<<< HEAD
-=======
                       const SizedBox(
                         height: 0,
                       ), // Add bottom padding to avoid overlap with bottom nav
->>>>>>> c539e3d (uza)
                     ],
                   ),
                 ),
@@ -218,25 +163,6 @@ class _PremiumScreenState extends State<PremiumScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-<<<<<<< HEAD
-          GestureDetector(
-            onTap: () =>
-                _showPlanSelection ? _toggleView() : Navigator.pop(context),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color(0xFF2A2A2A),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Colors.white,
-                size: 18,
-              ),
-            ),
-          ),
-=======
           if (widget.isBack || _showPlanSelection)
             GestureDetector(
               onTap: () =>
@@ -257,7 +183,6 @@ class _PremiumScreenState extends State<PremiumScreen>
             )
           else
             const SizedBox(width: 40, height: 40), // Placeholder for centering
->>>>>>> c539e3d (uza)
           Text(
             title,
             style: GoogleFonts.plusJakartaSans(
@@ -266,11 +191,7 @@ class _PremiumScreenState extends State<PremiumScreen>
               color: Colors.white,
             ),
           ),
-<<<<<<< HEAD
-          const SizedBox(width: 40),
-=======
           const SizedBox(width: 40, height: 40),
->>>>>>> c539e3d (uza)
         ],
       ),
     );
@@ -280,22 +201,7 @@ class _PremiumScreenState extends State<PremiumScreen>
   Widget _buildComparisonView() {
     return Column(
       children: [
-<<<<<<< HEAD
-        Text(
-          'go_premium_full_access'.tr(context),
-          textAlign: TextAlign.center,
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 25),
-
-        // The Comparison Table
-=======
         // Hero Section with Gradient
->>>>>>> c539e3d (uza)
         Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
@@ -373,16 +279,6 @@ class _PremiumScreenState extends State<PremiumScreen>
 
         const SizedBox(height: 25),
 
-<<<<<<< HEAD
-        // Marketing Philosophy Text
-        Text(
-          'free_traffic_desc'.tr(context),
-          textAlign: TextAlign.center,
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 14,
-            color: Colors.grey,
-            height: 1.5,
-=======
         // Call to Action with Stats
         Container(
           padding: const EdgeInsets.all(20),
@@ -414,14 +310,10 @@ class _PremiumScreenState extends State<PremiumScreen>
                 ),
               ),
             ],
->>>>>>> c539e3d (uza)
           ),
         ),
 
         const SizedBox(height: 30),
-<<<<<<< HEAD
-        _buildActionButton('upgrade_to_premium'.tr(context), _toggleView),
-=======
       ],
     );
   }
@@ -437,7 +329,6 @@ class _PremiumScreenState extends State<PremiumScreen>
             color: Colors.white,
           ),
         ),
->>>>>>> c539e3d (uza)
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -947,11 +838,7 @@ class _PremiumScreenState extends State<PremiumScreen>
         Expanded(
           flex: 1,
           child: Text(
-<<<<<<< HEAD
-            'free'.tr(context),
-=======
             "Free",
->>>>>>> c539e3d (uza)
             textAlign: TextAlign.center,
             style: GoogleFonts.plusJakartaSans(
               color: Colors.grey,
@@ -962,11 +849,7 @@ class _PremiumScreenState extends State<PremiumScreen>
         Expanded(
           flex: 1,
           child: Text(
-<<<<<<< HEAD
-            'premium'.tr(context),
-=======
             "Premium",
->>>>>>> c539e3d (uza)
             textAlign: TextAlign.center,
             style: GoogleFonts.plusJakartaSans(
               color: AppColors.primary,
@@ -989,11 +872,7 @@ class _PremiumScreenState extends State<PremiumScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-<<<<<<< HEAD
                   item['feature'].toString().tr(context),
-=======
-                  item['feature'],
->>>>>>> c539e3d (uza)
                   style: GoogleFonts.plusJakartaSans(
                     color: Colors.white,
                     fontSize: 14,
@@ -1001,11 +880,7 @@ class _PremiumScreenState extends State<PremiumScreen>
                   ),
                 ),
                 Text(
-<<<<<<< HEAD
                   item['desc'].toString().tr(context),
-=======
-                  item['desc'],
->>>>>>> c539e3d (uza)
                   style: GoogleFonts.plusJakartaSans(
                     color: Colors.grey,
                     fontSize: 11,
@@ -1020,7 +895,6 @@ class _PremiumScreenState extends State<PremiumScreen>
               item['free'] ? Icons.check_circle : Icons.cancel,
               color: item['free'] ? Colors.green : Colors.grey[800],
               size: 20,
-<<<<<<< HEAD
             ),
           ),
           Expanded(
@@ -1028,85 +902,6 @@ class _PremiumScreenState extends State<PremiumScreen>
             child: Icon(Icons.check_circle, color: AppColors.primary, size: 20),
           ),
         ],
-      ),
-    );
-  }
-
-  // --- SECTION 2: PLAN SELECTION VIEW ---
-  Widget _buildPlanSelectionView() {
-    return Consumer<VpnProvide>(
-      builder: (context, provider, child) {
-        if (provider.plans.isEmpty)
-          return const Center(child: CircularProgressIndicator());
-        return Column(
-          children: [
-            ...provider.plans.map((plan) => _buildPlanCard(plan)),
-            const SizedBox(height: 30),
-            _buildActionButton("start_premium_trial".tr(context), () {}),
-            const SizedBox(height: 20),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildPlanCard(dynamic plan) {
-    bool isSelected = _selectedPlan == plan.slug;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedPlan = plan.slug),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : const Color(0xFF2A2A2A),
-            width: 2,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  plan.name,
-                  style: GoogleFonts.plusJakartaSans(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                Text(
-                  plan.invoiceInterval,
-                  style: GoogleFonts.plusJakartaSans(
-                    color: Colors.grey,
-                    fontSize: 14,
-                  ),
-                ),
-              ],
-            ),
-            Text(
-              '\$${plan.discountPrice.toStringAsFixed(2)}',
-              style: GoogleFonts.plusJakartaSans(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-          ],
-        ),
-=======
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Icon(Icons.check_circle, color: AppColors.primary, size: 20),
-          ),
-        ],
->>>>>>> c539e3d (uza)
       ),
     );
   }

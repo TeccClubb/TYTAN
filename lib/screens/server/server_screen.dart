@@ -7,11 +7,8 @@ import 'package:tytan/DataModel/serverDataModel.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
 import 'package:tytan/Screens/background/background.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
-<<<<<<< HEAD
 import 'package:tytan/Defaults/extensions.dart';
-=======
 import 'package:tytan/screens/premium/premium.dart';
->>>>>>> c539e3d (uza)
 
 class ServersScreen extends StatefulWidget {
   final VoidCallback? onServerSelected;

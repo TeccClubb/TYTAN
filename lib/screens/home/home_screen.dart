@@ -10,11 +10,8 @@ import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:tytan/ReusableWidgets/customSnackBar.dart'
     show showCustomSnackBar;
-<<<<<<< HEAD
 import 'package:tytan/Defaults/extensions.dart';
-=======
 import 'package:tytan/screens/premium/premium.dart';
->>>>>>> c539e3d (uza)
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onNavigateToServers;
