@@ -3,14 +3,13 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tytan/Screens/home/home_screen.dart';
+import 'package:tytan/Screens/home/homescreen.dart';
 import 'package:tytan/Screens/constant/Appconstant.dart';
-import 'package:tytan/Screens/server/server_screen.dart';
+import 'package:tytan/Screens/server/serverscreen.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:tytan/Screens/setting/settingscreen.dart';
 import 'package:tytan/Providers/VpnProvide/vpnProvide.dart';
 import 'package:tytan/Defaults/extensions.dart';
-import 'package:tytan/screens/premium/premium.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({super.key});
@@ -59,8 +58,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
           },
         );
       case 2:
-        return PremiumScreen(isBack: false);
-      case 3:
         return const SettingsScreen();
       default:
         return HomeScreen(

@@ -218,8 +218,10 @@ class _TunnelingState extends State<Tunneling> {
                     const Spacer(),
                     Text(
                       'split_tunneling'.tr(context),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                       style: GoogleFonts.plusJakartaSans(
-                        fontSize: 24,
+                        fontSize: 20,
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
@@ -257,7 +259,7 @@ class _TunnelingState extends State<Tunneling> {
                           'split_tunneling_info'.tr(context),
                           style: GoogleFonts.poppins(
                             color: Colors.white,
-                            fontSize: 13,
+                            fontSize: 10.5,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
